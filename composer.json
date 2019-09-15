@@ -9,6 +9,7 @@
         "appointer/swaggervel": "dev-master",
         "barryvdh/laravel-ide-helper": "^2.5",
         "bensampo/laravel-enum": "^1.26",
+        "darkaonline/l5-swagger": "5.6.*",
         "doctrine/dbal": "~2.3",
         "fideloper/proxy": "^4.0",
         "infyomlabs/adminlte-templates": "5.6.x-dev",
@@ -17,7 +18,8 @@
         "laravel/framework": "5.6.*",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.6.0",
-        "spatie/laravel-permission": "2.37"
+        "spatie/laravel-permission": "2.37",
+        "zircote/swagger-php": "2.*"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
