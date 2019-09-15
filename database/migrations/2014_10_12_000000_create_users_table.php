@@ -14,12 +14,30 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
+            $table->bigIncrements('id');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('password')->nullable();
+            $table->string('email')->unique()->nullable();
+            $table->date('birthday')->nullable();
+            $table->string('username')->unique()->nullable();
+            $table->string('scu_id')->unique()->nullable();
+            $table->string('phone_number')->unique()->nullable();
+            $table->string('account')->unique()->nullable();
+            $table->string('national_id')->unique()->nullable();
+            $table->timestamp('last_login')->nullable();
+            $table->integer('status')->nullable();  //  Enum : Status
+            $table->double('cash')->default(0);
+            $table->bigInteger('reputation')->default(0);
+            $table->bigInteger('rebellious')->default(0);
+            $table->integer('level_id')->default(-1);
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('avatar_path', 250)->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('level_id')->references('id')->on('users_levels')->onUpdate('cascade');
         });
     }
 
