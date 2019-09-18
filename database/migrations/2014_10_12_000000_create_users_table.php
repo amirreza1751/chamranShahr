@@ -37,6 +37,9 @@ class CreateUsersTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+        });
+
+        Schema::table('users', function($table) {
             $table->foreign('level_id')->references('id')->on('users_levels')->onUpdate('cascade');
         });
     }
