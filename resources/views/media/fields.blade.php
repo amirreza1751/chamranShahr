@@ -20,7 +20,7 @@
 <div class="form-group col-sm-6">
     {!! Form::label('type', 'Type:') !!}
     {!! Form::number('type', null, ['class' => 'form-control']) !!}
-    {!! Form::select('owner_type', $mediaType, null ) !!}
+{{--    {!! Form::select('owner_type', $mediaType, null ) !!}--}}
 </div>
 
 <!-- Owner Type Field -->
