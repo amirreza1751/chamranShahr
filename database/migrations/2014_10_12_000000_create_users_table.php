@@ -30,7 +30,7 @@ class CreateUsersTable extends Migration
             $table->double('cash')->default(0);
             $table->bigInteger('reputation')->default(0);
             $table->bigInteger('rebellious')->default(0);
-            $table->unsignedInteger('level_id')->default(10);
+            $table->unsignedInteger('level_id');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('avatar_path', 250)->nullable();
             $table->rememberToken();
