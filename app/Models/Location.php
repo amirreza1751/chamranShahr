@@ -77,7 +77,7 @@ class Location extends Model
     use SoftDeletes;
 
     public $table = 'locations';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -121,5 +121,8 @@ class Location extends Model
         'owner_id' => 'required'
     ];
 
-    
+    public function medias()
+    {
+        return $this->morphMany(Media::class, 'owner');
+    }
 }

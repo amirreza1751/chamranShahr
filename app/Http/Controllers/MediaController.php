@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MediaType;
 use App\Http\Requests\CreateMediaRequest;
 use App\Http\Requests\UpdateMediaRequest;
+use App\Models\Location;
+use App\Models\News;
 use App\Repositories\MediaRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -43,7 +46,14 @@ class MediaController extends AppBaseController
      */
     public function create()
     {
-        return view('media.create');
+        $owners = [
+            Location::class => 'location',
+            News::class => 'news',
+        ];
+//        foreach (MediaType::toArray() as $type){
+//            $mediaType[$type] = $type;
+//        }
+        return view('media.create', compact('owners', 'mediaType'));
     }
 
     /**
@@ -56,6 +66,11 @@ class MediaController extends AppBaseController
     public function store(CreateMediaRequest $request)
     {
         $input = $request->all();
+        if($request->hasFile('path')){
+            $path = $request->file('path')->store('/public/images');
+            $path = str_replace('public', 'storage', $path);
+        }
+        $input['path'] = $path;
 
         $media = $this->mediaRepository->create($input);
 
@@ -151,5 +166,10 @@ class MediaController extends AppBaseController
         Flash::success('Media deleted successfully.');
 
         return redirect(route('media.index'));
+    }
+
+    public function owner()
+    {
+        return $this->morphTo();
     }
 }

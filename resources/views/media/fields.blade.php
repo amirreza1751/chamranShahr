@@ -13,19 +13,21 @@
 <!-- Path Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('path', 'Path:') !!}
-    {!! Form::text('path', null, ['class' => 'form-control']) !!}
+    {!! Form::file('path', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Type Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('type', 'Type:') !!}
     {!! Form::number('type', null, ['class' => 'form-control']) !!}
+    {!! Form::select('owner_type', $mediaType, null ) !!}
 </div>
 
 <!-- Owner Type Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('owner_type', 'Owner Type:') !!}
-    {!! Form::text('owner_type', null, ['class' => 'form-control']) !!}
+{{--    {!! Form::text('owner_type', null, ['class' => 'form-control']) !!}--}}
+    {!! Form::select('owner_type', $owners, null ) !!}
 </div>
 
 <!-- Owner Id Field -->

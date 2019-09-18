@@ -162,7 +162,10 @@ class LocationAPIController extends AppBaseController
             return $this->sendError('Location not found');
         }
 
-        return $this->sendResponse($location->toArray(), 'Location retrieved successfully');
+        $locationWithMedia = $location;
+        $locationWithMedia['medias'] = $location->medias;
+
+        return $this->sendResponse($locationWithMedia->toArray(), 'Location retrieved successfully');
     }
 
     /**

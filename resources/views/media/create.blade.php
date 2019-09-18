@@ -12,7 +12,7 @@
 
             <div class="box-body">
                 <div class="row">
-                    {!! Form::open(['route' => 'media.store']) !!}
+                    {!! Form::open(['route' => 'media.store', 'enctype' => 'multipart/form-data']) !!}
 
                         @include('media.fields')
 

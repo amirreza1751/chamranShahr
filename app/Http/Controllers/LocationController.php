@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateLocationRequest;
 use App\Http\Requests\UpdateLocationRequest;
+use App\Models\Media;
 use App\Repositories\LocationRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
