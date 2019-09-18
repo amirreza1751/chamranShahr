@@ -40,7 +40,7 @@ class CreateUsersTable extends Migration
         });
 
         Schema::table('users', function($table) {
-            $table->foreign('level_id')->references('id')->on('users_levels')->onUpdate('cascade');
+            $table->foreign('level_id')->references('id')->on('user_levels')->onUpdate('cascade');
         });
     }
 
