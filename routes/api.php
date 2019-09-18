@@ -29,3 +29,12 @@ Route::group([
         Route::get('user', 'AuthController@user');
     });
 });
+
+
+Route::resource('locations', 'LocationAPIController');
+
+Route::resource('media', 'MediaAPIController');
+
+Route::resource('news', 'NewsAPIController');
+
+Route::resource('notifications', 'NotificationAPIController');

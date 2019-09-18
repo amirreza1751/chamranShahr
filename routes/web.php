@@ -19,3 +19,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+
+Route::resource('locations', 'LocationController');
+
+Route::resource('media', 'MediaController');
+
+Route::resource('news', 'NewsController');
+
+Route::resource('notifications', 'NotificationController');
