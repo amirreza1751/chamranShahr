@@ -20,10 +20,10 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 
-Route::resource('locations', 'LocationController');
+Route::middleware('auth:web')->resource('locations', 'LocationController');
 
-Route::resource('media', 'MediaController');
+Route::middleware('auth:web')->resource('media', 'MediaController');
 
-Route::resource('news', 'NewsController');
+Route::middleware('auth:web')->resource('news', 'NewsController');
 
-Route::resource('notifications', 'NotificationController');
+Route::middleware('auth:web')->resource('notifications', 'NotificationController');

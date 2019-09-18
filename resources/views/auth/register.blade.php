@@ -44,13 +44,46 @@
 
             {!! csrf_field() !!}
 
-            <div class="form-group has-feedback{{ $errors->has('name') ? ' has-error' : '' }}">
-                <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="Full Name">
+            <div class="form-group has-feedback{{ $errors->has('first_name') ? ' has-error' : '' }}">
+                <input type="text" class="form-control" name="first_name" value="{{ old('first_name') }}" placeholder="First Name">
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
 
-                @if ($errors->has('name'))
+                @if ($errors->has('first_name'))
                     <span class="help-block">
-                        <strong>{{ $errors->first('name') }}</strong>
+                        <strong>{{ $errors->first('first_name') }}</strong>
+                    </span>
+                @endif
+            </div>
+
+            <div class="form-group has-feedback{{ $errors->has('last_name') ? ' has-error' : '' }}">
+                <input type="text" class="form-control" name="last_name" value="{{ old('last_name') }}" placeholder="Last Name">
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+
+                @if ($errors->has('last_name'))
+                    <span class="help-block">
+                        <strong>{{ $errors->first('last_name') }}</strong>
+                    </span>
+                @endif
+            </div>
+
+            <div class="form-group has-feedback{{ $errors->has('username') ? ' has-error' : '' }}">
+                <input type="text" class="form-control" name="username" value="{{ old('username') }}" placeholder="Username">
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+
+                @if ($errors->has('username'))
+                    <span class="help-block">
+                        <strong>{{ $errors->first('username') }}</strong>
+                    </span>
+                @endif
+            </div>
+
+            <div class="form-group has-feedback{{ $errors->has('phone_number') ? ' has-error' : '' }}">
+                <input type="text" class="form-control" name="phone_number" value="{{ old('phone_number') }}" placeholder="Phone Number">
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+
+                @if ($errors->has('phone_number'))
+                    <span class="help-block">
+                        <strong>{{ $errors->first('phone_number') }}</strong>
                     </span>
                 @endif
             </div>
