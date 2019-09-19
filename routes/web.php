@@ -14,7 +14,7 @@
 
 
 if (env('APP_ENV') === 'production') {
-    URL::forceSchema('https');
+    $this->app['request']->server->set('HTTPS', true);
 }
 
 Route::get('/', function () {
