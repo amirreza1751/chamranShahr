@@ -26,6 +26,9 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+         $schedule->command('news:fetch')
+                  ->everyMinute()->timezone('Asia/Tehran')->between('00:00','05:30');
+
     }
 
     /**
