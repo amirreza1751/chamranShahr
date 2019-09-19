@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://campus.scu.ac.ir'),
+    'url' => env('APP_URL', 'https://campus.scu.ac.ir/chamrans'),
 
     /*
     |--------------------------------------------------------------------------
