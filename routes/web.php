@@ -21,11 +21,6 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 
-
-//Route::group(['middleware' => 'HttpsProtocol'], function() {
-//    Route::resource('locations', 'LocationController');
-//});
-
 Route::middleware('auth:web')->resource('locations', 'LocationController');
 
 Route::middleware('auth:web')->resource('media', 'MediaController');

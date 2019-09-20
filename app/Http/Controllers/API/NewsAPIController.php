@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\CollectionHelper;
 use App\Http\Requests\API\CreateNewsAPIRequest;
 use App\Http\Requests\API\UpdateNewsAPIRequest;
 use App\Models\News;
@@ -65,7 +66,11 @@ class NewsAPIController extends AppBaseController
         $this->newsRepository->pushCriteria(new LimitOffsetCriteria($request));
         $news = $this->newsRepository->all();
 
-        return $this->sendResponse($news->toArray(), 'News retrieved successfully');
+        $total = $news->count();
+        $pageSize = 5;
+        $paginated = CollectionHelper::paginate($news, $total, $pageSize);
+
+        return $this->sendResponse($paginated->toArray(), 'News retrieved successfully');
     }
 
     /**
