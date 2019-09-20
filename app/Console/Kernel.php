@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('news:fetch')
             ->everyFiveMinutes()
             ->timezone('Asia/Tehran')
-            ->between('7:00', '14:30');
+            ->between('7:00', '19:30');
 
         $schedule->command('news:fetch')
             ->hourly()
