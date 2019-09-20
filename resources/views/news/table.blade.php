@@ -5,6 +5,8 @@
                 <th>Title</th>
         <th>Link</th>
         <th>Description</th>
+        <th>Path</th>
+        <th>Field For Test</th>
                 <th colspan="3">Action</th>
             </tr>
         </thead>
@@ -14,6 +16,8 @@
                 <td>{!! $news->title !!}</td>
             <td>{!! $news->link !!}</td>
             <td>{!! $news->description !!}</td>
+            <td>{!! $news->path !!}</td>
+            <td>{!! $news->field_for_test !!}</td>
                 <td>
                     {!! Form::open(['route' => ['news.destroy', $news->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>

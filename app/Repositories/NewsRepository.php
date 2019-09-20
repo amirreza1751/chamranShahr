@@ -8,7 +8,7 @@ use InfyOm\Generator\Common\BaseRepository;
 /**
  * Class NewsRepository
  * @package App\Repositories
- * @version September 18, 2019, 2:30 pm UTC
+ * @version September 20, 2019, 4:31 pm +0430
  *
  * @method News findWithoutFail($id, $columns = ['*'])
  * @method News find($id, $columns = ['*'])
@@ -22,7 +22,9 @@ class NewsRepository extends BaseRepository
     protected $fieldSearchable = [
         'title',
         'link',
-        'description'
+        'description',
+        'path',
+        'field_for_test'
     ];
 
     /**

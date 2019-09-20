@@ -22,6 +22,18 @@
     <p>{!! $news->description !!}</p>
 </div>
 
+<!-- Path Field -->
+<div class="form-group">
+    {!! Form::label('path', 'Path:') !!}
+    <p>{!! $news->path !!}</p>
+</div>
+
+<!-- Field For Test Field -->
+<div class="form-group">
+    {!! Form::label('field_for_test', 'Field For Test:') !!}
+    <p>{!! $news->field_for_test !!}</p>
+</div>
+
 <!-- Created At Field -->
 <div class="form-group">
     {!! Form::label('created_at', 'Created At:') !!}

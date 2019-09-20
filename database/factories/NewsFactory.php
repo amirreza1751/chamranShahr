@@ -11,6 +11,8 @@ $factory->define(News::class, function (Faker $faker) {
         'title' => $faker->word,
         'link' => $faker->word,
         'description' => $faker->text,
+        'path' => $faker->text,
+        'field_for_test' => $faker->text,
         'created_at' => $faker->date('Y-m-d H:i:s'),
         'updated_at' => $faker->date('Y-m-d H:i:s'),
         'deleted_at' => $faker->date('Y-m-d H:i:s')

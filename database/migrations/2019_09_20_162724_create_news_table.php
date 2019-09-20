@@ -18,6 +18,7 @@ class CreateNewsTable extends Migration
             $table->string('title')->nullable();
             $table->string('link')->nullable();
             $table->text('description')->nullable();
+            $table->text('path')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

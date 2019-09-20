@@ -31,6 +31,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          type="string"
  *      ),
  *      @SWG\Property(
+ *          property="path",
+ *          description="path",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="field_for_test",
+ *          description="field_for_test",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
  *          property="created_at",
  *          description="created_at",
  *          type="string",
@@ -66,7 +76,9 @@ class News extends Model
     public $fillable = [
         'title',
         'link',
-        'description'
+        'description',
+        'path',
+        'field_for_test'
     ];
 
     /**
@@ -78,7 +90,9 @@ class News extends Model
         'id' => 'integer',
         'title' => 'string',
         'link' => 'string',
-        'description' => 'string'
+        'description' => 'string',
+        'path' => 'string',
+        'field_for_test' => 'string'
     ];
 
     /**

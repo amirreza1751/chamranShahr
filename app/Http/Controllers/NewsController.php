@@ -152,4 +152,9 @@ class NewsController extends AppBaseController
 
         return redirect(route('news.index'));
     }
+
+    public function repoCreate($data)
+    {
+        $this->newsRepository->create((array)$data);
+    }
 }

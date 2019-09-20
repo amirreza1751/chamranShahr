@@ -148,6 +148,8 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         L5Swagger\L5SwaggerServiceProvider::class,
+        Weidner\Goutte\GoutteServiceProvider::class,
+        Orchestra\Parser\XmlServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -217,6 +219,8 @@ return [
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
         'Flash'     => Laracasts\Flash\Flash::class,
+        'Goutte' => Weidner\Goutte\GoutteFacade::class,
+        'XmlParser' => Orchestra\Parser\Xml\Facade::class,
 
     ],
 
