@@ -27,4 +27,5 @@ Route::middleware('auth:web')->resource('media', 'MediaController');
 
 Route::middleware('auth:web')->resource('news', 'NewsController');
 
+
 Route::middleware('auth:web')->resource('notifications', 'NotificationController');

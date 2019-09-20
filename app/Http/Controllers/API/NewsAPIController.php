@@ -64,7 +64,7 @@ class NewsAPIController extends AppBaseController
     {
         $this->newsRepository->pushCriteria(new RequestCriteria($request));
         $this->newsRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $news = $this->newsRepository->all();
+        $news = $this->newsRepository->orderBy('created_at', 'desc')->all();
 
         $total = $news->count();
         $pageSize = 5;
