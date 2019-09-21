@@ -29,7 +29,7 @@ Route::group([
         Route::get('user', 'AuthController@user');
     });
 });
-
+Route::post('/send_otp', 'OtpController@send_otp');
 
 Route::resource('locations', 'LocationAPIController');
 
