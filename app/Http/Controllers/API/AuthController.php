@@ -22,7 +22,6 @@ class AuthController extends Controller
      */
     public function signup(Request $request)
     {
-        return "api";
 //        return $request->phone_number;
         $request->validate([
             'phone_number' => 'required|regex:/(0)[0-9]{10,15}/',
