@@ -108,6 +108,11 @@ class MediaController extends AppBaseController
      */
     public function edit($id)
     {
+        $owners = [
+            Location::class => 'location',
+            News::class => 'news',
+        ];
+
         $media = $this->mediaRepository->findWithoutFail($id);
 
         if (empty($media)) {
@@ -116,7 +121,7 @@ class MediaController extends AppBaseController
             return redirect(route('media.index'));
         }
 
-        return view('media.edit')->with('media', $media);
+        return view('media.edit', compact('media', 'owners'));
     }
 
     /**
