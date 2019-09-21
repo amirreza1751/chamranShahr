@@ -135,14 +135,23 @@ class MediaController extends AppBaseController
     public function update($id, UpdateMediaRequest $request)
     {
         $media = $this->mediaRepository->findWithoutFail($id);
-
+        $new_request = $request->all();
         if (empty($media)) {
             Flash::error('Media not found');
 
             return redirect(route('media.index'));
         }
 
-        $media = $this->mediaRepository->update($request->all(), $id);
+        if($request->hasFile('path')){
+            $path = $request->file('path')->store('/public/images');
+            $path = str_replace('public', 'storage', $path);
+            $new_request['path'] = $path;
+        }
+        else{
+            $new_request['path'] = $media->path;
+        }
+
+        $media = $this->mediaRepository->update($new_request, $id);
 
         Flash::success('Media updated successfully.');
 

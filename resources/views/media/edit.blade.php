@@ -11,7 +11,7 @@
        <div class="box box-primary">
            <div class="box-body">
                <div class="row">
-                   {!! Form::model($media, ['route' => ['media.update', $media->id], 'method' => 'patch']) !!}
+                   {!! Form::model($media, ['route' => ['media.update', $media->id], 'method' => 'patch', 'enctype' => 'multipart/form-data']) !!}
 
                         @include('media.fields')
 
