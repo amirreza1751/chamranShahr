@@ -53,7 +53,7 @@ class NewsFetch extends Command
             ];
             $check = News::where('link', $news['link'])->first();
             // find out that this news is a new one or not
-            if(isset($check)){ // if this news is a new one
+            if(!isset($check)){ // if this news is a new one
                 $crawler = GoutteFacade::request('GET', 'http://scu.ac.ir/-/'.urlencode(str_replace('http://scu.ac.ir/-/', '',$news['link'])));
                 $node = $crawler->filter('div.news-page-image > img')->first();
                 $news['path'] = 'http://scu.ac.ir'.$node->attr('src');
