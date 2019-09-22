@@ -51,6 +51,10 @@ class NewsFetch extends Command
                 'link' => $data->link,
                 'description' => $data->description,
             ];
+
+            $data->description = str_replace('<br>', '', $data->description);
+            $data->description = str_replace('&nbsp;', '', $data->description);
+
             $check = News::where('link', $news['link'])->first();
             // find out that this news is a new one or not
             if(!isset($check)){ // if this news is a new one
@@ -61,8 +65,6 @@ class NewsFetch extends Command
                 app('App\Http\Controllers\NewsController')->repoCreate($news);
             }
             else {
-                $data->description = str_replace('<br>', '', $data->description);
-                $data->description = str_replace('&nbsp;', '', $data->description);
 
                 $check->description = str_replace('<br>', '', $check->description);
                 $check->description = str_replace('&nbsp;', '', $check->description);
