@@ -8,6 +8,7 @@ use App\Models\Location;
 use App\Repositories\LocationRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Support\Facades\DB;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
@@ -282,4 +283,12 @@ class LocationAPIController extends AppBaseController
 
         return $this->sendResponse($id, 'Location deleted successfully');
     }
+
+    public function byType($id)
+    {
+        $locations = Location::where('type', $id)->get();
+
+        return $this->sendResponse($locations->toArray(), 'Locations retrieved successfully');
+    }
+
 }

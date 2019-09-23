@@ -12,10 +12,10 @@ use BenSampo\Enum\Enum;
 final class LocationType extends Enum
 {
     const BusStation =   0;
-    const Self =   1;
+    const Self =   1;   // DONE
     const Office = 2;
-    const Faculty = 3;
+    const Faculty = 3;  // DONE
     const SportField = 4;
-    const Entrance = 5;
+    const Entrance = 5; // DONE
     const Bus = 6;
 }

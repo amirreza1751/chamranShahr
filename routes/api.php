@@ -33,11 +33,13 @@ Route::post('/send_otp', 'OtpController@send_otp');
 
 Route::resource('locations', 'LocationAPIController');
 
+Route::get('locations/bytype/{id}', 'LocationAPIController@byType');
+
+
 Route::resource('media', 'MediaAPIController');
 
 Route::resource('news', 'NewsAPIController');
 
 Route::resource('notifications', 'NotificationAPIController');
-
 
 Route::resource('notices', 'NoticeAPIController');
