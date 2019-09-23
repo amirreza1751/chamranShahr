@@ -89,14 +89,14 @@ class NoticeFetch extends Command
             if(!isset($check)){ // if this notice is a new one
                 app('App\Http\Controllers\NoticeController')->repoCreate($notice);
             }
-            else {
-                $check->description = str_replace('<br>', '', $check->description);
-                $check->description = str_replace('&nbsp;', '', $check->description);
-
-                if(strcmp(substr(strval($data->description), -100), substr(strval($check->description), -100)) != 0){ // if is not but
-                    app('App\Http\Controllers\NoticeController')->repoCreate($notice);
-                }
-            }
+//            else {
+//                $check->description = str_replace('<br>', '', $check->description);
+//                $check->description = str_replace('&nbsp;', '', $check->description);
+//
+//                if(strcmp(substr(strval($data->description), -100), substr(strval($check->description), -100)) != 0){ // if is not but
+//                    app('App\Http\Controllers\NoticeController')->repoCreate($notice);
+//                }
+//            }
         }
     }
 }
