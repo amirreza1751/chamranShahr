@@ -18,3 +18,23 @@
     <a href="{!! route('news.index') !!}"><i class="fa fa-edit"></i><span>News</span></a>
 </li>
 
+<li class="{{ Request::is('notices*') ? 'active' : '' }}">
+    <a href="{!! route('notices.index') !!}"><i class="fa fa-edit"></i><span>Notices</span></a>
+</li>
+
+<li class="{{ Request::is('notices*') ? 'active' : '' }}">
+    <a href="{!! route('notices.index') !!}"><i class="fa fa-edit"></i><span>Notices</span></a>
+</li>
+
+<li class="{{ Request::is('notices*') ? 'active' : '' }}">
+    <a href="{!! route('notices.index') !!}"><i class="fa fa-edit"></i><span>Notices</span></a>
+</li>
+
+<li class="{{ Request::is('notices*') ? 'active' : '' }}">
+    <a href="{!! route('notices.index') !!}"><i class="fa fa-edit"></i><span>Notices</span></a>
+</li>
+
+<li class="{{ Request::is('notices*') ? 'active' : '' }}">
+    <a href="{!! route('notices.index') !!}"><i class="fa fa-edit"></i><span>Notices</span></a>
+</li>
+

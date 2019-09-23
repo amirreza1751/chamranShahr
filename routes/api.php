@@ -38,3 +38,6 @@ Route::resource('media', 'MediaAPIController');
 Route::resource('news', 'NewsAPIController');
 
 Route::resource('notifications', 'NotificationAPIController');
+
+
+Route::resource('notices', 'NoticeAPIController');

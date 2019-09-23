@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\NewsFetch;
+use App\Console\Commands\NoticeFetch;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,7 +15,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        NewsFetch::class
+        NewsFetch::class,
+        NoticeFetch::class,
     ];
 
     /**
@@ -36,6 +38,20 @@ class Kernel extends ConsoleKernel
             ->between('14:30', '20:00');
 
         $schedule->command('news:fetch')
+            ->dailyAt('00:00')
+            ->timezone('Asia/Tehran');
+
+        $schedule->command('notice:fetch')
+            ->everyFiveMinutes()
+            ->timezone('Asia/Tehran')
+            ->between('7:00', '14:30');
+
+        $schedule->command('notice:fetch')
+            ->hourly()
+            ->timezone('Asia/Tehran')
+            ->between('14:30', '20:00');
+
+        $schedule->command('notice:fetch')
             ->dailyAt('00:00')
             ->timezone('Asia/Tehran');
     }
