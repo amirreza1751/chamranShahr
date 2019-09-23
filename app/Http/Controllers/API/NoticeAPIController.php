@@ -67,7 +67,7 @@ class NoticeAPIController extends AppBaseController
 //        $notices = $this->noticeRepository->all();
 
 //        return $this->sendResponse($notices->toArray(), 'Notices retrieved successfully');
-        return DB::table('notices')->orderBy('created_at', 'desc')->paginate(10)->toArray();
+        return DB::table('notices')->orderBy('created_at', 'asc')->paginate(10)->toArray();
     }
 
     /**
