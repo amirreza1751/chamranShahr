@@ -12,10 +12,6 @@
 */
 
 
-use Illuminate\Container\Container;
-use Laravie\Parser\Xml\Reader;
-use Orchestra\Parser\Xml\Document;
-use function GuzzleHttp\Psr7\str;
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,3 +31,6 @@ Route::middleware('auth:web')->resource('news', 'NewsController');
 Route::middleware('auth:web')->resource('notifications', 'NotificationController');
 
 Route::middleware('auth:web')->resource('notices', 'NoticeController');
+
+
+

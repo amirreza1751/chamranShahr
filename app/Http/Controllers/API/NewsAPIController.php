@@ -9,6 +9,7 @@ use App\Models\News;
 use App\Repositories\NewsRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Support\Facades\DB;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
@@ -64,13 +65,14 @@ class NewsAPIController extends AppBaseController
     {
         $this->newsRepository->pushCriteria(new RequestCriteria($request));
         $this->newsRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $news = $this->newsRepository->orderBy('created_at', 'desc')->all();
+//        $news = $this->newsRepository->orderBy('created_at', 'desc')->all();
 
-        $total = $news->count();
-        $pageSize = 5;
-        $paginated = CollectionHelper::paginate($news, $total, $pageSize);
+//        $total = $news->count();
+//        $pageSize = 10;
+//        $paginated = CollectionHelper::paginate($news, $total, $pageSize);
 
-        return $this->sendResponse($paginated->toArray(), 'News retrieved successfully');
+//        return $this->sendResponse($paginated->toArray(), 'News retrieved successfully');
+        return DB::table('news')->orderBy('created_at', 'desc')->paginate(10)->toArray();
     }
 
     /**

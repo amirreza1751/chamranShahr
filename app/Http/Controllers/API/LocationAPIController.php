@@ -165,6 +165,7 @@ class LocationAPIController extends AppBaseController
         $locationWithMedia = $location;
         $locationWithMedia['medias'] = $location->medias;
 
+
         return $this->sendResponse($locationWithMedia->toArray(), 'Location retrieved successfully');
     }
 

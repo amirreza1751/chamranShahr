@@ -8,6 +8,7 @@ use App\Models\Notice;
 use App\Repositories\NoticeRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Support\Facades\DB;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
@@ -63,9 +64,10 @@ class NoticeAPIController extends AppBaseController
     {
         $this->noticeRepository->pushCriteria(new RequestCriteria($request));
         $this->noticeRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $notices = $this->noticeRepository->all();
+//        $notices = $this->noticeRepository->all();
 
-        return $this->sendResponse($notices->toArray(), 'Notices retrieved successfully');
+//        return $this->sendResponse($notices->toArray(), 'Notices retrieved successfully');
+        return DB::table('notices')->orderBy('created_at', 'desc')->paginate(10)->toArray();
     }
 
     /**
