@@ -35,7 +35,6 @@ Route::resource('locations', 'LocationAPIController');
 
 Route::get('locations/bytype/{id}', 'LocationAPIController@byType');
 
-
 Route::resource('media', 'MediaAPIController');
 
 Route::resource('news', 'NewsAPIController');

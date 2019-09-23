@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Enums\LocationType;
 use App\Http\Requests\API\CreateLocationAPIRequest;
 use App\Http\Requests\API\UpdateLocationAPIRequest;
 use App\Models\Location;
@@ -165,6 +166,8 @@ class LocationAPIController extends AppBaseController
 
         $locationWithMedia = $location;
         $locationWithMedia['medias'] = $location->medias;
+        $locationWithMedia['type_name'] = LocationType::getDescription($location->type);
+
 
 
         return $this->sendResponse($locationWithMedia->toArray(), 'Location retrieved successfully');
@@ -290,5 +293,4 @@ class LocationAPIController extends AppBaseController
 
         return $this->sendResponse($locations->toArray(), 'Locations retrieved successfully');
     }
-
 }
