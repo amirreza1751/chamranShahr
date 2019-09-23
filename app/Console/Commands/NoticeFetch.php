@@ -80,7 +80,7 @@ class NoticeFetch extends Command
                 'description' => strval($data->summary),
                 'author' => strval($data->author->name),
             ];
-            app('App\Http\Controllers\NoticeController')->repoCreate($notice);
+
             $data->description = str_replace('<br>', '', $data->description);
             $data->description = str_replace('&nbsp;', '', $data->description);
 
