@@ -59,7 +59,7 @@ class NoticeFetch extends Command
         $input = collect((new Reader(new Document(new Container())))->load('http://scu.ac.ir/%D8%B5%D9%81%D8%AD%D9%87-%D8%A7%D8%B5%D9%84%DB%8C/-/asset_publisher/7z3VNzvtbJLj/rss?p_p_cacheability=cacheLevelPage')); // get XML data notices from SCU-API
         $datas = ((array) $input[$input->keys()[3]])['entry']; // fetch news from xml file and convert to array
 
-        foreach (array_reverse($datas) as $data){
+        foreach ($datas as $data){
 
             //              data sample    2019-05-22T09:32:34Z
 //            $t = strval($data->published);
