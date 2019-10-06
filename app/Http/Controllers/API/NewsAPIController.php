@@ -72,15 +72,15 @@ class NewsAPIController extends AppBaseController
 //        $paginated = CollectionHelper::paginate($news, $total, $pageSize);
 
 //        return $this->sendResponse($paginated->toArray(), 'News retrieved successfully');
-//        return DB::table('news')->orderBy('created_at', 'desc')->paginate(10)->toArray(); // uncomment this for https test
+        return DB::table('news')->orderBy('created_at', 'desc')->paginate(10)->toArray(); // uncomment this for https test
 
 
         // comment this section for get back to normal >
-        $paginated = DB::table('news')->orderBy('created_at', 'desc')->paginate(10)->toArray();
-        foreach ($paginated['data'] as $pagi){
-            $pagi->path = 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png';
-        }
-        return $paginated;
+//        $paginated = DB::table('news')->orderBy('created_at', 'desc')->paginate(10)->toArray();
+//        foreach ($paginated['data'] as $pagi){
+//            $pagi->path = 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png';
+//        }
+//        return $paginated;
         // comment this section for get back to normal <
     }
 
