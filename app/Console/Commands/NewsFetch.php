@@ -96,7 +96,7 @@ class NewsFetch extends Command
                     $news['path'] = $path;
                     dump($news['path']);
                 } else {
-                    $news['path'] = Storage::url('news_images/news_default_image.jpg');
+                    $news['path'] = URL::to('/').Storage::url('news_images/news_default_image.jpg');
                     dump($news['path']);
                 }
                 app('App\Http\Controllers\NewsController')->repoCreate($news);

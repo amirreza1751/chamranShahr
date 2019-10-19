@@ -106,7 +106,7 @@ class NoticeFetch extends Command
                     $notice['path'] = $path;
                     dump($notice['path']);
                 } else {
-                    $notice['path'] = Storage::url('notices_images/notice_default_image.jpg');
+                    $notice['path'] = URL::to('/').Storage::url('notices_images/notice_default_image.jpg');
                     dump($notice['path']);
                 }
                 app('App\Http\Controllers\NoticeController')->repoCreate($notice);
