@@ -58,7 +58,7 @@ class NoticeFetch extends Command
 
 //        app('App\Http\Controllers\NoticeController')->repoCreate($notice);
 
-        ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
+//        ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
         dump("read data from notices api...");
         $input = collect((new Reader(new Document(new Container())))->load(env('NOTICE_LINK'))); // get XML data notices from SCU-API
         $datas = ((array) $input[$input->keys()[3]])['entry']; // fetch news from xml file and convert to array

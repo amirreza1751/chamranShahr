@@ -45,7 +45,7 @@ class NewsFetch extends Command
      */
     public function handle()
     {
-        ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
+//        ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
         dump("read data from news api...");
         $input = collect((new Reader(new Document(new Container())))->load(env('NEWS_LINK'))); // get XML data news from SCU-API
         $datas = ((array) $input[$input->keys()[3]])['item']; // fetch news from xml file and convert to array
