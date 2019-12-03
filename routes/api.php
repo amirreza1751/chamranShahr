@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\NewMessage;
 use Illuminate\Http\Request;
 
 /*
@@ -42,3 +43,9 @@ Route::resource('news', 'NewsAPIController');
 Route::resource('notifications', 'NotificationAPIController');
 
 Route::resource('notices', 'NoticeAPIController');
+
+
+
+Route::get('/notification/test/{message}', function ($message){
+    return event(new NewMessage($message));
+});
