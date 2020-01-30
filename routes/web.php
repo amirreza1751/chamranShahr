@@ -12,11 +12,14 @@
 */
 
 
+use App\Models\Gender;
 use App\Models\News;
+use App\User;
 use http\Client\Request;
 use Illuminate\Container\Container;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Laravie\Parser\Xml\Reader;
 use Orchestra\Parser\Xml\Document;
@@ -40,3 +43,7 @@ Route::middleware('auth:web')->resource('news', 'NewsController');
 Route::middleware('auth:web')->resource('notifications', 'NotificationController');
 
 Route::middleware('auth:web')->resource('notices', 'NoticeController');
+
+Route::middleware('auth:web')->resource('users', 'UserController');
+
+Route::middleware('auth:web')->resource('genders', 'GenderController');

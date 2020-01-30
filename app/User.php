@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Gender;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
@@ -16,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone_number', 'username',
+        'first_name', 'last_name', 'email', 'password', 'phone_number', 'username', 'gender_unique_code',
     ];
 
     /**
@@ -25,6 +26,28 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'level_id',
+        'role_id',
+        'email_verified_at',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'remember_token',
     ];
+
+    public static $rules = [
+        'email' => 'unique:users',
+        'username' => 'unique:users',
+        'scu_id' => 'unique:users',
+        'phone_number' => 'unique:users|required|regex:/(09)[0-9]{9}/|size:11',
+        'password' => 'required',
+        'confirm_password' => 'required|same:password',
+        'national_id' => 'unique:users',
+    ];
+
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class, 'gender_unique_code', 'unique_code');
+    }
 }

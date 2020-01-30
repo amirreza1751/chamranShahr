@@ -44,8 +44,17 @@ Route::resource('notifications', 'NotificationAPIController');
 
 Route::resource('notices', 'NoticeAPIController');
 
+Route::resource('users', 'UserAPIController');
+Route::put('users/{id}/update_scu_id', 'UserAPIController@updateScuId');
+
 
 
 Route::get('/notification/test/{message}', function ($message){
     return event(new NewMessage($message));
 });
+
+
+
+
+
+Route::resource('genders', 'GenderAPIController');
