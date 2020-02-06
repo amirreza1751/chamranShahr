@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 
 class SamaRequestController extends Controller
 {
-    public function sama_request( $service, $method, $parameters)
+    public static function sama_request( $service, $method, $parameters)
     {
         $cookie = config_path('cookie/cookie.txt');
 
@@ -34,7 +34,7 @@ class SamaRequestController extends Controller
         } elseif ($httpcode == 400){
             $login_result = app('App\Http\Controllers\API\Sama\SamaAuthController')->sama_login();
             if ($login_result) /**  successful login  **/
-                return $this->sama_request($service, $method, $parameters);
+                return SamaRequestController::sama_request($service, $method, $parameters);
             else return false; /**  unsuccessful login  **/
         } else return false; /**  404 error  **/
     }
