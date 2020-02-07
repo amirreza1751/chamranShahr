@@ -56,7 +56,7 @@ window.Echo = new Echo({
     cluster: 'mt1',
     encrypted: true,
     wsHost : window.location.hostname,
-    // wsHost: 'campus.scu.ac.ir/socketserver/laravel-websockets',
+    authEndpoint: '/socketserver/broadcasting/auth',
     wsPort : 6001,
     wssPort: 6001,
     disableStats: false,
