@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\General\ConsoleColor;
+use App\General\TimeHandling;
+use App\Http\Controllers\API\Sama\SamaRequestController;
 use App\Models\Gender;
 use App\Models\Term;
 use Carbon\Carbon;
@@ -45,101 +47,58 @@ class TermFetch extends Command
     {
         $cc = new ConsoleColor();
         $class_name = strtolower(array_last(explode("\\", Term::class))); // static part of unique_code
-//        $term_list = SamaRequestController::sama_request('CoreService', 'GetTermList', []);
-        $term_list = json_decode('[
-    {
-        "BeginDate": "1397\/06\/24",
-        "EndDate": "1397\/11\/05",
-        "ModifiedDateTime": "1\/6\/2020 9:38:06 AM",
-        "StandardCode": 971,
-        "TermCode": 971,
-        "TermId": "145",
-        "Title": "971"
-    },
-    {
-        "BeginDate": "1397\/11\/06",
-        "EndDate": "1398\/06\/31",
-        "ModifiedDateTime": "1\/6\/2020 9:38:06 AM",
-        "StandardCode": 972,
-        "TermCode": 972,
-        "TermId": "146",
-        "Title": "972"
-    },
-    {
-        "BeginDate": "1397\/06\/03",
-        "EndDate": "1397\/06\/23",
-        "ModifiedDateTime": "1\/6\/2020 9:38:06 AM",
-        "StandardCode": 963,
-        "TermCode": 963,
-        "TermId": "147",
-        "Title": "963"
-    },
-    {
-        "BeginDate": "1398\/06\/02",
-        "EndDate": "1398\/10\/27",
-        "ModifiedDateTime": "1\/18\/2020 3:24:33 PM",
-        "StandardCode": 981,
-        "TermCode": 981,
-        "TermId": "148",
-        "Title": "981"
-    },
-    {
-        "BeginDate": "1398\/07\/01",
-        "EndDate": "1398\/07\/01",
-        "ModifiedDateTime": "1\/6\/2020 9:38:06 AM",
-        "StandardCode": 973,
-        "TermCode": 973,
-        "TermId": "149",
-        "Title": "973"
-    },
-    {
-        "BeginDate": "1398\/10\/28",
-        "EndDate": "1399\/05\/31",
-        "ModifiedDateTime": "1\/18\/2020 3:25:02 PM",
-        "StandardCode": 982,
-        "TermCode": 982,
-        "TermId": "150",
-        "Title": "982"
-    },
-    {
-        "BeginDate": "1398\/07\/01",
-        "EndDate": "1398\/07\/30",
-        "ModifiedDateTime": "1\/6\/2020 9:38:06 AM",
-        "StandardCode": 0,
-        "TermCode": 0,
-        "TermId": "151",
-        "Title": "000"
-    }
-]');
-
+        $term_list = SamaRequestController::sama_request('EducationService', 'GetTermList', []);
         dump("read data from sama:term api...");
         dump("Process:");
         foreach ($term_list as $term_item) {
-            $term = Term::where('unique_code', $class_name.$term_item->TermId)->first();
-            $jalalian_begin = new Jalalian(explode('/', $term_item->BeginDate)[0], explode('/', $term_item->BeginDate)[1], explode('/', $term_item->BeginDate)[2]);
-            $jalalian_end = new Jalalian(explode('/', $term_item->EndDate)[0], explode('/', $term_item->EndDate)[1], explode('/', $term_item->EndDate)[2]);
+            $term = Term::where('unique_code', $class_name . $term_item->TermId)->first();
+            $begin_date_array = explode('/', $term_item->BeginDate);
+            $end_date_array = explode('/', $term_item->EndDate);
+            if ($begin_date_array[1] > 6 && $begin_date_array[2] == 31) { // unnatural day number
+                $begin_date_array[2] = 30;
+            }
+            if ($end_date_array[1] > 6 && $end_date_array[2] == 31) { // unnatural day number
+                $end_date_array[2] = 30;
+            }
+            // ex. 1383/04/31 =>                1383                    04                      30 (: unnatural day number check)
+            $jalalian_begin = new Jalalian($begin_date_array[0], $begin_date_array[1], $begin_date_array[2]);
+            $jalalian_end = new Jalalian($end_date_array[0], $end_date_array[1], $end_date_array[2]);
 
-            if(is_null($term)) { // new term
-                printf($cc->getColoredString("-\tadd\t", $cc::CREATE)."new term:\t".$cc->getColoredString($term_item->Title.', '.$jalalian_begin->getMonth().' '.$jalalian_begin->getYear(), $cc::CREATE)."\n");
+            if (is_null($term)) { // new term
+                printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new term:\t" . $cc->getColoredString($term_item->Title . ",\tBegin Date: " . Jalalian::forge($jalalian_begin->getTimestamp())->format('Y-m-d'), $cc::CREATE) . "\t");
                 $term = new Term();
-            } else { // existing gender
-                printf($cc->getColoredString("-\tupdate\t", $cc::UPDATE)."existing term:\t".$cc->getColoredString($term_item->Title.', '.$jalalian_begin->getMonth().' '.$jalalian_begin->getYear(), $cc::UPDATE)."\n");
+            } else { // existing term
+                printf($cc->getColoredString("-\tupdate\t", $cc::UPDATE) . "existing term:\t" . $cc->getColoredString($term_item->Title . ",\tBegin Date: " . Jalalian::forge($jalalian_begin->getTimestamp())->format('Y-m-d'), $cc::UPDATE) . "\t");
             }
 
             $term->title = $term_item->Title;
 
-            $term->unique_code = $class_name.$term_item->TermId;
+            $term->unique_code = $class_name . $term_item->TermId;
             $term->term_code = $term_item->TermCode;
-            $term->begin_date = ($jalalian_begin)->toCarbon();
-            $term->end_date = ($jalalian_end)->toCarbon();
+
+            if (TimeHandling::isDST(($jalalian_begin)->toCarbon())) {
+                printf($cc->getColoredString("has DST time:", $cc::WARNING) . Jalalian::forge($jalalian_begin->getTimestamp())->format('Y-m-d') . "\t");
+                $term->begin_date = ($jalalian_begin->addHours(1)->subMinutes($jalalian_begin->getMinute()))->toCarbon();
+            } else {
+                $term->begin_date = ($jalalian_begin)->toCarbon();
+            }
+
+            if (TimeHandling::isDST(($jalalian_end)->toCarbon())) {
+                printf($cc->getColoredString("has DST time:", $cc::WARNING) . Jalalian::forge($jalalian_begin->getTimestamp())->format('Y-m-d') . "\t");
+                $term->end_date = ($jalalian_end->addHours(1)->subMinutes($jalalian_end->getMinute()))->toCarbon();
+            } else {
+                $term->end_date = ($jalalian_end)->toCarbon();
+            }
+
             $term->updated_at = Carbon::now(); // set update time
             $term->save();
+            printf("\n");
         }
 
         $terms = Term::all();
-        foreach ($terms as $term){
-            if ($term->updated_at < Carbon::now()->subMinute(30)){ // check for trash
-                printf($cc->getColoredString("-\tdelete\t", $cc::DELETE)."term:\t\t".$cc->getColoredString($term->title.', '.$jalalian_begin->getMonth().' '.$jalalian_begin->getYear(), $cc::DELETE)."\n");
+        foreach ($terms as $term) {
+            if ($term->updated_at < Carbon::now()->subMinute(30)) { // check for trash
+                printf($cc->getColoredString("-\tdelete\t", $cc::DELETE) . "term:\t\t" . $cc->getColoredString($term->title . ', ' . $jalalian_begin->getMonth() . ' ' . $jalalian_begin->getYear(), $cc::DELETE) . "\n");
                 $term->delete();
             }
         }

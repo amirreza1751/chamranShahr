@@ -9,6 +9,7 @@ class ConsoleColor
     const DELETE = 'red';
     const UPDATE = 'light_purple';
     const CREATE = 'light_green';
+    const WARNING = 'yellow';
 
     private $foreground_colors = array();
     private $background_colors = array();

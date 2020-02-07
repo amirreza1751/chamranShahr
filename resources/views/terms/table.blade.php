@@ -16,8 +16,8 @@
                 <td>{!! $term->title !!}</td>
             <td>{!! $term->unique_code !!}</td>
             <td>{!! $term->term_code !!}</td>
-            <td>{!! $term->begin_date !!}</td>
-            <td>{!! $term->end_date !!}</td>
+            <td>{!! $term->jalalian_begin_date !!}</td>
+            <td>{!! $term->jalalian_end_date !!}</td>
                 <td>
                     {!! Form::open(['route' => ['terms.destroy', $term->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>

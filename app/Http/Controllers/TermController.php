@@ -6,8 +6,10 @@ use App\Http\Requests\CreateTermRequest;
 use App\Http\Requests\UpdateTermRequest;
 use App\Repositories\TermRepository;
 use App\Http\Controllers\AppBaseController;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Flash;
+use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -31,6 +33,11 @@ class TermController extends AppBaseController
     {
         $this->termRepository->pushCriteria(new RequestCriteria($request));
         $terms = $this->termRepository->all();
+
+        foreach ($terms as $term){
+            $term->jalalian_begin_date = Jalalian::forge($term->begin_date)->format('%A, %d %B %Y');
+            $term->jalalian_end_date = Jalalian::forge($term->end_date)->format('%A, %d %B %Y');
+        }
 
         return view('terms.index')
             ->with('terms', $terms);
@@ -80,6 +87,9 @@ class TermController extends AppBaseController
 
             return redirect(route('terms.index'));
         }
+
+        $term->jalalian_begin_date = Jalalian::forge($term->begin_date)->format('%A, %d %B %Y');
+        $term->jalalian_end_date = Jalalian::forge($term->end_date)->format('%A, %d %B %Y');
 
         return view('terms.show')->with('term', $term);
     }

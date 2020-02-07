@@ -18,8 +18,8 @@
 
 <!-- Begin Date Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('begin_date', 'Begin Date:') !!}
-    {!! Form::date('begin_date', null, ['class' => 'form-control','id'=>'begin_date']) !!}
+    {!! Form::label('jalalian_begin_date', 'Begin Date:') !!}
+    {!! Form::date('jalalian_begin_date', null, ['class' => 'form-control','id'=>'jalalian_end_date']) !!}
 </div>
 
 @section('scripts')
@@ -33,8 +33,8 @@
 
 <!-- End Date Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('end_date', 'End Date:') !!}
-    {!! Form::date('end_date', null, ['class' => 'form-control','id'=>'end_date']) !!}
+    {!! Form::label('jalalian_end_date', 'End Date:') !!}
+    {!! Form::date('jalalian_end_date', null, ['class' => 'form-control','id'=>'jalalian_end_date']) !!}
 </div>
 
 @section('scripts')
