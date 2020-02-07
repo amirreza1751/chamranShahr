@@ -20758,8 +20758,10 @@ window.Pusher = __webpack_require__(3);
 
 window.Echo = new __WEBPACK_IMPORTED_MODULE_1_laravel_echo__["a" /* default */]({
     broadcaster: 'pusher',
-    key: "",
-    cluster: "mt1",
+    // key: process.env.MIX_PUSHER_APP_KEY,
+    key: 'ABCDEFG',
+    // cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+    cluster: 'mt1',
     encrypted: true,
     wsHost: window.location.hostname,
     wsPort: 6001,
