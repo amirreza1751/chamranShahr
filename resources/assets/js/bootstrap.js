@@ -1,4 +1,3 @@
-
 window._ = require('lodash');
 window.Popper = require('popper.js').default;
 
@@ -52,10 +51,15 @@ window.Echo = new Echo({
     broadcaster: 'pusher',
     key: process.env.MIX_PUSHER_APP_KEY,
     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-    encrypted: false,
+    encrypted: true,
     wsHost : window.location.hostname,
     wsPort : 6001,
     wssPort: 6001,
-    disableStats: true,
+    disableStats: false,
     enabledTransports: ['ws', 'wss'],
+    auth: {
+        headers: {
+            Authorization: 'Bearer ' + window.axios.defaults.headers.common['X-CSRF-TOKEN']
+        },
+    }
 });

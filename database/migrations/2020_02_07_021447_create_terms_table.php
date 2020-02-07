@@ -18,8 +18,8 @@ class CreateTermsTable extends Migration
             $table->string('title');
             $table->string('unique_code')->unique();
             $table->string('term_code');
-            $table->timestamp('begin_date');
-            $table->timestamp('end_date');
+            $table->dateTime('begin_date');
+            $table->dateTime('end_date');
             $table->timestamps();
             $table->softDeletes();
         });

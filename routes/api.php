@@ -49,9 +49,9 @@ Route::put('users/{id}/update_scu_id', 'UserAPIController@updateScuId');
 
 
 
-Route::get('/notification/test/{message}', function ($message){
-    return event(new NewMessage($message));
-});
+//Route::get('/notification/test/{message}', function ($message){
+//    return event(new NewMessage($message));
+//});
 
 
 

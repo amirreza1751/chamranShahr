@@ -52,3 +52,9 @@ Route::middleware('auth:web')->resource('terms', 'TermController');
 
 
 Route::resource('studyLevels', 'StudyLevelController');
+
+
+/** test notification page */
+Route::middleware('auth:web')->get('/test', function(){
+    return view('test');
+});
