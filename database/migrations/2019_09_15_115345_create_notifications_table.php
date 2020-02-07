@@ -18,8 +18,8 @@ class CreateNotificationsTable extends Migration
             $table->string('title')->nullable();
             $table->string('brief_description')->nullable();
             $table->string('type')->nullable();
-            $table->morphs('notifiable');
-            $table->morphs('notifier');
+            $table->morphs('notifiable')->nullable();
+            $table->morphs('notifier')->nullable();
             $table->timestamp('deadline')->nullable();
             $table->text('data')->nullable();
             $table->timestamp('read_at')->nullable();
