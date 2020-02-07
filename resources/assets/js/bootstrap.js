@@ -63,7 +63,8 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
     auth: {
         headers: {
-            Authorization: 'Bearer ' + window.axios.defaults.headers.common['X-CSRF-TOKEN']
+            // Authorization: 'Bearer ' + window.axios.defaults.headers.common['X-CSRF-TOKEN']
+            Authorization: window.axios.defaults.headers.common['X-CSRF-TOKEN']
         },
     }
 });
