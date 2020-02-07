@@ -16,7 +16,7 @@
 </head>
 <body>
 <div id="app">
-    @auth <h1>{{Auth()->user()->name}}</h1> @endauth
+    @auth <h1>{{Auth()->user()->username}}</h1> @endauth
     <h1>Listening to private notifications... </h1>
 </div>
 
