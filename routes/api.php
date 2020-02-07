@@ -60,3 +60,5 @@ Route::get('/notification/test/{message}', function ($message){
 Route::resource('genders', 'GenderAPIController');
 
 Route::resource('terms', 'TermAPIController');
+
+Route::resource('study_levels', 'StudyLevelAPIController');

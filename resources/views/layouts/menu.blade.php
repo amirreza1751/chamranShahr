@@ -30,3 +30,7 @@
     <a href="{!! route('terms.index') !!}"><i class="fa fa-edit"></i><span>Terms</span></a>
 </li>
 
+<li class="{{ Request::is('studyLevels*') ? 'active' : '' }}">
+    <a href="{!! route('studyLevels.index') !!}"><i class="fa fa-edit"></i><span>Study Levels</span></a>
+</li>
+
