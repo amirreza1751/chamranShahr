@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\General\ConsoleColor;
+use App\Http\Controllers\API\Sama\SamaRequestController;
 use App\Models\Gender;
 use App\Models\StudyLevel;
 use Carbon\Carbon;
@@ -44,121 +45,7 @@ class StudyLevelFetch extends Command
     {
         $cc = new ConsoleColor();
         $class_name = strtolower(array_last(explode("\\", StudyLevel::class))); // static part of unique_code
-//        $gender_list = SamaRequestController::sama_request('EducationService', 'GetStudyLevelList', []);
-        $study_level_list = json_decode('[
-     {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 0,
-        "StudyLevelId": 0,
-        "Title": "نامشخص"
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 11,
-        "StudyLevelId": 1,
-        "Title": "كارداني"
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 12,
-        "StudyLevelId": 2,
-        "Title": "كارشناسي"
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 13,
-        "StudyLevelId": 3,
-        "Title": "كارشناسي ارشد "
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 14,
-        "StudyLevelId": 4,
-        "Title": "دكتري حرفه اي "
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 122,
-        "StudyLevelId": 5,
-        "Title": "كارشناسي ناپيوسته"
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 17,
-        "StudyLevelId": 6,
-        "Title": "دكتري PhD"
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 0,
-        "StudyLevelId": 7,
-        "Title": "دكتري حرفه اي پيش درمانگاهي"
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 17,
-        "StudyLevelId": 8,
-        "Title": "دكترا"
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 21,
-        "StudyLevelId": 9,
-        "Title": "دانشوري"
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 17,
-        "StudyLevelId": 10,
-        "Title": "دكتري معادل "
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 0,
-        "StudyLevelId": 11,
-        "Title": "کارشناسي ارشد- معادل"
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 17,
-        "StudyLevelId": 14,
-        "Title": "دکتراي معادل"
-    },
-    {
-        "EnglishTitle": null,
-        "IsPostGraduate": null,
-        "ModifiedDateTime": "1\/20\/2020 5:06:25 PM",
-        "StandardCode": 0,
-        "StudyLevelId": 19,
-        "Title": "نامشخص قديمي"
-    }
-]');
+        $study_level_list = SamaRequestController::sama_request('EducationService', 'GetStudyLevelList', []);
         $tr = new GoogleTranslate('en'); // Translates into English
 
         dump("read data from sama:study_level api...");
