@@ -26,3 +26,7 @@
     <a href="{!! route('genders.index') !!}"><i class="fa fa-edit"></i><span>Genders</span></a>
 </li>
 
+<li class="{{ Request::is('terms*') ? 'active' : '' }}">
+    <a href="{!! route('terms.index') !!}"><i class="fa fa-edit"></i><span>Terms</span></a>
+</li>
+

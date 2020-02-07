@@ -47,3 +47,5 @@ Route::middleware('auth:web')->resource('notices', 'NoticeController');
 Route::middleware('auth:web')->resource('users', 'UserController');
 
 Route::middleware('auth:web')->resource('genders', 'GenderController');
+
+Route::middleware('auth:web')->resource('terms', 'TermController');
