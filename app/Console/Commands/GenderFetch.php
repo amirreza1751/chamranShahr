@@ -44,33 +44,7 @@ class GenderFetch extends Command
     {
         $cc = new ConsoleColor();
         $class_name = strtolower(array_last(explode("\\", Gender::class))); // static part of unique_code
-//        $gender_list = SamaRequestController::sama_request('CoreService', 'GetGenderList', []);
-        $gender_list = json_decode('[
-    {
-        "EnglishTitle": null,
-        "GenderId": 1,
-        "StandardCode": 1,
-        "Title": "زن"
-    },
-    {
-        "EnglishTitle": null,
-        "GenderId": 2,
-        "StandardCode": 2,
-        "Title": "مرد"
-    },
-    {
-        "EnglishTitle": null,
-        "GenderId": 3,
-        "StandardCode": 0,
-        "Title": "مشترك"
-    },
-    {
-        "EnglishTitle": null,
-        "GenderId": 0,
-        "StandardCode": 0,
-        "Title": "نامشخص"
-    }
-]');
+        $gender_list = SamaRequestController::sama_request('CoreService', 'GetGenderList', []);
         $tr = new GoogleTranslate('en'); // Translates into English
 
         dump("read data from sama:gender api...");
