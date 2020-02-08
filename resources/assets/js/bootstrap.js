@@ -64,7 +64,7 @@ window.Echo = new Echo({
     auth: {
         headers: {
             // Authorization: 'Bearer ' + window.axios.defaults.headers.common['X-CSRF-TOKEN']
-            Authorization: window.axios.defaults.headers.common['X-CSRF-TOKEN']
+            'X-CSRF-TOKEN': window.axios.defaults.headers.common['X-CSRF-TOKEN']
         },
     }
 });
