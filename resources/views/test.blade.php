@@ -8,11 +8,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Document</title>
-{{--    <script>--}}
-{{--        window.Laravel = {--}}
-{{--            csrfToken: "{{ csrf_token() }}"--}}
-{{--        };--}}
-{{--    </script>--}}
+    <script>
+        window.Laravel = {
+            csrfToken: "{{ csrf_token() }}"
+        };
+    </script>
 </head>
 <body>
 <div id="app">
