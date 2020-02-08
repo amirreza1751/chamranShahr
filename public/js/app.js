@@ -20773,7 +20773,7 @@ window.Echo = new __WEBPACK_IMPORTED_MODULE_1_laravel_echo__["a" /* default */](
         headers: {
             // Authorization: 'Bearer ' + window.axios.defaults.headers.common['X-CSRF-TOKEN']
             'X-CSRF-TOKEN': window.axios.defaults.headers.common['X-CSRF-TOKEN'],
-            'X-App-ID': this.app.id
+            'X-App-ID': 'app'
         }
     }
 });
