@@ -20764,7 +20764,7 @@ window.Echo = new __WEBPACK_IMPORTED_MODULE_1_laravel_echo__["a" /* default */](
     cluster: 'mt1',
     encrypted: true,
     wsHost: window.location.hostname,
-    authEndpoint: '/socketserver/laravel-websockets/auth',
+    authEndpoint: '/74522B1B45313233CBA723B112A76361D7850AAEA95A5DC67AE9FC072FE1DF1745F22956D3E0AABE373059B65735715EE7DB79AB52A37FD22FE5E64FB288B942/broadcasting/auth',
     wsPort: 6001,
     wssPort: 6001,
     disableStats: false,
