@@ -34,3 +34,7 @@
     <a href="{!! route('studyLevels.index') !!}"><i class="fa fa-edit"></i><span>Study Levels</span></a>
 </li>
 
+<li class="{{ Request::is('adTypes*') ? 'active' : '' }}">
+    <a href="{{ route('adTypes.index') }}"><i class="fa fa-edit"></i><span>Ad Types</span></a>
+</li>
+

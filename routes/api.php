@@ -62,3 +62,6 @@ Route::resource('genders', 'GenderAPIController');
 Route::resource('terms', 'TermAPIController');
 
 Route::resource('study_levels', 'StudyLevelAPIController');
+
+
+Route::resource('ad_types', 'AdTypeAPIController');

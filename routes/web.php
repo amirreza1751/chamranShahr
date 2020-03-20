@@ -58,3 +58,6 @@ Route::resource('studyLevels', 'StudyLevelController');
 Route::middleware('auth:web')->get('/test', function(){
     return view('test');
 });
+
+
+Route::resource('adTypes', 'AdTypeController');
