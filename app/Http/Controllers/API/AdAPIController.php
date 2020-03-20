@@ -278,4 +278,60 @@ class AdAPIController extends AppBaseController
 
         return $this->sendSuccess('Ad deleted successfully');
     }
+
+
+    /**
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     *************************************************** CUSTOMIZATION *************************************************
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     */
+
+    public function create_book_ad(Request $request){
+
+        $this->validate($request, [
+            'book_title' => 'required'
+        ]);
+
+        $book_info = [
+            'title' => $request->get('book_title'),
+            'edition_id' => $request->get('edition_id'),
+            'publisher' => $request->get('publisher'),
+            'publication_date' => $request->get('publication_date'),
+            'book_length' => $request->get('book_length'),
+            'language_id' => $request->get('language_id'),
+            'isbn' => $request->get('isbn'),
+            'author' => $request->get('author'),
+            'translator' => $request->get('translator'),
+            'price' => $request->get('price'),
+            'size_id' => $request->get('size_id'),
+            'is_grayscale' => $request->get('is_grayscale')
+        ];
+
+
+        $new_book = $this->bookRepository->create($book_info);
+
+
+        $ad_info = [
+            'title' => $request->get('title'),
+            'english_title' => $request->get('english_title'),
+            'ad_location' => $request->get('ad_location'),
+            'advertisable_type' => 'Book',
+            'advertisable_id' => $new_book->id,
+            'offered_price' => $request->get('offered_price'),
+            'phone_number' => $request->get('phone_number'),
+            'description' => $request->get('description'),
+            'is_verified' => 0,
+            'is_special' => 0,
+            'category_id' => $request->get('category_id'),
+            'ad_type_id' => $request->get('ad_type_id'),
+            'creator_id' => Auth('api')->user()->id
+        ];
+
+        $new_ad = $this->adRepository->create($ad_info);
+        return $this->sendResponse($new_ad->toArray(), 'Book ad created successfully.');
+
+    }
+
 }
