@@ -54,3 +54,7 @@
     <a href="{{ route('bookLanguages.index') }}"><i class="fa fa-edit"></i><span>Book Languages</span></a>
 </li>
 
+<li class="{{ Request::is('bookSizes*') ? 'active' : '' }}">
+    <a href="{{ route('bookSizes.index') }}"><i class="fa fa-edit"></i><span>Book Sizes</span></a>
+</li>
+
