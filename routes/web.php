@@ -67,3 +67,5 @@ Route::resource('categories', 'CategoryController');
 Route::resource('ads', 'AdController');
 
 Route::resource('bookEditions', 'BookEditionController');
+
+Route::resource('bookLanguages', 'BookLanguageController');

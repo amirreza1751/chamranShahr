@@ -71,3 +71,5 @@ Route::resource('categories', 'CategoryAPIController');
 Route::resource('ads', 'AdAPIController');
 
 Route::resource('book_editions', 'BookEditionAPIController');
+
+Route::resource('book_languages', 'BookLanguageAPIController');

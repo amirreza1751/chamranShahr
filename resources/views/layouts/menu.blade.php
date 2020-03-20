@@ -50,3 +50,7 @@
     <a href="{{ route('bookEditions.index') }}"><i class="fa fa-edit"></i><span>Book Editions</span></a>
 </li>
 
+<li class="{{ Request::is('bookLanguages*') ? 'active' : '' }}">
+    <a href="{{ route('bookLanguages.index') }}"><i class="fa fa-edit"></i><span>Book Languages</span></a>
+</li>
+
