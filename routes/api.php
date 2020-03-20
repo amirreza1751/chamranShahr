@@ -65,3 +65,5 @@ Route::resource('study_levels', 'StudyLevelAPIController');
 
 
 Route::resource('ad_types', 'AdTypeAPIController');
+
+Route::resource('categories', 'CategoryAPIController');
