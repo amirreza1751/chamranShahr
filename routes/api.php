@@ -75,3 +75,5 @@ Route::resource('book_editions', 'BookEditionAPIController');
 Route::resource('book_languages', 'BookLanguageAPIController');
 
 Route::resource('book_sizes', 'BookSizeAPIController');
+
+Route::resource('books', 'BookAPIController');
