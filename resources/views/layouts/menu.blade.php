@@ -46,3 +46,7 @@
     <a href="{{ route('ads.index') }}"><i class="fa fa-edit"></i><span>Ads</span></a>
 </li>
 
+<li class="{{ Request::is('bookEditions*') ? 'active' : '' }}">
+    <a href="{{ route('bookEditions.index') }}"><i class="fa fa-edit"></i><span>Book Editions</span></a>
+</li>
+

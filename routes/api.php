@@ -69,3 +69,5 @@ Route::resource('ad_types', 'AdTypeAPIController');
 Route::resource('categories', 'CategoryAPIController');
 
 Route::resource('ads', 'AdAPIController');
+
+Route::resource('book_editions', 'BookEditionAPIController');
