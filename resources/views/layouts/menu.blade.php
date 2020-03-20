@@ -42,3 +42,7 @@
     <a href="{{ route('categories.index') }}"><i class="fa fa-edit"></i><span>Categories</span></a>
 </li>
 
+<li class="{{ Request::is('ads*') ? 'active' : '' }}">
+    <a href="{{ route('ads.index') }}"><i class="fa fa-edit"></i><span>Ads</span></a>
+</li>
+

@@ -63,3 +63,5 @@ Route::middleware('auth:web')->get('/test', function(){
 Route::resource('adTypes', 'AdTypeController');
 
 Route::resource('categories', 'CategoryController');
+
+Route::resource('ads', 'AdController');
