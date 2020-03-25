@@ -48,7 +48,6 @@ class TermFetch extends Command
         $cc = new ConsoleColor();
         $class_name = strtolower(array_last(explode("\\", Term::class))); // static part of unique_code
         $term_list = SamaRequestController::sama_request('EducationService', 'GetTermList', []);
-
         dump("read data from SAMA : Term webservice [ to sync with term entity of ours ]...");
         dump("Process:");
         foreach ($term_list as $term_item) {
@@ -61,14 +60,14 @@ class TermFetch extends Command
              * ( we should update this for Leap year conditions, later :) )
              * 1383/11/31 =>                1383                    11                      30 ( => unnatural day number example)
              */
-            if ($begin_date_array[1] = 12 && $begin_date_array[2] > 29) { // unnatural day number 30th or 31th day of Esfand
+            if ($begin_date_array[1] == 12 && $begin_date_array[2] > 29) { // unnatural day number 30th or 31th day of Esfand
                 $begin_date_array[2] = 29;
             }
             else if ($begin_date_array[1] > 6 && $begin_date_array[2] == 31) { // unnatural day number 31th day of Mehr, Aban, Azar, Dey, Bahman
                 $begin_date_array[2] = 30;
             }
 
-            if ($end_date_array[1] = 12 && $end_date_array[2] > 29) { // unnatural day number 30th or 31th day of Esfand
+            if ($end_date_array[1] == 12 && $end_date_array[2] > 29) { // unnatural day number 30th or 31th day of Esfand
                 $end_date_array[2] = 29;
             }
             else if ($end_date_array[1] > 6 && $end_date_array[2] == 31) { // unnatural day number 31th day of Mehr, Aban, Azar, Dey, Bahman

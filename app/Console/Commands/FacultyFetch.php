@@ -4,6 +4,10 @@ namespace App\Console\Commands;
 
 use App\General\ConsoleColor;
 use App\Http\Controllers\API\Sama\SamaRequestController;
+use App\Models\Department;
+use App\Models\Faculty;
+use App\Models\ManageLevel;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 

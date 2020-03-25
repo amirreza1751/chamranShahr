@@ -51,14 +51,14 @@ class StudyLevelFetch extends Command
          * Translates into English --> uncomment if you want translate title to english, but be careful!
          * this google web service has a limitation for request and may ban you for a day due to high-rate request
          */
-//        $tr = new GoogleTranslate('en'); // Translates into English
+        $tr = new GoogleTranslate('en'); // Translates into English
 
         dump("read data from SAMA : Study Level webservice [ to sync with study level entity of ours ]...");
         dump("Process:");
 
         foreach ($study_level_list as $study_level_item) {
             $study_level = StudyLevel::where('unique_code', $class_name . $study_level_item->StudyLevelId)->first();
-//            $translated = $tr->translate($study_level_item->Title);
+            $translated = $tr->translate($study_level_item->Title);
 
             if(is_null($study_level)) { // new study level
                 printf($cc->getColoredString("-\tadd\t", $cc::CREATE)."new study level:\t".$cc->getColoredString($study_level_item->Title, $cc::CREATE)."\n");
@@ -72,9 +72,9 @@ class StudyLevelFetch extends Command
             if(!is_null($study_level_item->EnglishTitle)){ // check for empty english title field
                 $study_level->english_title = $study_level_item->EnglishTitle;
             }
-//            else {
-//                $study_level->english_title = $translated;
-//            }
+            else {
+                $study_level->english_title = $translated;
+            }
             /**
              * static part of unique_code      CONCAT      numeric part of unique_code retrieve from SAMA
              * example:            studylevel [CONCAT] 2 : studylevel2

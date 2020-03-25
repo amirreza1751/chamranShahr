@@ -4,6 +4,9 @@ namespace App\Console\Commands;
 
 use App\General\ConsoleColor;
 use App\Http\Controllers\API\Sama\SamaRequestController;
+use App\Models\StudyArea;
+use App\Models\StudyField;
+use App\Models\StudyLevel;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
