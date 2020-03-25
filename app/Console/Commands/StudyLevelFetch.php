@@ -24,7 +24,7 @@ class StudyLevelFetch extends Command
      *
      * @var string
      */
-    protected $description = 'fetch and synch genders from api of SAMA';
+    protected $description = "retrieve study levels's information from SAMA webservice";
 
     /**
      * Create a new command instance.
@@ -46,35 +46,48 @@ class StudyLevelFetch extends Command
         $cc = new ConsoleColor();
         $class_name = strtolower(array_last(explode("\\", StudyLevel::class))); // static part of unique_code
         $study_level_list = SamaRequestController::sama_request('EducationService', 'GetStudyLevelList', []);
-        $tr = new GoogleTranslate('en'); // Translates into English
 
-        dump("read data from sama:study_level api...");
+        /**
+         * Translates into English --> uncomment if you want translate title to english, but be careful!
+         * this google web service has a limitation for request and may ban you for a day due to high-rate request
+         */
+//        $tr = new GoogleTranslate('en'); // Translates into English
+
+        dump("read data from SAMA : Study Level webservice [ to sync with study level entity of ours ]...");
         dump("Process:");
 
         foreach ($study_level_list as $study_level_item) {
-            $study_level = StudyLevel::where('unique_code', $class_name.$study_level_item->StudyLevelId)->first();
-            $translated = $tr->translate($study_level_item->Title);
+            $study_level = StudyLevel::where('unique_code', $class_name . $study_level_item->StudyLevelId)->first();
+//            $translated = $tr->translate($study_level_item->Title);
 
-            if(is_null($study_level)) { // new gender
-                printf($cc->getColoredString("-\tadd\t", $cc::CREATE)."new study level:\t".$cc->getColoredString($translated, $cc::CREATE)."\n");
+            if(is_null($study_level)) { // new study level
+                printf($cc->getColoredString("-\tadd\t", $cc::CREATE)."new study level:\t".$cc->getColoredString($study_level_item->Title, $cc::CREATE)."\n");
                 $study_level = new StudyLevel();
-            } else { // existing gender
-                printf($cc->getColoredString("-\tupdate\t", $cc::UPDATE)."existing study level:\t".$cc->getColoredString($translated, $cc::UPDATE)."\n");
+            } else { // existing study level
+                printf($cc->getColoredString("-\tupdate\t", $cc::UPDATE)."existing study level:\t".$cc->getColoredString($study_level_item->Title, $cc::UPDATE)."\n");
             }
 
             $study_level->title = $study_level_item->Title;
 
             if(!is_null($study_level_item->EnglishTitle)){ // check for empty english title field
                 $study_level->english_title = $study_level_item->EnglishTitle;
-            } else {
-                $study_level->english_title = $translated;
             }
-
-            $study_level->unique_code = $class_name.$study_level_item->StudyLevelId;
+//            else {
+//                $study_level->english_title = $translated;
+//            }
+            /**
+             * static part of unique_code      CONCAT      numeric part of unique_code retrieve from SAMA
+             * example:            studylevel [CONCAT] 2 : studylevel2
+             */
+            $study_level->unique_code = $class_name . $study_level_item->StudyLevelId;
             $study_level->updated_at = Carbon::now(); // set update time
             $study_level->save();
         }
 
+        /**
+         * delete all study level record which updated before this procedure,
+         * because all needed study study levels's information retrieved from SAMA and the others probably are dummy data
+         */
         $study_levels = StudyLevel::all();
         foreach ($study_levels as $study_level){
             if ($study_level->updated_at < Carbon::now()->subMinute(30)){ // check for trash

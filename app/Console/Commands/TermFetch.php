@@ -26,7 +26,7 @@ class TermFetch extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = "retrieve terms's information from SAMA webservice";
 
     /**
      * Create a new command instance.
@@ -48,34 +48,55 @@ class TermFetch extends Command
         $cc = new ConsoleColor();
         $class_name = strtolower(array_last(explode("\\", Term::class))); // static part of unique_code
         $term_list = SamaRequestController::sama_request('EducationService', 'GetTermList', []);
-        dump("read data from sama:term api...");
+
+        dump("read data from SAMA : Term webservice [ to sync with term entity of ours ]...");
         dump("Process:");
         foreach ($term_list as $term_item) {
             $term = Term::where('unique_code', $class_name . $term_item->TermId)->first();
             $begin_date_array = explode('/', $term_item->BeginDate);
             $end_date_array = explode('/', $term_item->EndDate);
-            if ($begin_date_array[1] > 6 && $begin_date_array[2] == 31) { // unnatural day number
+            /**
+             * since work with the great SAMA, we found some unnatural data in the retrieved information
+             * such as 31th day of Bahman! so change all invalid 31th dates to 30th of that month
+             * ( we should update this for Leap year conditions, later :) )
+             * 1383/11/31 =>                1383                    11                      30 ( => unnatural day number example)
+             */
+            if ($begin_date_array[1] = 12 && $begin_date_array[2] > 29) { // unnatural day number 30th or 31th day of Esfand
+                $begin_date_array[2] = 29;
+            }
+            else if ($begin_date_array[1] > 6 && $begin_date_array[2] == 31) { // unnatural day number 31th day of Mehr, Aban, Azar, Dey, Bahman
                 $begin_date_array[2] = 30;
             }
-            if ($end_date_array[1] > 6 && $end_date_array[2] == 31) { // unnatural day number
+
+            if ($end_date_array[1] = 12 && $end_date_array[2] > 29) { // unnatural day number 30th or 31th day of Esfand
+                $end_date_array[2] = 29;
+            }
+            else if ($end_date_array[1] > 6 && $end_date_array[2] == 31) { // unnatural day number 31th day of Mehr, Aban, Azar, Dey, Bahman
                 $end_date_array[2] = 30;
             }
-            // ex. 1383/04/31 =>                1383                    04                      30 (: unnatural day number check)
+
             $jalalian_begin = new Jalalian($begin_date_array[0], $begin_date_array[1], $begin_date_array[2]);
             $jalalian_end = new Jalalian($end_date_array[0], $end_date_array[1], $end_date_array[2]);
-
             if (is_null($term)) { // new term
                 printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new term:\t" . $cc->getColoredString($term_item->Title . ",\tBegin Date: " . Jalalian::forge($jalalian_begin->getTimestamp())->format('Y-m-d'), $cc::CREATE) . "\t");
                 $term = new Term();
             } else { // existing term
                 printf($cc->getColoredString("-\tupdate\t", $cc::UPDATE) . "existing term:\t" . $cc->getColoredString($term_item->Title . ",\tBegin Date: " . Jalalian::forge($jalalian_begin->getTimestamp())->format('Y-m-d'), $cc::UPDATE) . "\t");
             }
-
             $term->title = $term_item->Title;
-
+            /**
+             * static part of unique_code      CONCAT      numeric part of unique_code retrieve from SAMA
+             * example:            term [CONCAT] 128 : term128
+             */
             $term->unique_code = $class_name . $term_item->TermId;
-            $term->term_code = $term_item->TermCode;
+            $term->term_code = $term_item->TermCode; /** term code is a meaningful string which define entrance year and term (Mehr : 1 or Bahman : 2) */
 
+            /**
+             * Daylight Saving Time (DST) is the practice of setting the clocks forward one hour from standard time
+             * during the summer months, and back again in the fall, in order to make better use of natural daylight.
+             * Clocks are set forward 1 hour for DST in the spring.
+             * if input date is in the dst range of locale timezone, it must be overwrite to a valid time
+             */
             if (TimeHandling::isDST(($jalalian_begin)->toCarbon())) {
                 printf($cc->getColoredString("has DST time:", $cc::WARNING) . Jalalian::forge($jalalian_begin->getTimestamp())->format('Y-m-d') . "\t");
                 $term->begin_date = ($jalalian_begin->addHours(1)->subMinutes($jalalian_begin->getMinute()))->toCarbon();
@@ -95,6 +116,10 @@ class TermFetch extends Command
             printf("\n");
         }
 
+        /**
+         * delete all term record which updated before this procedure,
+         * because all needed terms's information retrieved from SAMA and the others probably are dummy data
+         */
         $terms = Term::all();
         foreach ($terms as $term) {
             if ($term->updated_at < Carbon::now()->subMinute(30)) { // check for trash
