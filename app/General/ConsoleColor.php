@@ -10,6 +10,8 @@ class ConsoleColor
     const UPDATE = 'light_purple';
     const CREATE = 'light_green';
     const WARNING = 'yellow';
+    const HELP = 'light_blue';
+    const SUCCESS = 'green';
 
     private $foreground_colors = array();
     private $background_colors = array();
@@ -70,5 +72,21 @@ class ConsoleColor
     // Returns all background color names
     public function getBackgroundColors() {
         return array_keys($this->background_colors);
+    }
+
+    public function print_error($input, $end = "\n") {
+        printf($this->getColoredString($input, $this::DELETE) . $end);
+    }
+
+    public function print_warning($input, $end = "\n") {
+        printf($this->getColoredString($input, $this::WARNING) . $end);
+    }
+
+    public function print_help($input, $end = "\n") {
+        printf($this->getColoredString($input, $this::HELP) . $end);
+    }
+
+    public function print_success($input, $end = "\n") {
+        printf($this->getColoredString($input, $this::SUCCESS) . $end);
     }
 }

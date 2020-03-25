@@ -49,6 +49,7 @@ class StudyAreaFetch extends Command
         $class_name = strtolower(array_last(explode("\\", StudyArea::class))); // static part of unique_code
         $study_area_count = SamaRequestController::sama_request('EducationService', 'GetCourseStudiesCount', []);
         $counter = 1;
+        dump("read data from SAMA : Course Study webservice [ to sync with study area entity of ours ]...");
         while ($study_area_count > 0) {
             $study_area_list = SamaRequestController::sama_request('EducationService', 'GetCourseStudyList', ['pageNumber' => $counter]);
 
@@ -58,8 +59,7 @@ class StudyAreaFetch extends Command
              */
 //            $tr = new GoogleTranslate('en'); // Translates into English
 
-            dump("read data from SAMA : Course Study webservice [ to sync with study area entity of ours ]...");
-            dump("Process:");
+            dump("Process, Page Number " . $counter . ":");
             foreach ($study_area_list as $study_area_item) {
                 $study_area = StudyArea::where('unique_code', $class_name . $study_area_item->CourseStudyCode)->first();
 

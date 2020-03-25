@@ -66,7 +66,7 @@ class ManageLevel extends Model
     use SoftDeletes;
 
     public $table = 'manage_levels';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -105,8 +105,8 @@ class ManageLevel extends Model
     public static $rules = [
         'management_title' => 'required',
         'manager_title' => 'required',
-        'level' => 'required'
+        'level' => 'required|unique'
     ];
 
-    
+
 }
