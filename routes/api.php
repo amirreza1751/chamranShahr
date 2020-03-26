@@ -78,3 +78,24 @@ Route::resource('book_languages', 'BookLanguageAPIController');
 Route::resource('book_sizes', 'BookSizeAPIController');
 
 Route::resource('books', 'BookAPIController');
+
+
+Route::resource('manage_levels', 'ManageLevelAPIController');
+
+Route::resource('manage_hierarchies', 'ManageHierarchyAPIController');
+
+
+
+Route::resource('departments', 'DepartmentAPIController');
+
+Route::resource('faculties', 'FacultyAPIController');
+
+Route::resource('study_fields', 'StudyFieldAPIController');
+
+Route::resource('study_areas', 'StudyAreaAPIController');
+
+Route::resource('study_statuses', 'StudyStatusAPIController');
+
+Route::resource('students', 'StudentAPIController');
+
+Route::resource('manage_histories', 'ManageHistoryAPIController');

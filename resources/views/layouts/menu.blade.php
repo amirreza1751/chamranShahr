@@ -62,3 +62,40 @@
     <a href="{{ route('books.index') }}"><i class="fa fa-edit"></i><span>Books</span></a>
 </li>
 
+<li class="{{ Request::is('manageLevels*') ? 'active' : '' }}">
+    <a href="{!! route('manageLevels.index') !!}"><i class="fa fa-edit"></i><span>Manage Levels</span></a>
+</li>
+
+<li class="{{ Request::is('manageHierarchies*') ? 'active' : '' }}">
+    <a href="{!! route('manageHierarchies.index') !!}"><i class="fa fa-edit"></i><span>Manage Hierarchies</span></a>
+</li>
+
+
+<li class="{{ Request::is('departments*') ? 'active' : '' }}">
+    <a href="{!! route('departments.index') !!}"><i class="fa fa-edit"></i><span>Departments</span></a>
+</li>
+
+<li class="{{ Request::is('faculties*') ? 'active' : '' }}">
+    <a href="{!! route('faculties.index') !!}"><i class="fa fa-edit"></i><span>Faculties</span></a>
+</li>
+
+<li class="{{ Request::is('studyFields*') ? 'active' : '' }}">
+    <a href="{!! route('studyFields.index') !!}"><i class="fa fa-edit"></i><span>Study Fields</span></a>
+</li>
+
+<li class="{{ Request::is('studyAreas*') ? 'active' : '' }}">
+    <a href="{!! route('studyAreas.index') !!}"><i class="fa fa-edit"></i><span>Study Areas</span></a>
+</li>
+
+<li class="{{ Request::is('studyStatuses*') ? 'active' : '' }}">
+    <a href="{!! route('studyStatuses.index') !!}"><i class="fa fa-edit"></i><span>Study Statuses</span></a>
+</li>
+
+<li class="{{ Request::is('students*') ? 'active' : '' }}">
+    <a href="{!! route('students.index') !!}"><i class="fa fa-edit"></i><span>Students</span></a>
+</li>
+
+<li class="{{ Request::is('manageHistories*') ? 'active' : '' }}">
+    <a href="{!! route('manageHistories.index') !!}"><i class="fa fa-edit"></i><span>Manage Histories</span></a>
+</li>
+
