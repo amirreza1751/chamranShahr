@@ -2,11 +2,11 @@
     <table class="table" id="students-table">
         <thead>
             <tr>
-                <th>User Id</th>
-        <th>Study Area Unique Code</th>
-        <th>Study Level Unique Code</th>
-        <th>Entrance Term Unique Code</th>
-        <th>Study Status Unique Code</th>
+                <th>User Name</th>
+        <th>Study Area</th>
+        <th>Study Level</th>
+        <th>Entrance Term</th>
+        <th>Study Status</th>
         <th>Total Average</th>
         <th>Is Active</th>
         <th>Is Guest</th>
@@ -18,16 +18,16 @@
         <tbody>
         @foreach($students as $student)
             <tr>
-                <td>{!! $student->user_id !!}</td>
-            <td>{!! $student->study_area_unique_code !!}</td>
-            <td>{!! $student->study_level_unique_code !!}</td>
-            <td>{!! $student->entrance_term_unique_code !!}</td>
-            <td>{!! $student->study_status_unique_code !!}</td>
+                <td>{!! $student->user->first_name . ' ' . $student->user->last_name !!}</td>
+            <td>{!! $student->study_area->title !!}</td>
+            <td>{!! $student->study_level->title !!}</td>
+            <td>{!! $student->entrance_term->title !!}</td>
+            <td>{!! $student->study_status->title !!}</td>
             <td>{!! $student->total_average !!}</td>
-            <td>{!! $student->is_active !!}</td>
-            <td>{!! $student->is_guest !!}</td>
-            <td>{!! $student->is_iranian !!}</td>
-            <td>{!! $student->in_dormitory !!}</td>
+            <td>@if(isset($student->is_active)) @if($student->is_active) بله @else خیر @endif @endif</td>
+            <td>@if(isset($student->is_guest)) @if($student->is_guest) بله @else خیر @endif @endif</td>
+            <td>@if(isset($student->is_iranian)) @if($student->is_iranian) بله @else خیر @endif @endif</td>
+            <td>@if(isset($student->in_dormitory)) @if($student->in_dormitory) بله @else خیر @endif @endif</td>
                 <td>
                     {!! Form::open(['route' => ['students.destroy', $student->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>

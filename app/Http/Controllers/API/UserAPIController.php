@@ -2,14 +2,24 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\API\Sama\SamaRequestController;
 use App\Http\Requests\API\CreateUserAPIRequest;
 use App\Http\Requests\API\UpdateUserAPIRequest;
+use App\Models\Gender;
+use App\Models\StudyArea;
+use App\Models\StudyLevel;
+use App\Models\StudyStatus;
+use App\Models\Term;
+use App\Repositories\StudentRepository;
 use App\User;
 use App\Repositories\UserRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Support\Facades\Hash;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
+use Morilog\Jalali\Jalalian;
+use mysql_xdevapi\Exception;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -22,10 +32,12 @@ class UserAPIController extends AppBaseController
 {
     /** @var  UserRepository */
     private $userRepository;
+    private $studentRepository;
 
-    public function __construct(UserRepository $userRepo)
+    public function __construct(UserRepository $userRepo, StudentRepository $studentRepo)
     {
         $this->userRepository = $userRepo;
+        $this->studentRepository = $studentRepo;
     }
 
     /**
@@ -406,7 +418,7 @@ class UserAPIController extends AppBaseController
     public function verify($id, Request $request)
     {
         $request->validate([
-            'scu_id' => 'required|regex:/[0-9]{6,7}/',
+            'scu_id' => 'required|regex:/[0-9]{6,7}/|max:7',
             'national_id' => 'required|regex:/[0-9]{10}/|max:10',
         ]);
 
@@ -421,30 +433,35 @@ class UserAPIController extends AppBaseController
 
         if (is_null($user->student)) { // not verified user
             try {
-                $student_fetch = SamaRequestController::sama_request('StudentService', 'GetStudentPersonInfo', ['studentNumber' => $input['scu_id']])[0];
-                if (!is_null($student_fetch)) { // Student with entered Scu Id is exist
+                $student_fetch = SamaRequestController::sama_request('StudentService', 'GetStudentPersonInfo', ['studentNumber' => $input['scu_id']]);
+                if ($student_fetch->StudentNumber == $input['scu_id']) { // Student with entered Scu Id is exist
 
                     if ($student_fetch->Person->NationalCode == $input['national_id']) { // matched entered national id with the Scu Id
 
                         $birthday_array = explode('/', $student_fetch->Person->BirthDate);
                         $jalalian_begin = new Jalalian($birthday_array[0], $birthday_array[1], $birthday_array[2]); // extract Solar date from String
-
                         $user_information = array(
-                            'national_id' => $student_fetch->Person->NationalCode,
-                            'scu_id' => $student_fetch->StudentNumber,
                             'first_name' => $student_fetch->Person->FirstName,
                             'last_name' => $student_fetch->Person->LastName,
-                            'birthday' => $jalalian_begin->toCarbon(),  // convert Solar date to A.D.
-                            'gender_unique_code' => $student_fetch->Person->Gender->GenderId,
-                            'username' => str_random(2) . '-' . $student_fetch->StudentNumber,
-                            'is_active' => true,
+                            'birthday' => ($jalalian_begin)->toCarbon(),  // convert Solar date to A.D.
+                            'username' => str_random(8) . $student_fetch->StudentNumber,
+                            'scu_id' => $student_fetch->StudentNumber,
+                            'national_id' => $student_fetch->Person->NationalCode,
+                            'gender_unique_code' => strtolower(array_last(explode("\\", Gender::class))) . $student_fetch->Person->Gender->GenderId,
                             'updated_at' => Carbon::now(), // set update time
+                            'is_verified' => true,
                         );
                         $user = $this->userRepository->update($user_information, $id);
 
+
+                        /**
+                         * static part of unique_code      CONCAT      numeric part of unique_code retrieve from SAMA
+                         * example:            studyarea [CONCAT] 500 : studyarea500
+                         * example:            term [CONCAT] 128 : term128
+                         * example:            studylevel [CONCAT] 2 : studylevel2
+                         * example:            studystatus [CONCAT] 2 : studystatus2
+                         */
                         $student_information = array(
-//                                                      static part of unique_code                  CONCAT                          numeric part of unique_code retrieve from sama
-//                              example:                Term                                                                        128
                             'study_area_unique_code' => strtolower(array_last(explode("\\", StudyArea::class))) . $student_fetch->CourseStudy->CourseStudyCode,
                             'entrance_term_unique_code' => Term::where('term_code', $student_fetch->EntranceTerm->TermCode)->first()->unique_code, // sama retrieve TermCode which isn't Unique (multiple null)!
                             'study_level_unique_code' => strtolower(array_last(explode("\\", StudyLevel::class))) . $student_fetch->StudyLevel->StudyLevelId,
@@ -457,7 +474,8 @@ class UserAPIController extends AppBaseController
                             'user_id' => $user->id,
                         );
                         $student = $this->studentRepository->create($student_information);
-                        return $user->toJson(JSON_PRETTY_PRINT);
+                        $user['student'] = $student;
+                        return response()->json($user);
 
                     } else {
                         return $this->sendError('mismatch national id');
@@ -465,8 +483,14 @@ class UserAPIController extends AppBaseController
                 } else {
                     return $this->sendError('Scu Id not found');
                 }
-            } catch (Exception $e) {
-                return json_decode($e);
+            } catch (\Exception $e) {
+                /** ATTENTION!
+                 * uncomment this just for debug because this line below may pass critical information of Server Logic.
+                 */
+//                return response()->json($e->getMessage());
+                return response()->json([
+                    'status' => 'an internal error has occurred. please contact your administrator'
+                ], 500);
             }
         } else { // verified user
             return response()->json([

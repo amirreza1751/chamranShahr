@@ -45,7 +45,8 @@ Route::resource('notifications', 'NotificationAPIController');
 Route::resource('notices', 'NoticeAPIController');
 
 Route::resource('users', 'UserAPIController');
-Route::put('users/{id}/update_scu_id', 'UserAPIController@updateScuId');
+Route::middleware('auth:api')->put('users/{id}/update_scu_id', 'UserAPIController@updateScuId');
+Route::middleware('auth:api')->put('users/{id}/verify', 'UserAPIController@verify');
 
 
 
