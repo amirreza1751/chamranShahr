@@ -22,11 +22,10 @@ class SamaRequestController extends Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "GET",
-            CURLOPT_COOKIEFILE => $cookie
+            CURLOPT_COOKIEFILE => $cookie,
         ));
 
         $response = curl_exec($curl);
-
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         if ($httpcode == 200){

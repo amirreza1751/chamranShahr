@@ -291,7 +291,7 @@ class AdAPIController extends AppBaseController
     public function create_book_ad(Request $request){
 
         $this->validate($request, [
-            'book_title' => 'required'
+            'book_title' => 'required',
         ]);
 
         $book_info = [
@@ -333,5 +333,37 @@ class AdAPIController extends AppBaseController
         return $this->sendResponse($new_ad->toArray(), 'Book ad created successfully.');
 
     }
+
+    public function verify_book_ad(){
+        /** Admin can change the status of advertisement from pending to accepted. */
+
+    }
+
+    public function toggle_special_book_ad(){
+        /** Admin can make an advertisement special or not. */
+
+    }
+
+    public function show_book_ad(){
+        /** User can view a specific advertisement. */
+
+    }
+
+    public function index_book_ads(){
+        /** Displays all the book advertisements. */
+
+    }
+
+    public function my_book_ads(){
+        /** User can view a list of their advertisements which are created. */
+
+    }
+
+    public function remove_book_ad(){
+        /** User can remove their ads. Only the ads which they create themselves. */
+
+    }
+
+
 
 }

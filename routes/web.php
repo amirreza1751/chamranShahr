@@ -12,6 +12,7 @@
 */
 
 
+use App\Http\Controllers\API\Sama\SamaRequestController;
 use App\Models\Gender;
 use App\Models\News;
 use App\User;
@@ -73,3 +74,19 @@ Route::resource('bookLanguages', 'BookLanguageController');
 Route::resource('bookSizes', 'BookSizeController');
 
 Route::resource('books', 'BookController');
+
+//Route::get('/test_req', function(){
+//    $test = SamaRequestController::sama_request('StudentService', 'GetStudentsPersonInfo', ['studentNumber' => 9673144]);
+//    if ($test[0]->Person->IsIranian == true){
+//        return "true";
+//    } else return "null";
+////    dump($test);
+//});
+
+
+Route::get('/test_req', function(){
+    $test = SamaRequestController::sama_request('StudentService', 'GetStudentsPersonInfo', ['studentNumber' => 9250013]);
+//    return $test;
+});
+
+
