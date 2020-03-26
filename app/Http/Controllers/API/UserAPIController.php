@@ -421,7 +421,7 @@ class UserAPIController extends AppBaseController
 
         if (is_null($user->student)) { // not verified user
             try {
-                $student_fetch = SamaRequestController::sama_request('StudentService', 'GetStudentsPersonInfo', ['studentNumber' => $input['scu_id']])[0];
+                $student_fetch = SamaRequestController::sama_request('StudentService', 'GetStudentPersonInfo', ['studentNumber' => $input['scu_id']])[0];
                 if (!is_null($student_fetch)) { // Student with entered Scu Id is exist
 
                     if ($student_fetch->Person->NationalCode == $input['national_id']) { // matched entered national id with the Scu Id
