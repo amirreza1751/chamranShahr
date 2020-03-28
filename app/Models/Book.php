@@ -105,7 +105,7 @@ class Book extends Model
     use SoftDeletes;
 
     public $table = 'books';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -192,5 +192,10 @@ class Book extends Model
     public function size()
     {
         return $this->belongsTo(\App\Models\BookSize::class, 'size_id');
+    }
+
+
+    public function ad(){
+        return $this->morphOne('App\Models\Ad', 'advertisable');
     }
 }

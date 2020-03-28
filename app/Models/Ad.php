@@ -114,7 +114,7 @@ class Ad extends Model
     use SoftDeletes;
 
     public $table = 'ads';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -202,5 +202,9 @@ class Ad extends Model
     public function creator()
     {
         return $this->belongsTo(\App\Models\User::class, 'creator_id');
+    }
+
+    public function advertisable(){
+        return $this->morphTo();
     }
 }

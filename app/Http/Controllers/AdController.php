@@ -6,6 +6,7 @@ use App\Http\Requests\CreateAdRequest;
 use App\Http\Requests\UpdateAdRequest;
 use App\Repositories\AdRepository;
 use App\Http\Controllers\AppBaseController;
+use App\Repositories\BookRepository;
 use Illuminate\Http\Request;
 use Flash;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -15,10 +16,12 @@ class AdController extends AppBaseController
 {
     /** @var  AdRepository */
     private $adRepository;
+    private $bookRepository;
 
-    public function __construct(AdRepository $adRepo)
+    public function __construct(AdRepository $adRepo, BookRepository $bookRepo)
     {
         $this->adRepository = $adRepo;
+        $this->bookRepository = $bookRepo;
     }
 
     /**
@@ -152,4 +155,55 @@ class AdController extends AppBaseController
 
         return redirect(route('ads.index'));
     }
+
+
+
+
+
+
+
+
+
+    public function verify_book_ad($id){
+        /** Admin can change the status of advertisement from pending to accepted. */
+        $ad = $this->adRepository->findWithoutFail($id);
+
+
+        /** Check for Admin Role*/
+        /**
+         *
+         *
+         *
+         *  !!!Only Admin Role!!!
+         *
+         *
+         *
+         */
+        /** Check for Admin Role */
+
+
+        if (empty($ad)) {
+            Flash::error('Ad not found');
+
+            return redirect(route('ads.index'));
+        }
+
+        if ($ad->is_verified == 0){
+            $ad->is_verified = 1;
+        } else{
+            $ad->is_verified = 0;
+        }
+
+        Flash::success('Changes saved.');
+
+        return redirect(route('ads.index'));
+    }
+
+    public function toggle_special_book_ad(){
+        /** Admin can set an advertisement to special or not. */
+
+    }
+
+
+
 }

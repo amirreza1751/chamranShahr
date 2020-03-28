@@ -71,6 +71,7 @@ Route::resource('categories', 'CategoryAPIController');
 
 Route::resource('ads', 'AdAPIController');
 Route::post('ads/create_book_ad', 'AdAPIController@create_book_ad'); /** Adding a book advertisement (Custom Method) */
+Route::get('ads/show_book_ad/{id}', 'AdAPIController@show_book_ad'); /** Displaying a book advertisement (Custom Method) */
 
 Route::resource('book_editions', 'BookEditionAPIController');
 

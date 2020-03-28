@@ -337,20 +337,23 @@ class AdAPIController extends AppBaseController
 
     }
 
-    public function verify_book_ad(){
-        /** Admin can change the status of advertisement from pending to accepted. */
 
-    }
 
-    public function toggle_special_book_ad(){
-        /** Admin can set an advertisement to special or not. */
 
-    }
 
-    public function show_book_ad(){
+    public function show_book_ad($id){
         /** User can view a specific advertisement. */
 
+        $ad = $this->adRepository->with(['adType', 'category', 'advertisable.size', 'advertisable.language', 'advertisable.edition'])->where('id', $id)->get();
+
+        if (empty($ad)) {
+            return $this->sendError('Ad not found');
+        }
+
+        return $this->sendResponse($ad, 'Ad retrieved successfully');
     }
+
+
 
     public function index_book_ads(){
         /** Displays all the book advertisements. */
