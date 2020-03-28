@@ -15,8 +15,8 @@ class CreateStudyFieldsTable extends Migration
     {
         Schema::create('study_fields', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('unique_code');
-            $table->string('faculty_unique_code');
+            $table->string('unique_code')->index();
+            $table->string('faculty_unique_code')->index();
             $table->unsignedInteger('department_id');
             $table->timestamps();
             $table->softDeletes();

@@ -17,19 +17,19 @@ class CreateBooksTable extends Migration
             $table->increments('id');
             $table->string('title');
 //            $table->string('edition');
-            $table->unsignedInteger('edition_id');
-            $table->string('publisher');
-            $table->dateTime('publication_date');
+            $table->unsignedInteger('edition_id')->nullable();
+            $table->string('publisher')->nullable();
+            $table->dateTime('publication_date')->nullable();
             $table->unsignedInteger('book_length'); /** number of pages */
 //            $table->string('language');
-            $table->unsignedInteger('language_id');
-            $table->string('isbn');
-            $table->string('author');
-            $table->string('translator');
+            $table->unsignedInteger('language_id')->nullable();
+            $table->string('isbn')->nullable();
+            $table->string('author')->nullable();
+            $table->string('translator')->nullable();
             $table->string('price');
 //            $table->string('size');
-            $table->unsignedInteger('size_id');
-            $table->boolean('is_grayscale');
+            $table->unsignedInteger('size_id')->nullable();
+            $table->boolean('is_grayscale')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

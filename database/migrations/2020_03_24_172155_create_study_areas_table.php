@@ -17,10 +17,10 @@ class CreateStudyAreasTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->string('english_title')->nullable();
-            $table->string('unique_code');
+            $table->string('unique_code')->index();
             $table->boolean('is_active');
-            $table->string('study_level_unique_code');
-            $table->string('study_field_unique_code');
+            $table->string('study_level_unique_code')->index();
+            $table->string('study_field_unique_code')->index();
             $table->timestamps();
             $table->softDeletes();
 

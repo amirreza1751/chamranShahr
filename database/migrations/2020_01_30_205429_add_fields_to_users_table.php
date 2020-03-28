@@ -14,7 +14,8 @@ class AddFieldsToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('gender_unique_code')->default('UNKNOWN');
+            $table->string('gender_unique_code')->default('gender0');
+//            $table->string('gender_unique_code')->nullable();
             $table->foreign('gender_unique_code')->references('unique_code')->on('genders');
 
             $table->string('scu_id_to_update')->nullable();

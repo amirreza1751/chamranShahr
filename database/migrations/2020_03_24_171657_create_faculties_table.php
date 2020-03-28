@@ -15,7 +15,7 @@ class CreateFacultiesTable extends Migration
     {
         Schema::create('faculties', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('unique_code');
+            $table->string('unique_code')->index();
             $table->unsignedInteger('department_id');
             $table->timestamps();
             $table->softDeletes();

@@ -48,7 +48,7 @@ class ManageLevelInitial extends Command
         $cc->print_error("this procedure will truncate manage_levels table which may permanently delete some records!\nDo you want to continue? (pls type HellYeah to continue or anything to skip)");
         $answer = trim(fgets(STDIN));
         if ($answer == 'HellYeah') {
-            ManageLevel::truncate();
+            //ManageLevel::truncate();
 
             if (is_null(ManageLevel::where('level', 1.0)->first())) {
                 $level = array(

@@ -15,11 +15,11 @@ class CreateStudentsTable extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id')->unique();
-            $table->string('study_area_unique_code'); // SAMA identifier of Course Study [ such as Software Engineering : 500 ]
-            $table->string('study_level_unique_code'); // SAMA identifier of Study Level [ such as Bachelor : 2 ]
-            $table->string('entrance_term_unique_code'); // SAMA identifier of Term [ such as 921 : 128 ]
-            $table->string('study_status_unique_code'); // SAMA identifier of Student Status [ such as Graduated : 2 ]
+            $table->unsignedBigInteger('user_id')->unique();
+            $table->string('study_area_unique_code')->index(); // SAMA identifier of Course Study [ such as Software Engineering : 500 ]
+            $table->string('study_level_unique_code')->index(); // SAMA identifier of Study Level [ such as Bachelor : 2 ]
+            $table->string('entrance_term_unique_code')->index(); // SAMA identifier of Term [ such as 921 : 128 ]
+            $table->string('study_status_unique_code')->index(); // SAMA identifier of Student Status [ such as Graduated : 2 ]
             $table->double('total_average')->nullable();
             $table->boolean('is_active'); // ~ isGraduated
             $table->boolean('is_guest');

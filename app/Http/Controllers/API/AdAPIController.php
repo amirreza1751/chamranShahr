@@ -6,6 +6,7 @@ use App\Http\Requests\API\CreateAdAPIRequest;
 use App\Http\Requests\API\UpdateAdAPIRequest;
 use App\Models\Ad;
 use App\Repositories\AdRepository;
+use App\Repositories\BookRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
@@ -21,10 +22,12 @@ class AdAPIController extends AppBaseController
 {
     /** @var  AdRepository */
     private $adRepository;
+    private $bookRepository;
 
-    public function __construct(AdRepository $adRepo)
+    public function __construct(AdRepository $adRepo, BookRepository $bookRepo)
     {
         $this->adRepository = $adRepo;
+        $this->bookRepository = $bookRepo;
     }
 
     /**
@@ -340,7 +343,7 @@ class AdAPIController extends AppBaseController
     }
 
     public function toggle_special_book_ad(){
-        /** Admin can make an advertisement special or not. */
+        /** Admin can set an advertisement to special or not. */
 
     }
 

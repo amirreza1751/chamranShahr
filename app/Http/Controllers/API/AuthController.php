@@ -61,7 +61,8 @@ class AuthController extends Controller
 
         $user = User::create([
             'phone_number' => $request->phone_number,
-            'username' => app('App\Http\Controllers\API\AuthController')->random_username_generator(15)
+            'username' => app('App\Http\Controllers\API\AuthController')->random_username_generator(15),
+//            'gender_unique_code' => 'UNKNOWN'
         ]);
         $created_user = [
             'phone_number' => $user->phone_number,

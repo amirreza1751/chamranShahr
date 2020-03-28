@@ -489,12 +489,13 @@ class UserAPIController extends AppBaseController
                  */
 //                return response()->json($e->getMessage());
                 return response()->json([
-                    'status' => 'an internal error has occurred. please contact your administrator'
+                    'status' => 'An internal error has occurred. Please contact your administrator.',
+                    'e' => $e
                 ], 500);
             }
         } else { // verified user
             return response()->json([
-                'status' => 'this user is verified before'
+                'status' => 'This user has been verified before.'
             ], 400);
         }
     }

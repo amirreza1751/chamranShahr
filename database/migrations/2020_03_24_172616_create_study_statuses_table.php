@@ -17,7 +17,7 @@ class CreateStudyStatusesTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->string('english_title')->nullable();
-            $table->string('unique_code');
+            $table->string('unique_code')->index();
             $table->timestamps();
             $table->softDeletes();
         });

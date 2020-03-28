@@ -15,7 +15,7 @@ class CreateManagesHistoryTable extends Migration
     {
         Schema::create('manages_history', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('manager_id');
+            $table->unsignedBigInteger('manager_id');
             $table->morphs('managed');
             $table->dateTime('begin_date');
             $table->dateTime('end_date')->nullable();
