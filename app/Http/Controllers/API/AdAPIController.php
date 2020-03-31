@@ -9,6 +9,7 @@ use App\Repositories\AdRepository;
 use App\Repositories\BookRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Support\Facades\Auth;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
@@ -66,7 +67,7 @@ class AdAPIController extends AppBaseController
     {
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $ads = $this->adRepository->all();
+        $ads = $this->adRepository->paginate(10);
 
         return $this->sendResponse($ads->toArray(), 'Ads retrieved successfully');
     }
@@ -320,7 +321,7 @@ class AdAPIController extends AppBaseController
             'title' => $request->get('title'),
             'english_title' => $request->get('english_title'),
             'ad_location' => $request->get('ad_location'),
-            'advertisable_type' => 'Book',
+            'advertisable_type' => 'App\Models\Book',
             'advertisable_id' => $new_book->id,
             'offered_price' => $request->get('offered_price'),
             'phone_number' => $request->get('phone_number'),
@@ -355,19 +356,33 @@ class AdAPIController extends AppBaseController
 
 
 
-    public function index_book_ads(){
+    public function index_book_ads(Request $request){
         /** Displays all the book advertisements. */
+        $this->adRepository->pushCriteria(new RequestCriteria($request));
+        $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
+        $ads = $this->adRepository->with('advertisable')->paginate(10);
 
+        return $this->sendResponse($ads->toArray(), 'Ads retrieved successfully');
     }
 
-    public function my_book_ads(){
+    public function my_book_ads(Request $request){
         /** User can view a list of their advertisements which are created. */
-
+        $this->adRepository->pushCriteria(new RequestCriteria($request));
+        $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
+        $my_book_ads = $this->adRepository->with('advertisable')->where('creator_id', Auth('api')->user()->id)->paginate(10);
+        return $this->sendResponse($my_book_ads->toArray(), 'Ads retrieved successfully');
     }
 
-    public function remove_book_ad(){
+    public function remove_book_ad($id){
         /** User can remove their ads. Only the ads which they create themselves. */
+        $ad = $this->adRepository->where('creator_id', Auth('api')->user()->id)->where('id', $id)->first();
 
+        if (empty($ad)) {
+            return $this->sendError('Ad not found');
+        }
+        $ad->delete();
+//        return $this->sendSuccess('Ad deleted successfully');
+        return $this->sendResponse($ad->toArray(), 'Ad removed successfully');
     }
 
 

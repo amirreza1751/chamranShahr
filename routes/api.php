@@ -69,9 +69,36 @@ Route::resource('ad_types', 'AdTypeAPIController');
 
 Route::resource('categories', 'CategoryAPIController');
 
+
+
+
+
+
+
+
+
+
+
+/** Book Trade */
+
+Route::middleware('auth:api')->post('ads/create_book_ad', 'AdAPIController@create_book_ad'); /** Adding a book advertisement (Custom Method) */
+Route::middleware('auth:api')->get('ads/show_book_ad/{id}', 'AdAPIController@show_book_ad'); /** Displaying a book advertisement (Custom Method) */
+Route::middleware('auth:api')->get('ads/index_book_ads', 'AdAPIController@index_book_ads'); /** Displaying all book advertisements (Custom Method) */
+Route::middleware('auth:api')->get('ads/my_book_ads', 'AdAPIController@my_book_ads'); /** Displaying user's book advertisements (Custom Method) */
+Route::middleware('auth:api')->get('ads/remove_book_ad/{id}', 'AdAPIController@remove_book_ad'); /** Displaying user's book advertisements (Custom Method) */
 Route::resource('ads', 'AdAPIController');
-Route::post('ads/create_book_ad', 'AdAPIController@create_book_ad'); /** Adding a book advertisement (Custom Method) */
-Route::get('ads/show_book_ad/{id}', 'AdAPIController@show_book_ad'); /** Displaying a book advertisement (Custom Method) */
+
+/** Book Trade */
+
+
+
+
+
+
+
+
+
+
 
 Route::resource('book_editions', 'BookEditionAPIController');
 
