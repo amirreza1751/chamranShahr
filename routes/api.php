@@ -91,7 +91,16 @@ Route::resource('ads', 'AdAPIController');
 /** Book Trade */
 
 
+/** Fire Event */
 
+Route::get('test-broadcast/', function(Request $request){
+
+      return  event(new \App\Events\NewMessage($request->get('message')));
+
+});
+
+
+/** Fire Event */
 
 
 

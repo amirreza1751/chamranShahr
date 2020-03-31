@@ -381,7 +381,6 @@ class AdAPIController extends AppBaseController
             return $this->sendError('Ad not found');
         }
         $ad->delete();
-//        return $this->sendSuccess('Ad deleted successfully');
         return $this->sendResponse($ad->toArray(), 'Ad removed successfully');
     }
 
