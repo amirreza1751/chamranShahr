@@ -390,7 +390,7 @@ class AdAPIController extends AppBaseController
         return $this->sendResponse($ad->toArray(), 'Ad removed successfully');
     }
 
-    public function edit_book_ad($id, Request $request){
+    public function update_book_ad($id, Request $request){
 
 //        $this->validate($request, [
 //            'book_title' => 'required',

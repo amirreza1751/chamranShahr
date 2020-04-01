@@ -26,7 +26,7 @@ class CreateBooksTable extends Migration
             $table->string('isbn')->nullable();
             $table->string('author')->nullable();
             $table->string('translator')->nullable();
-            $table->string('price');
+            $table->string('price')->nullable();
 //            $table->string('size');
             $table->unsignedInteger('size_id')->nullable();
             $table->boolean('is_grayscale')->nullable();
