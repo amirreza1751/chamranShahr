@@ -64,6 +64,8 @@ Route::resource('adTypes', 'AdTypeController');
 
 Route::resource('categories', 'CategoryController');
 
+Route::get('ads/show_advertisable/{id}', 'AdController@show_advertisable')->name('show_advertisable');
+Route::get('ads/verify/{id}', 'AdController@verify_ad')->name('verify_ad');
 Route::resource('ads', 'AdController');
 
 Route::resource('bookEditions', 'BookEditionController');

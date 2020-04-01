@@ -21,8 +21,8 @@
         </thead>
         <tbody>
         @foreach($ads as $ad)
-            <tr>
-                <td>{{ $ad->title }}</td>
+            <tr class="  @if($ad->is_verified == 1) {{' bg-success '}}@endif">
+                <td><a href="{{route('show_advertisable', $ad->id)}}">{{ $ad->title }}</a></td>
             <td>{{ $ad->english_title }}</td>
             <td>{{ $ad->ad_location }}</td>
             <td>{{ $ad->english_ad_location }}</td>
@@ -41,6 +41,7 @@
                     <div class='btn-group'>
                         <a href="{{ route('ads.show', [$ad->id]) }}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
                         <a href="{{ route('ads.edit', [$ad->id]) }}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
+                        <a href="{{ route('verify_ad', [$ad->id]) }}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-ok"></i></a>
                         {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
                     </div>
                     {!! Form::close() !!}

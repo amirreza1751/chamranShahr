@@ -164,23 +164,23 @@ class AdController extends AppBaseController
 
 
 
-    public function verify_book_ad($id){
+    public function verify_ad($id){
         /** Admin can change the status of advertisement from pending to accepted. */
-        $ad = $this->adRepository->findWithoutFail($id);
 
 
-        /** Check for Admin Role*/
-        /**
-         *
-         *
+        /**  Check for Admin Role
          *
          *  !!!Only Admin Role!!!
          *
-         *
-         *
-         */
         /** Check for Admin Role */
 
+        if (!Auth('web')->user()->hasRole('admin')){
+            Flash::error('You do not have the "admin" role.');
+
+            return redirect(route('ads.index'));
+        }
+
+        $ad = $this->adRepository->findWithoutFail($id);
 
         if (empty($ad)) {
             Flash::error('Ad not found');
@@ -193,15 +193,21 @@ class AdController extends AppBaseController
         } else{
             $ad->is_verified = 0;
         }
+        $ad->save();
 
-        Flash::success('Changes saved.');
-
+//        Flash::success('Changes saved.');
+//return response()->json(['message' => $ad->is_verified]);
         return redirect(route('ads.index'));
     }
 
     public function toggle_special_book_ad(){
         /** Admin can set an advertisement to special or not. */
 
+    }
+
+    public function show_advertisable($id){
+        $ad = $this->adRepository->with(['adType', 'category', 'advertisable.size', 'advertisable.language', 'advertisable.edition'])->where('id', $id)->first();
+        return $ad;
     }
 
 

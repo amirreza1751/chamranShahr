@@ -298,7 +298,11 @@ class AdAPIController extends AppBaseController
         $this->authorize('create_book_ad', Auth::user());
 
         $this->validate($request, [
+            'title' => 'required',
+            'offered_price' => 'required',
+            'phone_number' => 'required',
             'book_title' => 'required',
+            'book_length' => 'required',
         ]);
 
         $book_info = [
@@ -340,9 +344,6 @@ class AdAPIController extends AppBaseController
         return $this->sendResponse($new_ad->toArray(), 'Book ad created successfully.');
 
     }
-
-
-
 
 
     public function show_book_ad($id){
@@ -387,6 +388,26 @@ class AdAPIController extends AppBaseController
         }
         $ad->delete();
         return $this->sendResponse($ad->toArray(), 'Ad removed successfully');
+    }
+
+    public function edit_book_ad($id, Request $request){
+
+//        $this->validate($request, [
+//            'book_title' => 'required',
+//        ]);
+
+        $input = $request->all();
+
+        /** @var Ad $ad */
+        $ad = $this->adRepository->where('creator_id', Auth('api')->user()->id)->where('id', $id)->first();
+
+        if (empty($ad)) {
+            return $this->sendError('Ad not found');
+        }
+
+        $ad = $this->adRepository->update($input, $id);
+
+        return $this->sendResponse($ad->toArray(), 'Ad updated successfully');
     }
 
 }
