@@ -410,4 +410,5 @@ class AdAPIController extends AppBaseController
         return $this->sendResponse($ad->toArray(), 'Ad updated successfully');
     }
 
+
 }
