@@ -201,7 +201,7 @@ class Ad extends Model
      **/
     public function creator()
     {
-        return $this->belongsTo(\App\Models\User::class, 'creator_id');
+        return $this->belongsTo(\App\User::class, 'creator_id');
     }
 
     public function advertisable(){

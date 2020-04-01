@@ -7,6 +7,7 @@ use App\Http\Requests\API\UpdateAdAPIRequest;
 use App\Models\Ad;
 use App\Repositories\AdRepository;
 use App\Repositories\BookRepository;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Support\Facades\Auth;
@@ -294,6 +295,8 @@ class AdAPIController extends AppBaseController
 
     public function create_book_ad(Request $request){
 
+        $this->authorize('create_book_ad', Auth::user());
+
         $this->validate($request, [
             'book_title' => 'required',
         ]);
@@ -375,7 +378,9 @@ class AdAPIController extends AppBaseController
 
     public function remove_book_ad($id){
         /** User can remove their ads. Only the ads which they create themselves. */
-        $ad = $this->adRepository->where('creator_id', Auth('api')->user()->id)->where('id', $id)->first();
+        $ad = $this->adRepository->findWithoutFail($id);
+
+        $this->authorize('remove_book_ad', $ad);
 
         if (empty($ad)) {
             return $this->sendError('Ad not found');
@@ -383,7 +388,5 @@ class AdAPIController extends AppBaseController
         $ad->delete();
         return $this->sendResponse($ad->toArray(), 'Ad removed successfully');
     }
-
-
 
 }
