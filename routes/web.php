@@ -93,3 +93,9 @@ Route::resource('studyStatuses', 'StudyStatusController');
 Route::resource('students', 'StudentController');
 
 Route::resource('manageHistories', 'ManageHistoryController');
+
+Route::middleware('auth:web')->get('permissions/guard_name_ajax', 'PermissionController@guardNameAjax');
+Route::middleware('auth:web')->resource('permissions', 'PermissionController');
+
+Route::middleware('auth:web')->get('roles/guard_name_ajax', 'RoleController@guardNameAjax');
+Route::middleware('auth:web')->resource('roles', 'RoleController');
