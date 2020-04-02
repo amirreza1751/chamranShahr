@@ -19,12 +19,14 @@ use http\Client\Request;
 use Illuminate\Container\Container;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Laravie\Parser\Xml\Reader;
 use Orchestra\Parser\Xml\Document;
 use phpseclib\Net\SSH1;
 use Weidner\Goutte\GoutteFacade;
+use function foo\func;
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,72 +34,88 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+Route::group(['middleware' => 'auth:web'], function(){
 
-Route::middleware('auth:web')->resource('locations', 'LocationController');
+    Route::group(['middleware' => ['role:admin|developer']], function(){
 
-Route::middleware('auth:web')->resource('media', 'MediaController');
+        Route::resource('users', 'UserController'); // ++
 
-Route::middleware('auth:web')->resource('news', 'NewsController');
+        Route::get('roles/guard_name_ajax', 'RoleController@guardNameAjax');
+        Route::resource('roles', 'RoleController');  // ++
 
-Route::middleware('auth:web')->resource('notifications', 'NotificationController');
+        Route::get('permissions/guard_name_ajax', 'PermissionController@guardNameAjax');
+        Route::resource('permissions', 'PermissionController');  // ++
 
-Route::middleware('auth:web')->resource('notices', 'NoticeController');
+        Route::resource('genders', 'GenderController'); // ++
 
-Route::middleware('auth:web')->resource('users', 'UserController');
+        Route::resource('terms', 'TermController');  // ++
 
-Route::middleware('auth:web')->resource('genders', 'GenderController');
+        Route::resource('studyLevels', 'StudyLevelController');  // ++
 
-Route::middleware('auth:web')->resource('terms', 'TermController');
+        Route::resource('adTypes', 'AdTypeController');  // ++
 
+        Route::resource('categories', 'CategoryController');  // ++
 
-Route::resource('studyLevels', 'StudyLevelController');
+        Route::resource('bookEditions', 'BookEditionController'); // ++
 
+        Route::resource('bookLanguages', 'BookLanguageController'); // ++
+
+        Route::resource('bookSizes', 'BookSizeController'); // ++
+
+        Route::resource('manageLevels', 'ManageLevelController'); // ++
+
+        Route::resource('manageHierarchies', 'ManageHierarchyController'); // ++
+
+        Route::resource('departments', 'DepartmentController'); // ++
+
+        Route::resource('faculties', 'FacultyController'); // ++
+
+        Route::resource('studyFields', 'StudyFieldController'); // ++
+
+        Route::resource('studyAreas', 'StudyAreaController'); // ++
+
+        Route::resource('studyStatuses', 'StudyStatusController'); // ++
+
+    });
+
+    Route::group(['middleware' => ['role:admin|developer|content_manager']], function(){
+
+        Route::resource('locations', 'LocationController');
+
+        Route::resource('media', 'MediaController');
+
+        Route::resource('news', 'NewsController');
+
+        Route::resource('notifications', 'NotificationController');
+
+        Route::resource('notices', 'NoticeController');
+
+        Route::get('ads/show_advertisable/{id}', 'AdController@show_advertisable')->name('show_advertisable');
+        Route::get('ads/verify/{id}', 'AdController@verify_ad')->name('verify_ad');
+        Route::resource('ads', 'AdController');
+
+        Route::resource('books', 'BookController');
+
+        Route::resource('students', 'StudentController');
+
+        Route::resource('manageHistories', 'ManageHistoryController');
+
+    });
+
+    Route::get('/home', 'HomeController@index');
+
+});
 
 /** test notification page */
 Route::middleware('auth:web')->get('/test', function(){
     return view('test');
 });
 
-
-Route::resource('adTypes', 'AdTypeController');
-
-Route::resource('categories', 'CategoryController');
-
-Route::get('ads/show_advertisable/{id}', 'AdController@show_advertisable')->name('show_advertisable');
-Route::get('ads/verify/{id}', 'AdController@verify_ad')->name('verify_ad');
-Route::resource('ads', 'AdController');
-
-Route::resource('bookEditions', 'BookEditionController');
-
-Route::resource('bookLanguages', 'BookLanguageController');
-
-Route::resource('bookSizes', 'BookSizeController');
-
-Route::resource('books', 'BookController');
-
-Route::resource('manageLevels', 'ManageLevelController');
-
-Route::resource('manageHierarchies', 'ManageHierarchyController');
+Route::get('roletest', function(){
+    Auth::user()->assignRole('developer');
+});
 
 
 
-Route::resource('departments', 'DepartmentController');
 
-Route::resource('faculties', 'FacultyController');
 
-Route::resource('studyFields', 'StudyFieldController');
-
-Route::resource('studyAreas', 'StudyAreaController');
-
-Route::resource('studyStatuses', 'StudyStatusController');
-
-Route::resource('students', 'StudentController');
-
-Route::resource('manageHistories', 'ManageHistoryController');
-
-Route::middleware('auth:web')->get('permissions/guard_name_ajax', 'PermissionController@guardNameAjax');
-Route::middleware('auth:web')->resource('permissions', 'PermissionController');
-
-Route::middleware('auth:web')->get('roles/guard_name_ajax', 'RoleController@guardNameAjax');
-Route::middleware('auth:web')->resource('roles', 'RoleController');
