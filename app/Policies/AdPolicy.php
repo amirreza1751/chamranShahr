@@ -113,4 +113,17 @@ class AdPolicy
             return false;
         }
     }
+
+    public function update_book_ad(User $user, Ad $ad)
+    {
+        if($user->hasRole('admin')){
+            return true;
+        }
+        elseif($ad->creator->id == $user->id){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

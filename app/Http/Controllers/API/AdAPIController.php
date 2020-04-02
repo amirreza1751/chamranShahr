@@ -399,13 +399,15 @@ class AdAPIController extends AppBaseController
         $input = $request->all();
 
         /** @var Ad $ad */
-        $ad = $this->adRepository->where('creator_id', Auth('api')->user()->id)->where('id', $id)->first();
+        $ad = $this->adRepository->findWithoutFail($id);
+
+        $this->authorize('update_book_ad', $ad);
 
         if (empty($ad)) {
             return $this->sendError('Ad not found');
         }
 
-        $ad = $this->adRepository->update($input, $id);
+//        $ad = $this->adRepository->update($input, $id);
 
         return $this->sendResponse($ad->toArray(), 'Ad updated successfully');
     }
