@@ -100,6 +100,8 @@ Route::group(['middleware' => 'auth:api'], function(){
 
         Route::resource('manage_histories', 'ManageHistoryAPIController');
 
+        Route::resource('notifications', 'NotificationAPIController');
+
     });
 
     /** User Apis which needs Authenticated user */
@@ -226,7 +228,9 @@ Route::get('manage_histories', 'ManageHistoryAPIController@index');
 Route::get('manage_histories/{manage_histories}', 'ManageHistoryAPIController@show');
 /** ManageHistory Routes, that's it */
 
-Route::resource('notifications', 'NotificationAPIController');
+/** Notification Apis which doesnt needs Authenticated user */
+Route::get('notifications/{notification}', 'NotificationAPIController@show');
+/** Notification Routes, that's it */
 
 //Route::get('/notification/test/{message}', function ($message){
 //    return event(new NewMessage($message));

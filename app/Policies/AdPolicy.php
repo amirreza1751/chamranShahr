@@ -90,21 +90,22 @@ class AdPolicy
      */
     public function show_book_ad(User $user, Ad $ad)
     {
-        if($user->hasRole('developer')){
-            return true;
-        }
-        elseif($user->hasRole('admin')){
-            return true;
-        }
-        elseif ($user->hasRole('content_manager')){
-            return true;
-        }
-        elseif ($user->hasRole('verified')){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return true;
+//        if($user->hasRole('developer')){
+//            return true;
+//        }
+//        elseif($user->hasRole('admin')){
+//            return true;
+//        }
+//        elseif ($user->hasRole('content_manager')){
+//            return true;
+//        }
+//        elseif ($user->hasRole('verified')){
+//            return true;
+//        }
+//        else {
+//            return false;
+//        }
     }
 
     public function index_book_ad(User $user)
