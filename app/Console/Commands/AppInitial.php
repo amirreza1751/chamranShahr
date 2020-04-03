@@ -13,14 +13,14 @@ class AppInitial extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'app:initial';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'fill all relevant tables with basic records at the beginning';
 
     /**
      * Create a new command instance.

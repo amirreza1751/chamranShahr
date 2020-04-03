@@ -16,6 +16,7 @@ use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Morilog\Jalali\Jalalian;
@@ -74,6 +75,8 @@ class UserAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index');
+
         $this->userRepository->pushCriteria(new RequestCriteria($request));
         $this->userRepository->pushCriteria(new LimitOffsetCriteria($request));
         $users = $this->userRepository->all();
@@ -121,6 +124,8 @@ class UserAPIController extends AppBaseController
      */
     public function store(CreateUserAPIRequest $request)
     {
+        $this->authorize('store');
+
         $input = $request->all();
 
         $input['password'] = Hash::make($input['password']);
@@ -176,6 +181,8 @@ class UserAPIController extends AppBaseController
         if (empty($user)) {
             return $this->sendError('User not found');
         }
+
+        $this->authorize('show', $user);
 
         return $this->sendResponse($user->toArray(), 'User retrieved successfully');
     }
@@ -237,6 +244,8 @@ class UserAPIController extends AppBaseController
             return $this->sendError('User not found');
         }
 
+        $this->authorize('update', $user);
+
         $input['password'] = Hash::make($input['password']);
 
         $user = $this->userRepository->update($input, $id);
@@ -290,6 +299,8 @@ class UserAPIController extends AppBaseController
         if (empty($user)) {
             return $this->sendError('User not found');
         }
+
+        $this->authorize('destroy', $user);
 
         $user->delete();
 
@@ -351,12 +362,18 @@ class UserAPIController extends AppBaseController
      *      )
      * )
      */
-    public function updateScuId($id, Request $request)
+    public function update_scu_id(Request $request)
     {
+        $this->authorize('update_scu_id');
+
+        $request->validate([
+            'scu_id' => 'required|regex:/[0-9]{6,7}/|max:7',
+        ]);
+
         $input = $request->all();
 
         /** @var User $user */
-        $user = $this->userRepository->findWithoutFail($id);
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
 
         if (empty($user)) {
             return $this->sendError('User not found');
@@ -367,6 +384,76 @@ class UserAPIController extends AppBaseController
         $user->save();
 
         return $this->sendResponse($user->scu_id_to_update, 'Scu Id Change Request is submitted successfully');
+    }
+
+    /**
+     * @param int $id
+     * @param UpdateUserAPIRequest $request
+     * @return Response
+     *
+     * @SWG\Put(
+     *      path="/users/{id}",
+     *      summary="Update the specified User in storage",
+     *      tags={"User"},
+     *      description="Update User",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of User",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Parameter(
+     *          name="body",
+     *          in="body",
+     *          description="User that should be updated",
+     *          required=false,
+     *          @SWG\Schema(ref="#/definitions/User")
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="#/definitions/User"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function update_national_id(Request $request)
+    {
+        $this->authorize('update_national_id');
+
+        $request->validate([
+            'national_id' => 'required|regex:/[0-9]{10}/|max:10',
+        ]);
+
+        $input = $request->all();
+
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('User not found');
+        }
+
+        $user->national_id_to_update = $input['national_id_to_update'];
+
+        $user->save();
+
+        return $this->sendResponse($user->national_id_to_update, 'Scu Id Change Request is submitted successfully');
     }
 
     /**
@@ -415,7 +502,7 @@ class UserAPIController extends AppBaseController
      *      )
      * )
      */
-    public function verify($id, Request $request)
+    public function verify(Request $request)
     {
         $request->validate([
             'scu_id' => 'required|regex:/[0-9]{6,7}/|max:7',
@@ -425,7 +512,7 @@ class UserAPIController extends AppBaseController
         $input = $request->all();
 
         /** @var User $user */
-        $user = $this->userRepository->findWithoutFail($id);
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
 
         if (empty($user)) {
             return $this->sendError('User not found');
@@ -451,8 +538,9 @@ class UserAPIController extends AppBaseController
                             'updated_at' => Carbon::now(), // set update time
                             'is_verified' => true,
                         );
-                        $user = $this->userRepository->update($user_information, $id);
+                        $user = $this->userRepository->update($user_information, auth('api')->user()->id);
 
+                        $user->assignRole('verified');
 
                         /**
                          * static part of unique_code      CONCAT      numeric part of unique_code retrieve from SAMA

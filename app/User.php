@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Gender;
+use App\Models\Student;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -65,5 +66,10 @@ class User extends Authenticatable
     public function gender()
     {
         return $this->belongsTo(Gender::class, 'gender_unique_code', 'unique_code');
+    }
+
+    public function student()
+    {
+        return $this->hasOne(Student::class);
     }
 }

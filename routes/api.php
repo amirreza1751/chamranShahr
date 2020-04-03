@@ -1,7 +1,9 @@
 <?php
 
 use App\Events\NewMessage;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,10 +36,12 @@ Route::post('/send_otp', 'OtpController@send_otp');
 
 Route::group(['middleware' => 'auth:api'], function(){
 
-    Route::group(['middleware' => ['role:admin']], function(){
+    Route::group(['middleware' => ['role:admin|developer']], function(){
 
         Route::get('locations/bytype/{id}', 'LocationAPIController@byType');
         Route::resource('locations', 'LocationAPIController');
+
+        Route::resource('users', 'UserAPIController');
 
         Route::resource('media', 'MediaAPIController');
 
@@ -45,16 +49,11 @@ Route::group(['middleware' => 'auth:api'], function(){
 
         Route::resource('notices', 'NoticeAPIController');
 
-        Route::put('users/{id}/update_scu_id', 'UserAPIController@updateScuId');
-        Route::put('users/{id}/verify', 'UserAPIController@verify');
-        Route::resource('users', 'UserAPIController');
-
         Route::resource('genders', 'GenderAPIController');
 
         Route::resource('terms', 'TermAPIController');
 
         Route::resource('study_levels', 'StudyLevelAPIController');
-
 
         Route::resource('ad_types', 'AdTypeAPIController');
 
@@ -103,7 +102,120 @@ Route::group(['middleware' => 'auth:api'], function(){
 
     });
 
+    /** User Apis which needs Authenticated user */
+    Route::put('users/{id}/update_scu_id', 'UserAPIController@updateScuId');
+    Route::put('users/verify', 'UserAPIController@verify');
 });
+
+/** Location Apis which doesnt needs Authenticated user */
+Route::get('locations', 'LocationAPIController@index');
+Route::get('locations/{location}', 'LocationAPIController@show');
+/** Location Routes, that's it */
+
+/** Media Apis which doesnt needs Authenticated user */
+Route::get('medias', 'MediaAPIController@index');
+Route::get('medias/{media}', 'MediaAPIController@show');
+/** Media Routes, that's it */
+
+/** News Apis which doesnt needs Authenticated user */
+Route::get('news', 'NewsAPIController@index');
+Route::get('news/{news}', 'NewsAPIController@show');
+/** News Routes, that's it */
+
+/** Notice Apis which doesnt needs Authenticated user */
+Route::get('notices', 'NoticeAPIController@index');
+Route::get('notices/{notice}', 'NoticeAPIController@show');
+/** Notice Routes, that's it */
+
+/** Gender Apis which doesnt needs Authenticated user */
+Route::get('genders', 'GenderAPIController@index');
+Route::get('genders/{gender}', 'GenderAPIController@show');
+/** Gender Routes, that's it */
+
+/** Term Apis which doesnt needs Authenticated user */
+Route::get('terms', 'TermAPIController@index');
+Route::get('terms/{term}', 'TermAPIController@show');
+/** Term Routes, that's it */
+
+/** StudyLevel Apis which doesnt needs Authenticated user */
+Route::get('study_levels', 'StudyLevelAPIController@index');
+Route::get('study_levels/{study_level}', 'StudyLevelAPIController@show');
+/** StudyLevel Routes, that's it */
+
+/** AdType Apis which doesnt needs Authenticated user */
+Route::get('ad_types', 'AdTypeAPIController@index');
+Route::get('ad_types/{ad_type}', 'AdTypeAPIController@show');
+/** AdType Routes, that's it */
+
+/** Category Apis which doesnt needs Authenticated user */
+Route::get('categories', 'CategoryAPIController@index');
+Route::get('categories/{category}', 'CategoryAPIController@show');
+/** Category Routes, that's it */
+
+/** BookEdition Apis which doesnt needs Authenticated user */
+Route::get('book_editions', 'BookEditionAPIController@index');
+Route::get('book_editions/{book_edition}', 'BookEditionAPIController@show');
+/** BookEdition Routes, that's it */
+
+/** BookLanguage Apis which doesnt needs Authenticated user */
+Route::get('book_languages', 'BookLanguageAPIController@index');
+Route::get('book_languages/{book_language}', 'BookLanguageAPIController@show');
+/** BookLanguage Routes, that's it */
+
+/** BookSize Apis which doesnt needs Authenticated user */
+Route::get('book_sizes', 'BookSizeAPIController@index');
+Route::get('book_sizes/{book_size}', 'BookSizeAPIController@show');
+/** BookSize Routes, that's it */
+
+/** Book Apis which doesnt needs Authenticated user */
+Route::get('books', 'BookAPIController@index');
+Route::get('books/{book}', 'BookAPIController@show');
+/** Book Routes, that's it */
+
+/** ManageLevel Apis which doesnt needs Authenticated user */
+Route::get('manage_levels', 'ManageLevelAPIController@index');
+Route::get('manage_levels/{manage_level}', 'ManageLevelAPIController@show');
+/** ManageLevel Routes, that's it */
+
+/** ManageHierarchy Apis which doesnt needs Authenticated user */
+Route::get('manage_hierarchies', 'ManageHierarchyAPIController@index');
+Route::get('manage_hierarchies/{manage_hierarchy}', 'ManageHierarchyAPIController@show');
+/** ManageHierarchy Routes, that's it */
+
+/** Department Apis which doesnt needs Authenticated user */
+Route::get('departments', 'DepartmentAPIController@index');
+Route::get('departments/{department}', 'DepartmentAPIController@show');
+/** Department Routes, that's it */
+
+/** Faculty Apis which doesnt needs Authenticated user */
+Route::get('faculties', 'FacultyAPIController@index');
+Route::get('faculties/{faculty}', 'FacultyAPIController@show');
+/** Faculty Routes, that's it */
+
+/** StudyField Apis which doesnt needs Authenticated user */
+Route::get('study_fields', 'StudyFieldAPIController@index');
+Route::get('study_fields/{study_field}', 'StudyFieldAPIController@show');
+/** StudyField Routes, that's it */
+
+/** StudyArea Apis which doesnt needs Authenticated user */
+Route::get('study_areas', 'StudyAreaAPIController@index');
+Route::get('study_areas/{study_area}', 'StudyAreaAPIController@show');
+/** StudyArea Routes, that's it */
+
+/** StudyStatus Apis which doesnt needs Authenticated user */
+Route::get('study_statuses', 'StudyStatusAPIController@index');
+Route::get('study_statuses/{study_status}', 'StudyStatusAPIController@show');
+/** StudyStatus Routes, that's it */
+
+/** StudyStatus Apis which doesnt needs Authenticated user */
+Route::get('students', 'StudentAPIController@index');
+Route::get('students/{student}', 'StudentAPIController@show');
+/** StudyStatus Routes, that's it */
+
+/** ManageHistory Apis which doesnt needs Authenticated user */
+Route::get('manage_histories', 'ManageHistoryAPIController@index');
+Route::get('manage_histories/{manage_histories}', 'ManageHistoryAPIController@show');
+/** ManageHistory Routes, that's it */
 
 Route::resource('notifications', 'NotificationAPIController');
 
@@ -118,6 +230,5 @@ Route::get('test-broadcast/', function(Request $request){
       return  event(new \App\Events\NewMessage($request->get('message')));
 
 });
-
 
 /** Fire Event */

@@ -61,20 +61,8 @@ class RoleInitial extends Command
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
 
             $role = Role::create([
-                'name' => 'developer',
-                'guard_name' => 'api',
-            ]);
-            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
-
-            $role = Role::create([
                 'name' => 'admin',
                 'guard_name' => 'web',
-            ]);
-            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
-
-            $role = Role::create([
-                'name' => 'admin',
-                'guard_name' => 'api',
             ]);
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
 
@@ -85,20 +73,8 @@ class RoleInitial extends Command
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
 
             $role = Role::create([
-                'name' => 'content_manager',
-                'guard_name' => 'api',
-            ]);
-            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
-
-            $role = Role::create([
                 'name' => 'verified',
                 'guard_name' => 'web',
-            ]);
-            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
-
-            $role = Role::create([
-                'name' => 'verified',
-                'guard_name' => 'api',
             ]);
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
 
