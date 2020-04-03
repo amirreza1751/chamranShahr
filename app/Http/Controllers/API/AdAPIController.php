@@ -355,6 +355,8 @@ class AdAPIController extends AppBaseController
             return $this->sendError('Ad not found');
         }
 
+        $this->authorize('show_book_ad', $ad);
+
         return $this->sendResponse($ad, 'Ad retrieved successfully');
     }
 
@@ -362,6 +364,9 @@ class AdAPIController extends AppBaseController
 
     public function index_book_ads(Request $request){
         /** Displays all the book advertisements. */
+
+        $this->authorize('index_book_ads');
+
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
         $ads = $this->adRepository->with('advertisable')->paginate(10);
@@ -371,6 +376,9 @@ class AdAPIController extends AppBaseController
 
     public function my_book_ads(Request $request){
         /** User can view a list of their advertisements which are created. */
+
+        $this->authorize('my_book_ads');
+
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
         $my_book_ads = $this->adRepository->with('advertisable')->where('creator_id', Auth('api')->user()->id)->paginate(10);

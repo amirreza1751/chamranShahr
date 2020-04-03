@@ -63,7 +63,7 @@ class UserAPIController extends AppBaseController
      *              @SWG\Property(
      *                  property="data",
      *                  type="array",
-     *                  @SWG\Items(ref="#/definitions/User")
+     *                  @SWG\Items(ref="App/User")
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -99,7 +99,7 @@ class UserAPIController extends AppBaseController
      *          in="body",
      *          description="User that should be stored",
      *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
+     *          @SWG\Schema(ref="App/User")
      *      ),
      *      @SWG\Response(
      *          response=200,
@@ -112,7 +112,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="App/User"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -163,7 +163,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="App/User"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -210,7 +210,7 @@ class UserAPIController extends AppBaseController
      *          in="body",
      *          description="User that should be updated",
      *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
+     *          @SWG\Schema(ref="App/User")
      *      ),
      *      @SWG\Response(
      *          response=200,
@@ -223,7 +223,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="App/User"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -316,52 +316,7 @@ class UserAPIController extends AppBaseController
      *******************************************************************************************************************
      */
 
-    /**
-     * @param int $id
-     * @param UpdateUserAPIRequest $request
-     * @return Response
-     *
-     * @SWG\Put(
-     *      path="/users/{id}",
-     *      summary="Update the specified User in storage",
-     *      tags={"User"},
-     *      description="Update User",
-     *      produces={"application/json"},
-     *      @SWG\Parameter(
-     *          name="id",
-     *          description="id of User",
-     *          type="integer",
-     *          required=true,
-     *          in="path"
-     *      ),
-     *      @SWG\Parameter(
-     *          name="body",
-     *          in="body",
-     *          description="User that should be updated",
-     *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
-     *      ),
-     *      @SWG\Response(
-     *          response=200,
-     *          description="successful operation",
-     *          @SWG\Schema(
-     *              type="object",
-     *              @SWG\Property(
-     *                  property="success",
-     *                  type="boolean"
-     *              ),
-     *              @SWG\Property(
-     *                  property="data",
-     *                  ref="#/definitions/User"
-     *              ),
-     *              @SWG\Property(
-     *                  property="message",
-     *                  type="string"
-     *              )
-     *          )
-     *      )
-     * )
-     */
+
     public function update_scu_id(Request $request)
     {
         $this->authorize('update_scu_id');
@@ -386,52 +341,7 @@ class UserAPIController extends AppBaseController
         return $this->sendResponse($user->scu_id_to_update, 'Scu Id Change Request is submitted successfully');
     }
 
-    /**
-     * @param int $id
-     * @param UpdateUserAPIRequest $request
-     * @return Response
-     *
-     * @SWG\Put(
-     *      path="/users/{id}",
-     *      summary="Update the specified User in storage",
-     *      tags={"User"},
-     *      description="Update User",
-     *      produces={"application/json"},
-     *      @SWG\Parameter(
-     *          name="id",
-     *          description="id of User",
-     *          type="integer",
-     *          required=true,
-     *          in="path"
-     *      ),
-     *      @SWG\Parameter(
-     *          name="body",
-     *          in="body",
-     *          description="User that should be updated",
-     *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
-     *      ),
-     *      @SWG\Response(
-     *          response=200,
-     *          description="successful operation",
-     *          @SWG\Schema(
-     *              type="object",
-     *              @SWG\Property(
-     *                  property="success",
-     *                  type="boolean"
-     *              ),
-     *              @SWG\Property(
-     *                  property="data",
-     *                  ref="#/definitions/User"
-     *              ),
-     *              @SWG\Property(
-     *                  property="message",
-     *                  type="string"
-     *              )
-     *          )
-     *      )
-     * )
-     */
+
     public function update_national_id(Request $request)
     {
         $this->authorize('update_national_id');
@@ -479,7 +389,7 @@ class UserAPIController extends AppBaseController
      *          in="body",
      *          description="User that should be updated",
      *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
+     *          @SWG\Schema(ref="App/User")
      *      ),
      *      @SWG\Response(
      *          response=200,
@@ -492,7 +402,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="App/User"
      *              ),
      *              @SWG\Property(
      *                  property="message",

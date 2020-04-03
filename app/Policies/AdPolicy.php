@@ -81,9 +81,79 @@ class AdPolicy
         //
     }
 
+    /**
+     * Determine whether the user can permanently delete the ad.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Models\Ad  $ad
+     * @return mixed
+     */
+    public function show_book_ad(User $user, Ad $ad)
+    {
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->hasRole('verified')){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function index_book_ad(User $user)
+    {
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif($user->is_verified){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public function my_book_ads(User $user)
+    {
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif($user->is_verified){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public function create_book_ad(User $user)
     {
-        if($user->hasRole('admin')){
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
             return true;
         }
         elseif($user->is_verified){
@@ -103,11 +173,19 @@ class AdPolicy
      */
     public function remove_book_ad(User $user, Ad $ad)
     {
-        if($user->hasRole('admin')){
+        if($user->hasRole('developer')){
             return true;
         }
-        elseif($ad->creator->id == $user->id){
+        elseif($user->hasRole('admin')){
             return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->id == $ad->creator->id){ // if user request to remove him/her Ads
+            if ($user->hasRole('verified')){
+                return true;
+            }
         }
         else {
             return false;
@@ -116,14 +194,21 @@ class AdPolicy
 
     public function update_book_ad(User $user, Ad $ad)
     {
-        if($user->hasRole('admin')){
+        if($user->hasRole('developer')){
             return true;
         }
-        elseif($ad->creator->id == $user->id){
+        elseif($user->hasRole('admin')){
             return true;
         }
-        else {
-            return false;
+        elseif ($user->hasRole('content_manager')){
+            return true;
         }
+        elseif ($user->id == $ad->creator->id){ // if user request to update him/her Ads
+            if ($user->hasRole('verified')){
+                return true;
+            }
+        }
+
+        return false;
     }
 }
