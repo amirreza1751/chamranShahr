@@ -76,6 +76,11 @@ Route::group(['middleware' => 'auth:web'], function(){
 
         Route::resource('studyStatuses', 'StudyStatusController'); // ++
 
+        Route::resource('externalServiceTypes', 'ExternalServiceTypeController'); // ++
+
+        Route::get('/externalServices/ajaxOwner', 'ExternalServiceController@ajaxOwner');
+        Route::resource('externalServices', 'ExternalServiceController'); // ++
+
     });
 
     Route::group(['middleware' => ['role:admin|developer|content_manager']], function(){
@@ -88,7 +93,9 @@ Route::group(['middleware' => 'auth:web'], function(){
 
         Route::resource('notifications', 'NotificationController');
 
+        Route::get('/notices/ajaxOwner', 'NoticeController@ajaxOwner');
         Route::resource('notices', 'NoticeController');
+
 
         Route::get('ads/show_advertisable/{id}', 'AdController@show_advertisable')->name('show_advertisable');
         Route::get('ads/verify/{id}', 'AdController@verify_ad')->name('verify_ad');
@@ -113,6 +120,12 @@ Route::middleware('auth:web')->get('/test', function(){
 
 Route::get('roletest', function(){
     Auth::user()->assignRole('developer');
+});
+
+Route::get('xmltest2', function (){
+    $input = collect((new Reader(new Document(new Container())))->load('http://scu.ac.ir/web/ugrad/%D8%B5%D9%81%D8%AD%D9%87-%D8%A7%D8%B5%D9%84%DB%8C/-/asset_publisher/UwTaYRF3YZS8/rss?p_p_cacheability=cacheLevelPage')); // get XML data notices from SCU-API
+//    return $input;
+    dump($input);
 });
 
 

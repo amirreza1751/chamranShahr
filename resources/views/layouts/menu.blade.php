@@ -107,3 +107,13 @@
     <a href="{!! route('manageHistories.index') !!}"><i class="fa fa-edit"></i><span>Manage Histories</span></a>
 </li>
 
+
+
+<li class="{{ Request::is('externalServiceTypes*') ? 'active' : '' }}">
+    <a href="{!! route('externalServiceTypes.index') !!}"><i class="fa fa-edit"></i><span>External Service Types</span></a>
+</li>
+
+<li class="{{ Request::is('externalServices*') ? 'active' : '' }}">
+    <a href="{!! route('externalServices.index') !!}"><i class="fa fa-edit"></i><span>External Services</span></a>
+</li>
+

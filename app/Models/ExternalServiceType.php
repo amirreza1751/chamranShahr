@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @SWG\Definition(
- *      definition="News",
+ *      definition="ExternalServiceType",
  *      required={""},
  *      @SWG\Property(
  *          property="id",
@@ -21,24 +21,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          type="string"
  *      ),
  *      @SWG\Property(
- *          property="link",
- *          description="link",
- *          type="string"
- *      ),
- *      @SWG\Property(
- *          property="description",
- *          description="description",
- *          type="string"
- *      ),
- *      @SWG\Property(
- *          property="path",
- *          description="path",
- *          type="string"
- *      ),
- *      @SWG\Property(
- *          property="field_for_test",
- *          description="field_for_test",
- *          type="string"
+ *          property="version",
+ *          description="version",
+ *          type="number",
+ *          format="number"
  *      ),
  *      @SWG\Property(
  *          property="created_at",
@@ -60,12 +46,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      )
  * )
  */
-class News extends Model
+class ExternalServiceType extends Model
 {
     use SoftDeletes;
 
-    public $table = 'news';
-
+    public $table = 'external_service_types';
+    
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -73,15 +59,10 @@ class News extends Model
     protected $dates = ['deleted_at'];
 
 
+
     public $fillable = [
         'title',
-        'link',
-        'description',
-        'path',
-        'field_for_test',
-        'owner_type',
-        'owner_id',
-        'creator_id',
+        'version'
     ];
 
     /**
@@ -92,10 +73,7 @@ class News extends Model
     protected $casts = [
         'id' => 'integer',
         'title' => 'string',
-        'link' => 'string',
-        'description' => 'string',
-        'path' => 'string',
-        'field_for_test' => 'string'
+        'version' => 'float'
     ];
 
     /**
@@ -104,8 +82,8 @@ class News extends Model
      * @var array
      */
     public static $rules = [
-
+        'title' => 'required'
     ];
 
-
+    
 }

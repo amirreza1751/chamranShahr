@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @SWG\Definition(
- *      definition="News",
+ *      definition="ExternalService",
  *      required={""},
  *      @SWG\Property(
  *          property="id",
@@ -21,24 +21,36 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          type="string"
  *      ),
  *      @SWG\Property(
- *          property="link",
- *          description="link",
+ *          property="english_title",
+ *          description="english_title",
  *          type="string"
  *      ),
  *      @SWG\Property(
- *          property="description",
- *          description="description",
+ *          property="url",
+ *          description="url",
  *          type="string"
  *      ),
  *      @SWG\Property(
- *          property="path",
- *          description="path",
+ *          property="type_id",
+ *          description="type_id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="content_type",
+ *          description="content_type",
  *          type="string"
  *      ),
  *      @SWG\Property(
- *          property="field_for_test",
- *          description="field_for_test",
+ *          property="owner_type",
+ *          description="owner_type",
  *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="owner_id",
+ *          description="owner_id",
+ *          type="integer",
+ *          format="int32"
  *      ),
  *      @SWG\Property(
  *          property="created_at",
@@ -60,11 +72,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      )
  * )
  */
-class News extends Model
+class ExternalService extends Model
 {
     use SoftDeletes;
 
-    public $table = 'news';
+    public $table = 'external_services';
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
@@ -73,15 +85,15 @@ class News extends Model
     protected $dates = ['deleted_at'];
 
 
+
     public $fillable = [
         'title',
-        'link',
-        'description',
-        'path',
-        'field_for_test',
+        'english_title',
+        'url',
+        'type_id',
+        'content_type',
         'owner_type',
-        'owner_id',
-        'creator_id',
+        'owner_id'
     ];
 
     /**
@@ -92,10 +104,12 @@ class News extends Model
     protected $casts = [
         'id' => 'integer',
         'title' => 'string',
-        'link' => 'string',
-        'description' => 'string',
-        'path' => 'string',
-        'field_for_test' => 'string'
+        'english_title' => 'string',
+        'url' => 'string',
+        'type_id' => 'integer',
+        'content_type' => 'string',
+        'owner_type' => 'string',
+        'owner_id' => 'integer'
     ];
 
     /**
@@ -104,8 +118,15 @@ class News extends Model
      * @var array
      */
     public static $rules = [
-
+        'url' => 'required',
+        'content_type' => 'required',
+        'owner_type' => 'required',
+        'owner_id' => 'required'
     ];
 
+    public function owner()
+    {
+        return $this->morphTo();
+    }
 
 }

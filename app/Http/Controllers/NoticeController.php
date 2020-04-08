@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateNoticeRequest;
 use App\Http\Requests\UpdateNoticeRequest;
+use App\Models\Department;
+use App\Models\Notice;
 use App\Repositories\NoticeRepository;
 use App\Http\Controllers\AppBaseController;
+use App\User;
 use Illuminate\Http\Request;
 use Flash;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -15,6 +18,9 @@ class NoticeController extends AppBaseController
 {
     /** @var  NoticeRepository */
     private $noticeRepository;
+    private $owner_types = array(
+        'Department' => Department::class,
+    );
 
     public function __construct(NoticeRepository $noticeRepo)
     {
@@ -43,7 +49,10 @@ class NoticeController extends AppBaseController
      */
     public function create()
     {
-        return view('notices.create');
+        $creators = User::all()->pluck('full_name_scu_id', 'id');
+        return view('notices.create')
+            ->with('creators', $creators)
+            ->with('owner_types', $this->owner_types);
     }
 
     /**
@@ -101,7 +110,10 @@ class NoticeController extends AppBaseController
             return redirect(route('notices.index'));
         }
 
-        return view('notices.edit')->with('notice', $notice);
+        $creators = User::all()->pluck('full_name_scu_id', 'id');
+        return view('notices.edit')->with('notice', $notice)
+            ->with('creators', $creators)
+            ->with('owner_types', $this->owner_types);
     }
 
     /**
@@ -156,5 +168,21 @@ class NoticeController extends AppBaseController
     public function repoCreate($data)
     {
         $this->noticeRepository->create((array)$data);
+    }
+
+    public function ajaxOwner(Request $request)
+    {
+        $notice = Notice::find($request->id);
+        $model_name =  $request['model_name'];
+        $model = new $model_name();
+        $models = $model::all();
+        foreach ($models as $model){
+            if (isset($notice)){
+                if ($notice->owner_type == $model_name && $notice->owner_id == $model->id){
+                    $model['selected'] = true;
+                }
+            }
+        }
+        return $models;
     }
 }

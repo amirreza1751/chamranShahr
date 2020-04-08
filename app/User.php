@@ -63,6 +63,16 @@ class User extends Authenticatable
         'national_id' => 'unique:users',
     ];
 
+    public function getFullNameAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function getFullNameScuIdAttribute()
+    {
+        return "{$this->first_name} {$this->last_name} {$this->scu_id}";
+    }
+
     public function gender()
     {
         return $this->belongsTo(Gender::class, 'gender_unique_code', 'unique_code');

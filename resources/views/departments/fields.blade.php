@@ -25,7 +25,8 @@
 <!-- Manage Level Id Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('manage_level_id', 'Manage Level Id:') !!}
-    {!! Form::number('manage_level_id', null, ['class' => 'form-control']) !!}
+{{--    {!! Form::number('manage_level_id', null, ['class' => 'form-control']) !!}--}}
+    {!! Form::select('manage_level_id', $manage_levels, null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Submit Field -->

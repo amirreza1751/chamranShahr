@@ -245,3 +245,12 @@ Route::get('test-broadcast/', function(Request $request){
 });
 
 /** Fire Event */
+
+
+
+
+
+
+Route::resource('external_service_types', 'ExternalServiceTypeAPIController');
+
+Route::resource('external_services', 'ExternalServiceAPIController');

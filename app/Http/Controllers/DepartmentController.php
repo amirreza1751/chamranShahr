@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
+use App\Models\ManageLevel;
 use App\Repositories\DepartmentRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -43,7 +44,8 @@ class DepartmentController extends AppBaseController
      */
     public function create()
     {
-        return view('departments.create');
+        return view('departments.create')
+            ->with('manage_levels', ManageLevel::all()->pluck('management_title_level', 'id'));
     }
 
     /**

@@ -22,4 +22,13 @@ class GeneralFunction
             }
         }
     }
+
+    public function databaseForeignKeyCheck($check = true)
+    {
+        if ($check){
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        } else {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        }
+    }
 }

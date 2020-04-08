@@ -65,7 +65,7 @@ class Notice extends Model
     use SoftDeletes;
 
     public $table = 'notices';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -78,7 +78,10 @@ class Notice extends Model
         'link',
         'path',
         'description',
-        'author'
+        'author',
+        'owner_type',
+        'owner_id',
+        'creator_id',
     ];
 
     /**
@@ -101,8 +104,9 @@ class Notice extends Model
      * @var array
      */
     public static $rules = [
-        
+        'owner_type' => 'required',
+        'owner_id' => 'required',
     ];
 
-    
+
 }

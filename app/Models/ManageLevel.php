@@ -108,5 +108,9 @@ class ManageLevel extends Model
         'level' => 'required|unique'
     ];
 
+    public function getManagementTitleLevelAttribute()
+    {
+        return "{$this->management_title} {$this->level}";
+    }
 
 }
