@@ -51,7 +51,7 @@ class ExternalServiceType extends Model
     use SoftDeletes;
 
     public $table = 'external_service_types';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -85,5 +85,8 @@ class ExternalServiceType extends Model
         'title' => 'required'
     ];
 
-    
+    public function external_services()
+    {
+        return $this->hasMany(ExternalService::class);
+    }
 }

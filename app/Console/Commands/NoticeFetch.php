@@ -13,8 +13,8 @@ use Illuminate\Container\Container;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
-use Laravie\Parser\Xml\Reader;
 use Orchestra\Parser\Xml\Document;
+use Orchestra\Parser\Xml\Reader;
 use Weidner\Goutte\GoutteFacade;
 
 class NoticeFetch extends Command
@@ -57,47 +57,56 @@ class NoticeFetch extends Command
      */
     public function handle()
     {
-//        ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
+        ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
         $cc = new ConsoleColor();
-        $external_services = ExternalService::where('content_type', Notice::class)->get();
+        try {
 
-        /**
-         * this user is the default user of the university created by UserInitial command at first
-         * consist of special information,
-         * and it use for specific functionality,
-         * such as fill creator_id field of notices which retrieved from Scu portal using it's id
-         */
-        $scu_user = User::where('scu_id', 'scu')
-            ->where('national_id', 'scu')
-            ->where('username', 'scu')->first();
+            $external_services = ExternalService::where('content_type', Notice::class)->get();
 
-        foreach ($external_services as $external_service) {
-            dump("read data from SCU notice rss: " . $external_service->title ."...");
-            $input = collect((new Reader(new Document(new Container())))->load($external_service->url)); // get XML data notices from SCU-API
-            $datas = ((array)$input[$input->keys()[3]])['entry']; // fetch news from xml file and convert to array
+            /**
+             * this user is the default user of the university created by UserInitial command at first
+             * consist of special information,
+             * and it use for specific functionality,
+             * such as fill creator_id field of notices which retrieved from Scu portal using it's id
+             */
+            $scu_user = User::where('scu_id', 'scu')
+                ->where('national_id', 'scu')
+                ->where('username', 'scu')->first();
 
-            dump('images store on server for specific notice:');
-            foreach ($datas as $data) {
+            foreach ($external_services as $external_service) {
+                dump("read data from SCU notice rss: " . $external_service->title . "...");
+                dump("( URL:\t" . $external_service->url . " )");
+                $app = new Container;
+                $document = new Document($app);
+                $reader = new Reader($document);
+                $input = collect($reader->load($external_service->url)); // get XML data notices from SCU-API
+//                $input = collect((new Reader(new Document(new Container())))->load($external_service->url)); // get XML data notices from SCU-API
+                $datas = ((array)$input[$input->keys()[3]])['entry']; // fetch news from xml file and convert to array
 
-                $notice = [
-                    'title' => strval($data->title),
-                    'link' => strval(($data->link)[0]['href']),
-                    'path' => strval(($data->link)[1]['href']),
-                    'description' => strval($data->summary),
-                    'author' => strval($data->author->name),
-                    'creator_id' => $scu_user->id,
-                    'owner_type' => $external_service->owner_type,
-                    'owner_id' => $external_service->owner_id,
-                ];
+                dump('images store on server for specific notice:');
+                foreach ($datas as $data) {
 
-                $notice['description'] = str_replace("<br>", '\n', $notice['description']);
-                $notice['description'] = str_replace("&nbsp;", ' ', $notice['description']);
+                    $default_image = false;
 
-                $check = Notice::where('link', $notice['link'])->first();
-                // find out that this news is a new one or not
-                if (!isset($check)) { // if this notice is a new one
+                    $notice = [
+                        'title' => strval($data->title),
+                        'link' => strval(($data->link)[0]['href']),
+                        'path' => strval(($data->link)[1]['href']),
+                        'description' => strval($data->summary),
+                        'author' => strval($data->author->name),
+                        'creator_id' => $scu_user->id,
+                        'owner_type' => $external_service->owner_type,
+                        'owner_id' => $external_service->owner_id,
+                    ];
 
-                        if( $notice['path'] != "" ) {// image exist
+                    $notice['description'] = str_replace("<br>", '\n', $notice['description']);
+                    $notice['description'] = str_replace("&nbsp;", ' ', $notice['description']);
+
+                    $check = Notice::where('link', $notice['link'])->first();
+                    // find out that this news is a new one or not
+                    if (!isset($check)) { // if this notice is a new one
+
+                        if ($notice['path'] != "") {// image exist
                             //                      < get image size >
                             stream_context_set_default(array('http' => array('method' => 'HEAD')));
                             $head = array_change_key_case(get_headers($notice['path'], 1));
@@ -118,36 +127,51 @@ class NoticeFetch extends Command
                                 curl_close($ch);
                                 fclose($fp);
 
-                                $path = Storage::putFile('public/notices_images/'. app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
+                                $path = Storage::putFile('public/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
                                 $path = URL::to('/') . '/' . str_replace('public', 'storage', $path);
                                 $notice['path'] = $path;
-                                dump($notice['path']);
+
                             } else { // image size is > 2MiB
                                 $notice['path'] = URL::to('/') . Storage::url('notices_images/notice_default_image.jpg');
-                                dump($notice['path']);
+                                $default_image = true;
                             }
-                        }  else { // notice have no image
+                        } else { // notice have no image
                             $notice['path'] = URL::to('/') . Storage::url('notices_images/notice_default_image.jpg');
-                            dump($notice['path']);
+                            $default_image = true;
                         }
-                    $this->noticeRepository->create($notice);
+                        $cc->print_success('image url:', "\t"); dump($notice['path']); if ($default_image) { $cc->print_warning("\t-> default image"); }
+                        $this->noticeRepository->create($notice);
+                    }
                 }
+
+                //                      < clear tmp directory >
+                $files = glob('tmp/notices_tmp*'); //get all file names
+                if (sizeof($files) > 0) {
+                    $cc->print_warning('clean tmp directory:');
+                    dump($files);
+                    foreach ($files as $file) {
+                        if (is_file($file))
+                            unlink($file); //delete file
+                    }
+                } else {
+                    $cc->print_warning('no new image to store');
+                }
+                //                      < clear tmp directory >
+
+                $cc->print_success("----------------------------------------------------------------------------------------\tretrieve " . $external_service->title . " done successfully.\n");
             }
 
-            //                      < clear tmp directory >
-            dump('clean tmp directory:');
-            $files = glob('tmp/notices_tmp*'); //get all file names
-            dump($files);
-            foreach ($files as $file) {
-                if (is_file($file))
-                    unlink($file); //delete file
+            $cc->print_success("========================================================================================\tnotice:initial command done successfully.\n");
+        } catch (\Exception $e) {
+            $cc->print_error("\n\n\noops!");
+            $cc->print_warning("fetch procedure crash due to some problem with this error:");
+            $cc->print_error($e->getMessage());
+            $cc->print_help("the exception thrown at line " . $e->getLine() . " of\t" . str_after($e->getFile(), base_path()) . "\tfile, pls check that and try again");
+            $cc->print_warning("do you want to see exception trace back?(y or n)");
+            $c = fread(STDIN, 1);
+            if ($c == 'y') {
+                var_dump($e->getTraceAsString());
             }
-            //                      < clear tmp directory >
-
-            $cc->print_success("----------------------------------------------------------------------------------------\tretrieve " .  $external_service->title . " done successfully.\n");
         }
-
-        $cc->print_success("========================================================================================\tnotice:initial command done successfully.\n");
-
     }
 }

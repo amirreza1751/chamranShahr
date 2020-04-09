@@ -108,15 +108,18 @@ class ExternalServiceController extends AppBaseController
      */
     public function edit($id)
     {
-        $externalService = $this->externalServiceRepository->findWithoutFail($id);
+        $external_service = $this->externalServiceRepository->findWithoutFail($id);
 
-        if (empty($externalService)) {
+        if (empty($external_service)) {
             Flash::error('External Service not found');
 
             return redirect(route('externalServices.index'));
         }
 
-        return view('external_services.edit')->with('externalService', $externalService);
+        return view('external_services.edit')->with('external_service', $external_service)
+            ->with('external_service_types', ExternalServiceType::all()->pluck('title', 'id'))
+            ->with('content_types', $this->content_types)
+            ->with('owner_types', $this->owner_types);
     }
 
     /**

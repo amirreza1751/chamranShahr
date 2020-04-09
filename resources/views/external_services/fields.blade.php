@@ -33,17 +33,17 @@
     <select class="form-control m-bot15" name="content_type" id="content_type">
         <option disabled selected value> -- select an option -- </option>
         @if(isset($external_service)) // edit view
-        @foreach($content_types as $key => $value)
-            @if($value == $external_service->content_type)
-                <option value="{{ $value }}" selected>{{ $key }}</option>
-            @else
-                <option value="{{ $value }}">{{ $key }}</option>
-            @endif
-        @endforeach
+            @foreach($content_types as $key => $value)
+                @if($value == $external_service->content_type)
+                    <option value="{{ $value }}" selected>{{ $key }}</option>
+                @else
+                    <option value="{{ $value }}">{{ $key }}</option>
+                @endif
+            @endforeach
         @else                   // create view
-        @foreach($content_types as $key => $value)
-            <option value="{{ $value }}">{{ $key }}</option>
-        @endforeach
+            @foreach($content_types as $key => $value)
+                <option value="{{ $value }}">{{ $key }}</option>
+            @endforeach
         @endif
     </select>
 </div>
@@ -54,17 +54,17 @@
     <select class="form-control m-bot15" name="owner_type" id="owner_type">
         <option disabled selected value> -- select an option -- </option>
         @if(isset($external_service)) // edit view
-        @foreach($owner_types as $key => $value)
-            @if($value == $external_service->owner_type)
-                <option value="{{ $value }}" selected>{{ $key }}</option>
-            @else
-                <option value="{{ $value }}">{{ $key }}</option>
-            @endif
-        @endforeach
+            @foreach($owner_types as $key => $value)
+                @if($value == $external_service->owner_type)
+                    <option value="{{ $value }}" selected>{{ $key }}</option>
+                @else
+                    <option value="{{ $value }}">{{ $key }}</option>
+                @endif
+            @endforeach
         @else                   // create view
-        @foreach($owner_types as $key => $value)
-            <option value="{{ $value }}">{{ $key }}</option>
-        @endforeach
+            @foreach($owner_types as $key => $value)
+                <option value="{{ $value }}">{{ $key }}</option>
+            @endforeach
         @endif
     </select>
 </div>

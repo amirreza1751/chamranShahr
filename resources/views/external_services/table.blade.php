@@ -4,7 +4,7 @@
             <tr>
                 <th>Title</th>
         <th>English Title</th>
-        <th>Url</th>
+        <th class="col-sm-4">Url</th>
         <th>Type Id</th>
         <th>Content Type</th>
         <th>Owner</th>
@@ -17,9 +17,9 @@
                 <td>{!! $externalService->title !!}</td>
             <td>{!! $externalService->english_title !!}</td>
             <td><a href="{!! $externalService->url !!}">{!! $externalService->url !!}</a></td>
-            <td>{!! $externalService->type_id !!}</td>
-            <td>{!! $externalService->content_type !!}</td>
-            <td>{!! $externalService->owner->title !!} <a href="{!! app($externalService->owner_type)->getTable() . '.show',  $externalService->owner->id !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a></td>
+            <td>{!! $externalService->type->title !!}  <a href="{!! route('externalServiceTypes.show', [$externalService->type->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a></td>
+            <td>{!!  array_last(explode("\\", $externalService->content_type)) !!}<a href="{!! route(app($externalService->content_type)->getTable() . '.index') !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a></td>
+            <td>{!! $externalService->owner->title !!} <a href="{!! route(app( $externalService->owner_type)->getTable() . '.show', [$externalService->owner->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a></td>
                 <td>
                     {!! Form::open(['route' => ['externalServices.destroy', $externalService->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>

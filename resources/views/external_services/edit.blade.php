@@ -11,7 +11,7 @@
        <div class="box box-primary">
            <div class="box-body">
                <div class="row">
-                   {!! Form::model($externalService, ['route' => ['externalServices.update', $externalService->id], 'method' => 'patch']) !!}
+                   {!! Form::model($external_service, ['route' => ['externalServices.update', $external_service->id], 'method' => 'patch']) !!}
 
                         @include('external_services.fields')
 

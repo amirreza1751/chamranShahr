@@ -129,4 +129,9 @@ class ExternalService extends Model
         return $this->morphTo();
     }
 
+    public function type()
+    {
+        return $this->belongsTo(ExternalServiceType::class);
+    }
+
 }
