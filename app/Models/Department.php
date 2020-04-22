@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -120,5 +121,15 @@ class Department extends Model
     public function notices()
     {
         return $this->morphMany(Notice::class, 'owner');
+    }
+
+    public function manager()
+    {
+        $manage_history = $this->morphMany(ManageHistory::class, 'managed')
+            ->where('is_active', true)
+            ->orderBy('begin_date', 'desc')->first();
+        if (isset($manage_history)){
+            return User::find($manage_history->manager_id);
+        }
     }
 }

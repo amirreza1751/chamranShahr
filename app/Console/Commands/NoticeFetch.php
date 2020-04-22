@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\General\ConsoleColor;
+use App\General\GeneralVariable;
 use App\Models\ExternalService;
 use App\Models\Notice;
 use App\Repositories\NoticeRepository;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\URL;
 use Orchestra\Parser\Xml\Document;
 use Orchestra\Parser\Xml\Reader;
 use Weidner\Goutte\GoutteFacade;
+use Orchestra\Parser\Xml\Facade as XmlParser;
 
 class NoticeFetch extends Command
 {
@@ -59,8 +61,11 @@ class NoticeFetch extends Command
     {
         ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
         $cc = new ConsoleColor();
+        $default_image_dir = URL::to('/') . Storage::url('notices_images/notice_default_image.jpg');
         try {
-
+            /**
+             * get all external services which are notice type
+             */
             $external_services = ExternalService::where('content_type', Notice::class)->get();
 
             /**
@@ -75,18 +80,33 @@ class NoticeFetch extends Command
 
             foreach ($external_services as $external_service) {
                 dump("read data from SCU notice rss: " . $external_service->title . "...");
-                dump("( URL:\t" . $external_service->url . " )");
-                $app = new Container;
-                $document = new Document($app);
-                $reader = new Reader($document);
-                $input = collect($reader->load($external_service->url)); // get XML data notices from SCU-API
-//                $input = collect((new Reader(new Document(new Container())))->load($external_service->url)); // get XML data notices from SCU-API
-                $datas = ((array)$input[$input->keys()[3]])['entry']; // fetch news from xml file and convert to array
+                dump("( URL: " . $external_service->url . " )");
 
-                dump('images store on server for specific notice:');
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_URL, $external_service->url);
+                $xml = curl_exec($ch);  // get xml content of this service rss url
+                curl_close($ch);
+
+                $xml = simplexml_load_string($xml);
+
+                /**
+                 * scu portal have special structure and we don't need all information its provide;
+                 * so we use certain part of information which retrieved in "entry" key
+                 * that's an array of notices
+                 */
+                $datas = $xml->entry;
+
+                /** retrieve owner of the notice; for example: department */
+                $model_name =  $external_service->owner_type;
+                $model = new $model_name();
+                $owner = $model::findOrFail($external_service->owner_id);
+
+                dump('medias store on server for specific notice:');
                 foreach ($datas as $data) {
-
                     $default_image = false;
+                    $default_image_message = '';
 
                     $notice = [
                         'title' => strval($data->title),
@@ -94,20 +114,41 @@ class NoticeFetch extends Command
                         'path' => strval(($data->link)[1]['href']),
                         'description' => strval($data->summary),
                         'author' => strval($data->author->name),
-                        'creator_id' => $scu_user->id,
                         'owner_type' => $external_service->owner_type,
                         'owner_id' => $external_service->owner_id,
                     ];
 
+                    /**
+                     * check that this notice's owner has manager or not
+                     * if not, use default user of the university created first of this procedure
+                     */
+                    if(isset($owner)){
+                        $manager = $owner->manager();
+                        if (isset($manager)){
+                            $notice['creator_id'] = $owner->manager()->id;
+                        } else {
+                            $notice['creator_id'] = $scu_user->id;
+                        }
+                    } else {
+                        $notice['creator_id'] = $scu_user->id;
+                    }
+
+
                     $notice['description'] = str_replace("<br>", '\n', $notice['description']);
                     $notice['description'] = str_replace("&nbsp;", ' ', $notice['description']);
 
+                    /**
+                     * identifier of each retrieved notice is its "link" (id attribute in xml),
+                     * so check out that in notices table to find out that is a new one or not
+                     */
                     $check = Notice::where('link', $notice['link'])->first();
-                    // find out that this news is a new one or not
                     if (!isset($check)) { // if this notice is a new one
-
                         if ($notice['path'] != "") {// image exist
-                            //                      < get image size >
+
+                            /**
+                             * brief look at request header to check some details
+                             * such as file size, extension and etc.
+                             */
                             stream_context_set_default(array('http' => array('method' => 'HEAD')));
                             $head = array_change_key_case(get_headers($notice['path'], 1));
                             $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
@@ -115,46 +156,79 @@ class NoticeFetch extends Command
                             if (!$clen) { // cannot retrieve file size, return "-1"
                                 $clen = -1;
                             }
-                            //                      < get image size >
 
-                            if ($clen < 2097152) { // if image size < 2MiB
-                                $name = 'tmp/notices_tmp' . str_random(4) . '.tmp';
-                                $ch = curl_init($notice['path']);
-                                $fp = fopen($name, 'wb') or die('Permission error');
-                                curl_setopt($ch, CURLOPT_FILE, $fp);
-                                curl_setopt($ch, CURLOPT_HEADER, 0);
-                                curl_exec($ch);
-                                curl_close($ch);
-                                fclose($fp);
+                            $pathinfo = pathinfo($notice['path']);
+                            /**
+                             * < get media extension >
+                             * extract substring after last '.' and remove possible parameters
+                             * example:
+                             * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
+                             * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
+                             *                                              we need this^
+                             */
+                            $extension = explode( "?", $pathinfo['extension'])[0];
 
-                                $path = Storage::putFile('public/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
-                                $path = URL::to('/') . '/' . str_replace('public', 'storage', $path);
-                                $notice['path'] = $path;
+                            if(str_contains(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
+                                /** < get media size > */
+                                if ($clen < 2097152) { // if media size < 2MiB
 
-                            } else { // image size is > 2MiB
-                                $notice['path'] = URL::to('/') . Storage::url('notices_images/notice_default_image.jpg');
+                                    $name = 'tmp/notices_tmp' . str_random(4) . '.tmp';
+                                    $ch = curl_init($notice['path']);
+                                    $fp = fopen($name, 'wb') or die('Permission error');
+                                    curl_setopt($ch, CURLOPT_FILE, $fp);
+                                    curl_setopt($ch, CURLOPT_HEADER, 0);
+                                    curl_exec($ch);
+                                    curl_close($ch);
+                                    fclose($fp);
+                                    //put media to relative folder to its owner such department
+                                    $path = Storage::putFile('public/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
+                                    // create laravel symbolic link for this media
+                                    $path = URL::to('/') . '/' . str_replace('public', 'storage', $path);
+                                    $notice['path'] = $path;
+
+
+                                    /**
+                                     * ************************* SO IMPORTANT
+                                     * if for some reason can't get media of this notice
+                                     * use default image that MUST exist with this specific directory and name:
+                                     * /storage/app/public/notices_images/notice_default_image.jpg
+                                     * creating this default image is an INITIAL functionality :)
+                                     */
+                                } else { // media size is > 2MiB
+                                    $notice['path'] = $default_image_dir;
+                                    $default_image = true;
+                                    $default_image_message = 'image file was too big';
+                                }
+                            } else { // media's extension is not acceptable for this functionality
+                                $notice['path'] = $default_image_dir;
                                 $default_image = true;
+                                $default_image_message = 'media extension was not acceptable : '.$extension;
                             }
-                        } else { // notice have no image
-                            $notice['path'] = URL::to('/') . Storage::url('notices_images/notice_default_image.jpg');
+                        } else { // notice have no media
+                            $notice['path'] = $default_image_dir;
                             $default_image = true;
+                            $default_image_message = 'media file not found';
                         }
-                        $cc->print_success('image url:', "\t"); dump($notice['path']); if ($default_image) { $cc->print_warning("\t-> default image"); }
+                        $cc->print_success('media url:', "\t"); dump($notice['path']); if ($default_image) { $cc->print_warning("\t-> default image; ". $default_image_message); }
                         $this->noticeRepository->create($notice);
                     }
                 }
 
-                //                      < clear tmp directory >
+                /**
+                 * < clear tmp directory >
+                 * delete all medias stored in in tmp directory due to put it to exact directory,
+                 * because all needed medias should stored to their exact directory before, and the others probably are dummy files
+                 */
                 $files = glob('tmp/notices_tmp*'); //get all file names
                 if (sizeof($files) > 0) {
                     $cc->print_warning('clean tmp directory:');
-                    dump($files);
                     foreach ($files as $file) {
                         if (is_file($file))
                             unlink($file); //delete file
                     }
+                    dump($files);
                 } else {
-                    $cc->print_warning('no new image to store');
+                    $cc->print_warning('no new media to store');
                 }
                 //                      < clear tmp directory >
 

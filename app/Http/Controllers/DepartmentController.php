@@ -103,7 +103,8 @@ class DepartmentController extends AppBaseController
             return redirect(route('departments.index'));
         }
 
-        return view('departments.edit')->with('department', $department);
+        return view('departments.edit')->with('department', $department)
+            ->with('manage_levels', ManageLevel::all()->pluck('management_title_level', 'id'));
     }
 
     /**

@@ -11,7 +11,7 @@
        <div class="box box-primary">
            <div class="box-body">
                <div class="row">
-                   {!! Form::model($manageHistory, ['route' => ['manageHistories.update', $manageHistory->id], 'method' => 'patch']) !!}
+                   {!! Form::model($manage_history, ['route' => ['manageHistories.update', $manage_history->id], 'method' => 'patch']) !!}
 
                         @include('manage_histories.fields')
 

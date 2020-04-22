@@ -25,7 +25,6 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules()
     {
-        error_log(json_encode($this->route('user')));
         return [
             'email' => 'unique:users,email,'.$this->route('user'),
             'username' => 'unique:users,username,'.$this->route('user'),

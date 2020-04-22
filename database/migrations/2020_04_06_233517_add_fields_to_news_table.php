@@ -14,7 +14,7 @@ class AddFieldsToNewsTable extends Migration
     public function up()
     {
         Schema::table('news', function (Blueprint $table) {
-            $table->unsignedBigInteger('creator_id')->unique();
+            $table->unsignedBigInteger('creator_id');
             $table->morphs('owner');
 
             $table->foreign('creator_id')->references('id')->on('users');

@@ -22,7 +22,7 @@
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.6.0",
         "morilog/jalali": "3.*",
-        "orchestra/parser": "3.6",
+        "orchestra/parser": "^5.0",
         "pusher/pusher-php-server": "~3.0",
         "spatie/laravel-permission": "2.37",
         "stichoza/google-translate-php": "^4.0",

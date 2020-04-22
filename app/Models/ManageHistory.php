@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -74,7 +75,7 @@ class ManageHistory extends Model
     use SoftDeletes;
 
     public $table = 'manages_history';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -120,5 +121,13 @@ class ManageHistory extends Model
         'is_active' => 'required'
     ];
 
-    
+    public function managed()
+    {
+        return $this->morphTo();
+    }
+
+    public function manager()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

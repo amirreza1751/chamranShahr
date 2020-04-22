@@ -7,9 +7,11 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\Gender;
 use App\Repositories\UserRepository;
 use App\Http\Controllers\AppBaseController;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Flash;
 use Illuminate\Support\Facades\Hash;
+use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -33,6 +35,10 @@ class UserController extends AppBaseController
     {
         $this->userRepository->pushCriteria(new RequestCriteria($request));
         $users = $this->userRepository->all();
+
+        foreach ($users as $user){
+            $user['birthday'] = Jalalian::fromCarbon(new Carbon($user['birthday']))->format('d / m / Y');
+        }
 
         return view('users.index')
             ->with('users', $users);
@@ -134,9 +140,14 @@ class UserController extends AppBaseController
 
         $input = $request->all();
 
-        $input['password'] = Hash::make($input['password']);
+        if(!is_null($input['password'])){
+            $input['password'] = Hash::make($input['password']);
+        } else {
+            $input['password'] = $user->password;
+        }
+
         $input['id'] = $id;
-        $user = $this->userRepository->update($input, $id);
+//        $user = $this->userRepository->update($input, $id);
 
         Flash::success('User updated successfully.');
 

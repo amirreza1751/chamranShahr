@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateManageHistoryRequest;
 use App\Http\Requests\UpdateManageHistoryRequest;
+use App\Models\Department;
+use App\Models\ManageHistory;
 use App\Repositories\ManageHistoryRepository;
 use App\Http\Controllers\AppBaseController;
+use App\User;
 use Illuminate\Http\Request;
 use Flash;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -15,6 +18,9 @@ class ManageHistoryController extends AppBaseController
 {
     /** @var  ManageHistoryRepository */
     private $manageHistoryRepository;
+    private $managed_types = [
+        'Department' => Department::class,
+    ];
 
     public function __construct(ManageHistoryRepository $manageHistoryRepo)
     {
@@ -43,7 +49,9 @@ class ManageHistoryController extends AppBaseController
      */
     public function create()
     {
-        return view('manage_histories.create');
+        return view('manage_histories.create')
+            ->with('users', User::all()->pluck('id', 'full_name_scu_id'))
+            ->with('managed_types', $this->managed_types);
     }
 
     /**
@@ -93,15 +101,16 @@ class ManageHistoryController extends AppBaseController
      */
     public function edit($id)
     {
-        $manageHistory = $this->manageHistoryRepository->findWithoutFail($id);
+        $manage_history = $this->manageHistoryRepository->findWithoutFail($id);
 
-        if (empty($manageHistory)) {
+        if (empty($manage_history)) {
             Flash::error('Manage History not found');
 
             return redirect(route('manageHistories.index'));
         }
 
-        return view('manage_histories.edit')->with('manageHistory', $manageHistory);
+        return view('manage_histories.edit')->with('manage_history', $manage_history)
+            ->with('users', User::all()->pluck('id', 'full_name_scu_id'));
     }
 
     /**
@@ -152,4 +161,21 @@ class ManageHistoryController extends AppBaseController
 
         return redirect(route('manageHistories.index'));
     }
+
+    public function ajaxManaged(Request $request)
+    {
+        $manage_history = ManageHistory::find($request->id);
+        $model_name =  $request['model_name'];
+        $model = new $model_name();
+        $models = $model::all();
+        foreach ($models as $model){
+            if (isset($manage_history)){
+                if ($manage_history->managed_type == $model_name && $manage_history->managed_id == $model->id){
+                    $model['selected'] = true;
+                }
+            }
+        }
+        return $models;
+    }
+
 }

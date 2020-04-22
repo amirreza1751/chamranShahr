@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Gender;
+use App\Models\ManageHistory;
 use App\Models\Student;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
@@ -81,5 +82,28 @@ class User extends Authenticatable
     public function student()
     {
         return $this->hasOne(Student::class);
+    }
+
+    public function manage_history()
+    {
+        return $this->hasMany(ManageHistory::class, 'manager_id');
+    }
+
+    public function is_manager()
+    {
+        $manage_histories = $this->manage_history;
+        foreach ($this->manage_history as $manage_history){
+            if($manage_history->is_active == true){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function is_manager_of()
+    {
+        return ManageHistory::where('manager_id', $this->id)
+            ->where('is_active', true)
+            ->orderBy('begin_date', 'desc')->first();
     }
 }

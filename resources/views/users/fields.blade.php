@@ -47,13 +47,19 @@
 <div class="form-group col-sm-6">
     {!! Form::label('gender_unique_code', 'Gender:') !!}
     <select class="form-control m-bot15" name="gender_unique_code">
-        @foreach($genders as $gender)
-            @if($gender->unique_code == $user->gender->unique_code)
-                <option value="{{ $gender->unique_code }}" selected>{{ $gender->title }}</option>
-            @else
+        @if(isset($user))
+            @foreach($genders as $gender)
+                @if($gender->unique_code == $user->gender->unique_code)
+                    <option value="{{ $gender->unique_code }}" selected>{{ $gender->title }}</option>
+                @else
+                    <option value="{{ $gender->unique_code }}">{{ $gender->title }}</option>
+                @endif
+            @endforeach
+        @else
+            @foreach($genders as $gender)
                 <option value="{{ $gender->unique_code }}">{{ $gender->title }}</option>
-            @endif
-        @endforeach
+            @endforeach
+        @endif
     </select>
 </div>
 

@@ -1,20 +1,123 @@
-<!-- Manager Id Field -->
+@if(isset($manage_history)) {{--edit view--}}
+    <input id="manage_history_id" type="hidden" value="{{$manage_history->id}}">
+@endif
+
+<!-- Manager Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('manager_id', 'Manager Id:') !!}
-    {!! Form::number('manager_id', null, ['class' => 'form-control']) !!}
+    {!! Form::label('manager_id', 'Manager:') !!}
+    <select class="form-control m-bot15" name="manager_id" id="manager_id">
+        <option disabled selected value> -- select an option -- </option>
+        @if(isset($manage_history)) // edit view
+            @foreach($users as $key => $value)
+                @if($value == $manage_history->manager_id)
+                    <option value="{{ $value }}" selected>{{ $key }}</option>
+                @else
+                    <option value="{{ $value }}">{{ $key }}</option>
+                @endif
+            @endforeach
+        @else                   // create view
+            @foreach($users as $key => $value)
+                <option value="{{ $value }}">{{ $key }}</option>
+            @endforeach
+        @endif
+    </select>
 </div>
 
-<!-- Managed Type Field -->
+<!-- Managed Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('managed_type', 'Managed Type:') !!}
-    {!! Form::text('managed_type', null, ['class' => 'form-control']) !!}
+    {!! Form::label('managed_type', 'Manage Type:') !!}
+    {{--    {!! Form::text('creator_id', null, ['class' => 'form-control']) !!}--}}
+    <select class="form-control m-bot15" name="managed_type" id="managed_type">
+        <option disabled selected value> -- select an option -- </option>
+        @if(isset($notice)) // edit view
+            @foreach($managed_types as $key => $value)
+                @if($value == $managed_types->managed_type)
+                    <option value="{{ $value }}" selected>{{ $key }}</option>
+                @else
+                    <option value="{{ $value }}">{{ $key }}</option>
+                @endif
+            @endforeach
+        @else                   // create view
+            @foreach($managed_types as $key => $value)
+                <option value="{{ $value }}">{{ $key }}</option>
+            @endforeach
+        @endif
+    </select>
 </div>
 
-<!-- Managed Id Field -->
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous">
+</script>
+<script>
+    jQuery(document).ready(function(){
+        $('select[name="managed_type"]').on('click', function(){
+            jQuery('#managed_id').empty();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+            jQuery.ajax({
+                url: "{{ url('/manageHistories/ajaxManaged') }}",
+                method: 'get',
+                data: {
+                    model_name: jQuery('#managed_type').val(),
+                    id: jQuery('#manage_history_id').val(),
+                },
+                success: function(data){
+                    console.log(data);
+                    $.each(data, function(id, managed){
+                        if(managed['selected']){
+                            $('#managed_id').append('<option selected value="'+ managed['id'] +'">' + managed['title'] + '</option>');
+                        } else {
+                            $('#managed_id').append('<option value="'+ managed['id'] +'">' + managed['title'] + '</option>');
+                        }
+                    });
+                },
+                failure: function (data) {
+                    console.log('failure');
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Owner Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('managed_id', 'Managed Id:') !!}
-    {!! Form::number('managed_id', null, ['class' => 'form-control']) !!}
+    {!! Form::label('managed_id', 'Managed:') !!}
+    {{--    {!! Form::text('creator_id', null, ['class' => 'form-control']) !!}--}}
+    <select class="form-control" name="managed_id" id="managed_id"></select>
 </div>
+
+<script>
+    jQuery(document).ready(function(){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            }
+        });
+        jQuery.ajax({
+            url: "{{ url('/manageHistories/ajaxManaged') }}",
+            method: 'get',
+            data: {
+                model_name: jQuery('#managed_type').val(),
+                id: jQuery('#manage_history_id').val(),
+            },
+            success: function(data){
+                $.each(data, function(id, owner){
+                    if(owner['selected']){
+                        $('#managed_id').append('<option selected value="'+ owner['id'] +'">' + owner['title'] + '</option>');
+                    } else {
+                        $('#managed_id').append('<option value="'+ owner['id'] +'">' + owner['title'] + '</option>');
+                    }
+                });
+            },
+            failure: function (data) {
+                console.log('failure');
+                console.log(data);
+            }
+        });
+    });
+</script>
 
 <!-- Begin Date Field -->
 <div class="form-group col-sm-6">
@@ -24,7 +127,15 @@
 
 @section('scripts')
     <script type="text/javascript">
-        $('#begin_date').datetimepicker({
+
+{{--        @if(!isset($manage_history))--}}
+{{--            jQuery(document).ready(function(){--}}
+{{--                alert('hello');--}}
+{{--                $('#begin_date').datepicker('setDate', new Date());--}}
+{{--            });--}}
+{{--        @endif--}}
+
+        $('#begin_date').timestamppicker({
             format: 'YYYY-MM-DD HH:mm:ss',
             useCurrent: false
         })
@@ -39,7 +150,7 @@
 
 @section('scripts')
     <script type="text/javascript">
-        $('#end_date').datetimepicker({
+        $('#end_date').timestamppicker({
             format: 'YYYY-MM-DD HH:mm:ss',
             useCurrent: false
         })

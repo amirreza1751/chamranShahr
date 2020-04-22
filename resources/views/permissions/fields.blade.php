@@ -58,7 +58,6 @@
                 },
                 failure: function (data) {
                     console.log('failure');
-                    console.log(data);
                 }
             });
         });
