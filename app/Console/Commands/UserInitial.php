@@ -46,10 +46,10 @@ class UserInitial extends Command
         $answer = trim(fgets(STDIN));
         if ($answer == 'HellYeah') {
 
-            $gf->truncate([
-                'users',
-            ],
-                true);
+//            $gf->truncate([
+//                'users',
+//            ],
+//                true);
 
             $user = User::create([
                 'first_name' => 'Shahid Chamran',

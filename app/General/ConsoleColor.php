@@ -74,19 +74,19 @@ class ConsoleColor
         return array_keys($this->background_colors);
     }
 
-    public function print_error($input, $end = "\n") {
+    public function print_error($input = "", $end = "\n") {
         printf($this->getColoredString($input, $this::DELETE) . $end);
     }
 
-    public function print_warning($input, $end = "\n") {
+    public function print_warning($input = "", $end = "\n") {
         printf($this->getColoredString($input, $this::WARNING) . $end);
     }
 
-    public function print_help($input, $end = "\n") {
+    public function print_help($input = "", $end = "\n") {
         printf($this->getColoredString($input, $this::HELP) . $end);
     }
 
-    public function print_success($input, $end = "\n") {
+    public function print_success($input = "", $end = "\n") {
         printf($this->getColoredString($input, $this::SUCCESS) . $end);
     }
 }

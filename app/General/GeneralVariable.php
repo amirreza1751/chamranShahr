@@ -10,5 +10,6 @@ class GeneralVariable
         'jpg',
         'png',
         'webp',
+        'jpeg',
     ];
 }
