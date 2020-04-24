@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateNotificationRequest;
 use App\Models\Faculty;
 use App\Models\News;
 use App\Models\Notice;
+use App\Models\Notification;
 use App\Models\Student;
 use App\Models\StudyArea;
 use App\Models\StudyField;
@@ -16,6 +17,7 @@ use App\Notifications\NoticeNotification;
 use App\Repositories\NotificationRepository;
 use App\Http\Controllers\AppBaseController;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Flash;
 use Illuminate\Support\Facades\Auth;
@@ -40,8 +42,31 @@ class NotificationController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Notification::class);
+
         $this->notificationRepository->pushCriteria(new RequestCriteria($request));
-        $notifications = $this->notificationRepository->all();
+
+        if (Auth::user()->hasRole('developer')) {
+            $notifications = $this->notificationRepository->all();
+        } elseif (Auth::user()->hasRole('admin')) {
+            $notifications = $this->notificationRepository->all();
+        } elseif (Auth::user()->hasRole('notification_manager')) {
+            $notifications = $this->notificationRepository->all();
+        } else {
+            $notifications = collect();
+            $all = $this->notificationRepository->all();
+            $manage_histories = Auth::user()->under_managment();
+            foreach ($all as $notification) {
+                foreach ($manage_histories as $manage_history) {
+                    if (isset($notification->notifier) && isset($notification->notifier->owner)) {
+                        if (get_class($manage_history->managed) == get_class($notification->notifier->owner) && $manage_history->managed->id == $notification->notifier->owner->id) {
+                            $notifications->push($notification);
+                        }
+                    }
+                }
+            }
+
+        }
 
         return view('notifications.index')
             ->with('notifications', $notifications);
@@ -78,7 +103,7 @@ class NotificationController extends AppBaseController
     /**
      * Display the specified Notification.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return Response
      */
@@ -98,7 +123,7 @@ class NotificationController extends AppBaseController
     /**
      * Show the form for editing the specified Notification.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return Response
      */
@@ -118,7 +143,7 @@ class NotificationController extends AppBaseController
     /**
      * Update the specified Notification in storage.
      *
-     * @param  int              $id
+     * @param int $id
      * @param UpdateNotificationRequest $request
      *
      * @return Response
@@ -143,13 +168,15 @@ class NotificationController extends AppBaseController
     /**
      * Remove the specified Notification from storage.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return Response
      */
     public function destroy($id)
     {
         $notification = $this->notificationRepository->findWithoutFail($id);
+
+        $this->authorize('delete', $notification);
 
         if (empty($notification)) {
             Flash::error('Notification not found');
@@ -175,50 +202,91 @@ class NotificationController extends AppBaseController
 
     public function showNotifyStudents()
     {
+//        $this->authorize('notifyStudents', Notification::class);
+
         $notifiers = [
             'Notice' => Notice::class,
             'News' => News::class,
         ];
         $faculties = Faculty::all()->pluck('unique_code', 'title');
         $entrance_terms = Term::orderBy('begin_date', 'desc')->pluck('unique_code', 'title');
+        $study_statuses = StudyStatus::all()->pluck('unique_code', 'title');
         return view('notifications.notify_students')
             ->with('faculties', $faculties)
             ->with('entrance_terms', $entrance_terms)
+            ->with('study_statuses', $study_statuses)
             ->with('notifiers', $notifiers);
     }
 
-    public function notify_students(Request $request)
+    public function notifyStudents(Request $request)
     {
 
         $input = $request->all();
 
+//        if(isset($input['study_status_unique_code'])){
+//            error_log($input['study_status_unique_code']);
+//        } else {
+//            error_log('study_status_unique_code dont set');
+//        }
+//
+//        if(isset($input['faculty_unique_code'])){
+//            error_log($input['faculty_unique_code']);
+//        } else {
+//            error_log('faculty_unique_code dont set');
+//        }
+//
+//        if(isset($input['study_field_unique_code'])){
+//            error_log($input['study_field_unique_code']);
+//        } else {
+//            error_log('study_field_unique_code dont set');
+//        }
+//
+//        if(isset($input['study_area_unique_code'])){
+//            error_log($input['study_area_unique_code']);
+//        } else {
+//            error_log('study_area_unique_code dont set');
+//        }
+//
+//        if(isset($input['entrance_term_unique_code'])){
+//            error_log($input['entrance_term_unique_code']);
+//        } else {
+//            error_log('entrance_term_unique_code dont set');
+//        }
+
+
         $request->validate([
             'notifier_type' => 'required|string',
             'notifier_id' => 'required|numeric',
-            'type_id' => 'required|numeric',
             'deadline' => 'required|date',
-            'study_status_unique_code' => 'string|regex:/' . strtolower(array_last(explode("\\", StudyStatus::class))) . '[0-9]/',
-            'faculty_unique_code' => 'string|regex:/' . strtolower(array_last(explode("\\", Faculty::class))) . '[0-9]/',
-            'study_field_unique_code' => 'string|regex:/' . strtolower(array_last(explode("\\", StudyField::class))) . '[0-9]/',
-            'study_area_unique_code' => 'string|regex:/' . strtolower(array_last(explode("\\", StudyArea::class))) . '[0-9]/',
-            'entrance_term_unique_code' => 'string|regex:/' . strtolower(array_last(explode("\\", Term::class))) . '[0-9]/',
+            'study_status_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyStatus::class))) . '[0-9]/',
+            'faculty_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", Faculty::class))) . '[0-9]/',
+            'study_field_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyField::class))) . '[0-9]/',
+            'study_area_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyArea::class))) . '[0-9]/',
+            'entrance_term_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", Term::class))) . '[0-9]/',
         ]);
 
         $students = Student::all();
 
-        if(isset($input['study_status_unique_code'])){
+        if (isset($input['study_status_unique_code'])) {
             $students = $students->where('study_status_unique_code', $input['study_status_unique_code']);
         }
 
-        if(isset($input['study_area_unique_code'])){
+        if (isset($input['faculty_unique_code'])) {
+            $students = $students->where('faculty_unique_code', $input['faculty_unique_code']);
+        }
+
+        if (isset($input['study_field_unique_code'])) {
+            $students = $students->where('study_field_unique_code', $input['study_field_unique_code']);
+        }
+
+        if (isset($input['study_area_unique_code'])) {
             $students = $students->where('study_area_unique_code', $input['study_area_unique_code']);
         }
 
-        if(isset($input['entrance_term_unique_code'])){
+        if (isset($input['entrance_term_unique_code'])) {
             $students = $students->where('entrance_term_unique_code', $input['entrance_term_unique_code']);
         }
 
-        error_log(Carbon::now());
         \Illuminate\Support\Facades\Notification::send($students, new NoticeNotification($input['notifier_type'], $input['notifier_id'], Carbon::now()));
 
         Flash::success('Notification sent successfully.');
@@ -228,20 +296,30 @@ class NotificationController extends AppBaseController
 
     public function ajaxNotifier(Request $request)
     {
-        if(Auth::user()->hasRole('developer') || Auth::user()->hasRole('admin')){
-            $model_name =  $request['model_name'];
-            $model = new $model_name();
+        $model_name = $request['model_name'];
+        $model = new $model_name();
+        $result = new Collection();
+        if (Auth::user()->hasRole('developer') || Auth::user()->hasRole('admin')) {
             $models = $model::all();
-            foreach ($models as $model){
-                $model->title = $model->getTitleOwnerAttribute();
-                if ($model->owner_type == $request['type'] && $model->owner_id == $request['id']){
+            foreach ($models as $model) {
+                $model->title = $model->getTitleOwnerAttribute(); // must setup on target models, define as notifiers top of this class
+                if ($model->owner_type == $request['type'] && $model->owner_id == $request['id']) {
                     $model['selected'] = true;
                 }
             }
-            return $models;
+            $result = $models;
         } else {
-//            $departments = Auth::user()
+            $manage_histories = Auth::user()->under_managment();
+            error_log($manage_histories);
+            foreach ($manage_histories as $manage_history) {
+                $models = $model::where('owner_type', get_class($manage_history->managed))
+                    ->where('owner_id', $manage_history->managed->id)->get();
+                foreach ($models as $model) {
+                    $result->push($model);
+                }
+            }
         }
+        return $result;
     }
 
     public function ajaxStudyField(Request $request)

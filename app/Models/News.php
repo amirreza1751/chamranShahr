@@ -117,5 +117,10 @@ class News extends Model
         return "{$this->owner->title} : {$this->title}";
     }
 
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifier');
+    }
+
 
 }

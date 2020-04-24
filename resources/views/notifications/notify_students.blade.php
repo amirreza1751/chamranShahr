@@ -12,7 +12,7 @@
 
             <div class="box-body">
                 <div class="row">
-                {!! Form::open(['route' => 'notifications.notify_students']) !!}
+                {!! Form::open(['route' => 'notifications.notifyStudents']) !!}
 
                     @if(isset($notification)) {{--reditect view--}}
                         <input id="notification_id" type="hidden" value="{{$notification->id}}">
@@ -96,7 +96,7 @@
                         </select>
                     </div>
 
-                    <!-- Faculty Id Field -->
+                    <!-- Faculty Unique Code Field -->
                     <div class="form-group col-sm-6">
                         {!! Form::label('faculty_unique_code', 'Faculty:') !!}
                         <select class="form-control m-bot15" name="faculty_unique_code" id="faculty_unique_code">
@@ -136,7 +136,7 @@
                         });
                     </script>
 
-                    <!-- Study Field Field -->
+                    <!-- Study Field Unique Code Field -->
                     <div class="form-group col-sm-6">
                         {!! Form::label('study_field_unique_code', 'Study Field:') !!}
                         <select class="form-control" name="study_field_unique_code" id="study_field_unique_code">
@@ -173,7 +173,7 @@
                         });
                     </script>
 
-                    <!-- Study Area Field -->
+                    <!-- Study Area Unique Code Field -->
                     <div class="form-group col-sm-6">
                         {!! Form::label('study_area_unique_code', 'Study Area:') !!}
                         <select class="form-control" name="study_area_unique_code" id="study_area_unique_code">
@@ -181,12 +181,23 @@
                         </select>
                     </div>
 
-                    <!-- Entrance Term Field -->
+                    <!-- Entrance Term Unique Code Field -->
                     <div class="form-group col-sm-6">
                         {!! Form::label('entrance_term_unique_code', 'Entrance Term:') !!}
                         <select class="form-control" name="entrance_term_unique_code" id="entrance_term_unique_code">
                             <option selected value> -- all -- </option>
                             @foreach($entrance_terms as $key => $value)
+                                <option value="{{ $value }}">{{ $key }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Status Status Unique Code Field -->
+                    <div class="form-group col-sm-6">
+                        {!! Form::label('study_status_unique_code', 'Study Status:') !!}
+                        <select class="form-control m-bot15" name="study_status_unique_code" id="study_status_unique_code">
+                            <option selected value> -- all -- </option>
+                            @foreach($study_statuses as $key => $value)
                                 <option value="{{ $value }}">{{ $key }}</option>
                             @endforeach
                         </select>

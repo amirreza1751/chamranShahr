@@ -3,20 +3,20 @@
 namespace App\Policies;
 
 use App\User;
-use App\Models\Notification;
+use App\Models\Notice;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class NotificationPolicy
+class NoticePolicy
 {
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view the notification.
+     * Determine whether the user can view the notice.
      *
      * @param  User  $user
      * @return mixed
      */
-    public function viewAny(User $user)
+    public function anyView(User $user)
     {
         if($user->hasRole('developer')){
             return true;
@@ -38,7 +38,36 @@ class NotificationPolicy
     }
 
     /**
-     * Determine whether the user can create notifications.
+     * Determine whether the user can view the notice.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Notice  $notice
+     * @return mixed
+     */
+    public function view(User $user, Notice $notice)
+    {
+
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif ($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->hasRole('notification_manager')){
+            return true;
+        }
+        elseif (!empty($user->under_managment())){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether the user can create notices.
      *
      * @param  \App\User  $user
      * @return mixed
@@ -58,30 +87,7 @@ class NotificationPolicy
         elseif ($user->hasRole('notification_manager')){
             return true;
         }
-
-        return false;
-    }
-
-    /**
-     * Determine whether the user can update the notification.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Notification  $notification
-     * @return mixed
-     */
-    public function update(User $user, Notification $notification)
-    {
-
-        if($user->hasRole('developer')){
-            return true;
-        }
-        elseif ($user->hasRole('admin')){
-            return true;
-        }
-        elseif ($user->hasRole('content_manager')){
-            return true;
-        }
-        elseif ($user->hasRole('notification_manager')){
+        elseif (!empty($user->under_managment())){
             return true;
         }
 
@@ -89,84 +95,15 @@ class NotificationPolicy
     }
 
     /**
-     * Determine whether the user can delete the notification.
+     * Determine whether the user can update the notice.
      *
      * @param  \App\User  $user
-     * @param  \App\Notification  $notification
+     * @param  \App\Notice  $notice
      * @return mixed
      */
-    public function delete(User $user, Notification $notification)
+    public function update(User $user, Notice $notice)
     {
 
-        if($user->hasRole('developer')){
-            return true;
-        }
-        elseif ($user->hasRole('admin')){
-            return true;
-        }
-        elseif ($user->hasRole('content_manager')){
-            return true;
-        }
-        elseif ($user->hasRole('notification_manager')){
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the notification.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Notification  $notification
-     * @return mixed
-     */
-    public function restore(User $user, Notification $notification)
-    {
-
-        if($user->hasRole('developer')){
-            return true;
-        }
-        elseif ($user->hasRole('admin')){
-            return true;
-        }
-        elseif ($user->hasRole('content_manager')){
-            return true;
-        }
-        elseif ($user->hasRole('notification_manager')){
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the notification.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Notification  $notification
-     * @return mixed
-     */
-    public function forceDelete(User $user, Notification $notification)
-    {
-        if($user->hasRole('developer')){
-            return true;
-        }
-        elseif ($user->hasRole('admin')){
-            return true;
-        }
-        elseif ($user->hasRole('content_manager')){
-            return true;
-        }
-        elseif ($user->hasRole('notification_manager')){
-            return true;
-        }
-
-        return false;
-    }
-
-    public function notifyStudents(User $user, $model_name)
-    {
         if($user->hasRole('developer')){
             return true;
         }
@@ -184,6 +121,92 @@ class NotificationPolicy
         }
 
         return false;
+    }
 
+    /**
+     * Determine whether the user can delete the notice.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Notice  $notice
+     * @return mixed
+     */
+    public function delete(User $user, Notice $notice)
+    {
+
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif ($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->hasRole('notification_manager')){
+            return true;
+        }
+        elseif (!empty($user->under_managment())){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether the user can restore the notice.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Notice  $notice
+     * @return mixed
+     */
+    public function restore(User $user, Notice $notice)
+    {
+
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif ($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->hasRole('notification_manager')){
+            return true;
+        }
+        elseif (!empty($user->under_managment())){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether the user can permanently delete the notice.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Notice  $notice
+     * @return mixed
+     */
+    public function forceDelete(User $user, Notice $notice)
+    {
+
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif ($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->hasRole('notification_manager')){
+            return true;
+        }
+        elseif (!empty($user->under_managment())){
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,5 +1,9 @@
+<input name="make_notification" id="make_notification" type="hidden" value="{{false}}">
 @if(isset($notice)) {{--edit view--}}
-<input id="notice_id" type="hidden" value="{{$notice->id}}">
+    <input id="notice_id" type="hidden" value="{{$notice->id}}">
+    @if(isset($notice->notifications))
+        <input id="has_notification" type="hidden" value="{{true}}">
+    @endif
 @endif
 
 
@@ -136,6 +140,18 @@
 
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
-    {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
+{{--    {!! Form::submit('Save', ['class' => 'btn btn-primary', 'onclick' => "ConfirmDialog('Are you sure')"]) !!}--}}
+    {!! Form::submit('Save', ['class' => 'btn btn-primary', 'id' => 'submit']) !!}
+
     <a href="{!! route('notices.index') !!}" class="btn btn-default">Cancel</a>
 </div>
+
+<script>
+    $("#submit").click(function(){
+        if(confirm("do you want make a notification too?")){
+            if(confirm("this notice has notifications before, create anathor one?!")){
+                $("#make_notification").val(true);
+            }
+        }
+    });
+</script>

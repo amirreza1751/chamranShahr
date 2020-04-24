@@ -98,21 +98,6 @@ Route::group(['middleware' => 'auth:web'], function(){
 
         Route::resource('news', 'NewsController');
 
-        Route::get('notifications/notify_students', [
-            'as' => 'notifications.showNotifyStudents', 'uses' => 'NotificationController@showNotifyStudents'
-        ]);
-        Route::post('notifications/notify_students', [
-            'as' => 'notifications.notify_students', 'uses' => 'NotificationController@notify_students'
-        ]);
-        Route::get('/notifications/ajaxStudyField', 'NotificationController@ajaxStudyField');
-        Route::get('/notifications/ajaxStudyArea', 'NotificationController@ajaxStudyArea');
-        Route::get('/notifications/ajaxNotifier', 'NotificationController@ajaxNotifier');
-        Route::resource('notifications', 'NotificationController');
-
-        Route::get('/notices/ajaxOwner', 'NoticeController@ajaxOwner');
-        Route::resource('notices', 'NoticeController');
-
-
         Route::get('ads/show_advertisable/{id}', 'AdController@show_advertisable')->name('show_advertisable');
         Route::get('ads/verify/{id}', 'AdController@verify_ad')->name('verify_ad');
         Route::resource('ads', 'AdController');
@@ -126,7 +111,23 @@ Route::group(['middleware' => 'auth:web'], function(){
 
     });
 
+    Route::get('/notices/ajaxOwner', 'NoticeController@ajaxOwner');
+    Route::resource('notices', 'NoticeController');
+
+    Route::get('notifications/notifyStudents', [
+        'as' => 'notifications.showNotifyStudents', 'uses' => 'NotificationController@showNotifyStudents'
+    ]);
+    Route::post('notifications/notifyStudents', [
+        'as' => 'notifications.notifyStudents', 'uses' => 'NotificationController@notifyStudents'
+    ]);
+    Route::get('/notifications/ajaxStudyField', 'NotificationController@ajaxStudyField');
+    Route::get('/notifications/ajaxStudyArea', 'NotificationController@ajaxStudyArea');
+    Route::get('/notifications/ajaxNotifier', 'NotificationController@ajaxNotifier');
+    Route::resource('notifications', 'NotificationController');
+
     Route::get('/home', 'HomeController@index');
+
+    Route::resource('users', 'UserController'); // ++
 
 });
 

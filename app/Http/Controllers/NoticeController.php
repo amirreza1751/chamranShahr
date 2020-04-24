@@ -11,6 +11,7 @@ use App\Http\Controllers\AppBaseController;
 use App\User;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\Auth;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -35,8 +36,32 @@ class NoticeController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('anyView', Notice::class);
+
         $this->noticeRepository->pushCriteria(new RequestCriteria($request));
         $notices = $this->noticeRepository->all();
+
+        if (Auth::user()->hasRole('developer')) {
+            $notices = $this->noticeRepository->all();
+        } elseif (Auth::user()->hasRole('admin')) {
+            $notices = $this->noticeRepository->all();
+        } elseif (Auth::user()->hasRole('notification_manager')) {
+            $notices = $this->noticeRepository->all();
+        } else {
+            $notices = collect();
+            $all = $this->noticeRepository->all();
+            $manage_histories = Auth::user()->under_managment();
+            foreach ($all as $notice) {
+                foreach ($manage_histories as $manage_history) {
+                    if (isset($notice->owner_type) && isset($notice->owner_id)) {
+                        if (get_class($manage_history->managed) == $notice->owner_type && $manage_history->managed->id == $notice->owner_id) {
+                            $notices->push($notice);
+                        }
+                    }
+                }
+            }
+
+        }
 
         return view('notices.index')
             ->with('notices', $notices);
@@ -67,6 +92,8 @@ class NoticeController extends AppBaseController
         $input = $request->all();
 
         $notice = $this->noticeRepository->create($input);
+
+//        error_log($input['make_notification']);
 
         Flash::success('Notice saved successfully.');
 

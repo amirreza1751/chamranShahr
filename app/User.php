@@ -110,7 +110,7 @@ class User extends Authenticatable
 
     public function under_managment()
     {
-        return $this->morphMany(ManageHistory::class, 'managed')
+        return $this->hasMany(ManageHistory::class, 'manager_id')
             ->where('is_active', true)
             ->where('end_date', null)->get();
 

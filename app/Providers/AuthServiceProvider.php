@@ -3,7 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Ad;
+use App\Models\Notice;
+use App\Models\Notification;
 use App\Policies\AdPolicy;
+use App\Policies\NoticePolicy;
+use App\Policies\NotificationPolicy;
 use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -19,6 +23,8 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
         Ad::class => AdPolicy::class,
+        Notification::class => NotificationPolicy::class,
+        Notice::class => NoticePolicy::class,
     ];
 
     /**
