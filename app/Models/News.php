@@ -107,5 +107,15 @@ class News extends Model
 
     ];
 
+    public function owner()
+    {
+        return $this->morphTo();
+    }
+
+    public function getTitleOwnerAttribute()
+    {
+        return "{$this->owner->title} : {$this->title}";
+    }
+
 
 }

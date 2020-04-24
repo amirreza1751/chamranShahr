@@ -95,4 +95,9 @@ class Faculty extends Model
     {
         return $this->hasMany(StudyField::class, 'faculty_unique_code', 'unique_code');
     }
+
+    public function getTitleAttribute()
+    {
+        return "{$this->department->title}";
+    }
 }

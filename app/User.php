@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Department;
 use App\Models\Gender;
 use App\Models\ManageHistory;
 use App\Models\Student;
@@ -84,26 +85,34 @@ class User extends Authenticatable
         return $this->hasOne(Student::class);
     }
 
-    public function manage_history()
-    {
-        return $this->hasMany(ManageHistory::class, 'manager_id');
-    }
+//    public function manage_history()
+//    {
+//        return $this->hasMany(ManageHistory::class, 'manager_id');
+//    }
+//
+//    public function is_manager()
+//    {
+//        $manage_histories = $this->manage_history;
+//        foreach ($this->manage_history as $manage_history){
+//            if($manage_history->is_active == true){
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//
+//    public function is_manager_of()
+//    {
+//        return ManageHistory::where('manager_id', $this->id)
+//            ->where('is_active', true)
+//            ->orderBy('begin_date', 'desc')->first();
+//    }
 
-    public function is_manager()
+    public function under_managment()
     {
-        $manage_histories = $this->manage_history;
-        foreach ($this->manage_history as $manage_history){
-            if($manage_history->is_active == true){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public function is_manager_of()
-    {
-        return ManageHistory::where('manager_id', $this->id)
+        return $this->morphMany(ManageHistory::class, 'managed')
             ->where('is_active', true)
-            ->orderBy('begin_date', 'desc')->first();
+            ->where('end_date', null)->get();
+
     }
 }

@@ -108,4 +108,9 @@ class StudyField extends Model
     {
         return $this->belongsTo(Faculty::class, 'faculty_unique_code', 'unique_code');
     }
+
+    public function getTitleAttribute()
+    {
+        return "{$this->department->title}";
+    }
 }

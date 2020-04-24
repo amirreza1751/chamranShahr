@@ -108,5 +108,19 @@ class Notice extends Model
         'owner_id' => 'required',
     ];
 
+    public function owner()
+    {
+        return $this->morphTo();
+    }
+
+    public function getTitleOwnerAttribute()
+    {
+        return "{$this->owner->title} : {$this->title}";
+    }
+
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifier');
+    }
 
 }

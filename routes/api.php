@@ -100,6 +100,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 
         Route::resource('manage_histories', 'ManageHistoryAPIController');
 
+//        Route::post('notifications/notify_students', 'NotificationAPIController@notify_students');
         Route::resource('notifications', 'NotificationAPIController');
 
     });
@@ -229,6 +230,7 @@ Route::get('manage_histories/{manage_histories}', 'ManageHistoryAPIController@sh
 /** ManageHistory Routes, that's it */
 
 /** Notification Apis which doesnt needs Authenticated user */
+Route::post('notifications/notify_students', 'NotificationAPIController@notify_students');
 Route::get('notifications/{notification}', 'NotificationAPIController@show');
 /** Notification Routes, that's it */
 

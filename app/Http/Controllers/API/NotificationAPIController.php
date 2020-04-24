@@ -2,10 +2,21 @@
 
 namespace App\Http\Controllers\API;
 
+use App\General\ConsoleColor;
 use App\Http\Requests\API\CreateNotificationAPIRequest;
 use App\Http\Requests\API\UpdateNotificationAPIRequest;
+use App\Models\Faculty;
+use App\Models\Notice;
 use App\Models\Notification;
+use App\Models\Student;
+use App\Models\StudyArea;
+use App\Models\StudyField;
+use App\Models\StudyStatus;
+use App\Models\Term;
+use App\Notifications\NoticeNotification;
+use App\Notifications\PrivateNotification;
 use App\Repositories\NotificationRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
@@ -277,5 +288,55 @@ class NotificationAPIController extends AppBaseController
         $notification->delete();
 
         return $this->sendResponse($id, 'Notification deleted successfully');
+    }
+
+
+    /**
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     *************************************************** CUSTOMIZATION *************************************************
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     */
+
+    public function notify_students(Request $request)
+    {
+        $input = $request->all();
+
+        $request->validate([
+            'notifier_type' => 'required|string',
+            'notifier_id' => 'required|numeric',
+            'type_id' => 'required|numeric',
+            'deadline' => 'required|date',
+            'study_status_unique_code' => 'string|regex:/' . strtolower(array_last(explode("\\", StudyStatus::class))) . '[0-9]/',
+            'faculty_unique_code' => 'string|regex:/' . strtolower(array_last(explode("\\", Faculty::class))) . '[0-9]/',
+            'study_field_unique_code' => 'string|regex:/' . strtolower(array_last(explode("\\", StudyField::class))) . '[0-9]/',
+            'study_area_unique_code' => 'string|regex:/' . strtolower(array_last(explode("\\", StudyArea::class))) . '[0-9]/',
+            'entrance_term_unique_code' => 'string|regex:/' . strtolower(array_last(explode("\\", Term::class))) . '[0-9]/',
+        ]);
+
+        $students = Student::all();
+
+        if(isset($input['study_status_unique_code'])){
+            $students = $students->where('study_status_unique_code', $input['study_status_unique_code']);
+        }
+
+        if(isset($input['study_area_unique_code'])){
+            $students = $students->where('study_area_unique_code', $input['study_area_unique_code']);
+        }
+
+        if(isset($input['entrance_term_unique_code'])){
+            $students = $students->where('entrance_term_unique_code', $input['entrance_term_unique_code']);
+        }
+
+        error_log(Carbon::now());
+        \Illuminate\Support\Facades\Notification::send($students, new NoticeNotification($input['notifier_type'], $input['notifier_id'], Carbon::now()));
+        return $students;
+//        Notification::send($users, new InvoicePaid($invoice));
+
+
+//        $notification = $this->notificationRepository->create($input);
+
+        return 'OK';
     }
 }

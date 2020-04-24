@@ -93,7 +93,7 @@ class Notification extends Model
     use SoftDeletes;
 
     public $table = 'notifications';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -145,5 +145,13 @@ class Notification extends Model
         'notifier_id' => 'required'
     ];
 
-    
+    public function notifier()
+    {
+        return $this->morphTo();
+    }
+
+    public function notifiable()
+    {
+        return $this->morphTo();
+    }
 }
