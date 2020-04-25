@@ -287,7 +287,16 @@ class NotificationController extends AppBaseController
             $students = $students->where('entrance_term_unique_code', $input['entrance_term_unique_code']);
         }
 
-        \Illuminate\Support\Facades\Notification::send($students, new NoticeNotification($input['notifier_type'], $input['notifier_id'], Carbon::now()));
+        error_log($students);
+
+        if ($students->isEmpty()) {
+            Flash::error('there is no student with input information');
+
+            return redirect(route('notifications.index'));
+        }
+
+        $this->send($students, $input['notifier_type'], $input['notifier_id']);
+//        \Illuminate\Support\Facades\Notification::send($students, new NoticeNotification($input['notifier_type'], $input['notifier_id'], Carbon::now()));
 
         Flash::success('Notification sent successfully.');
 
@@ -310,7 +319,6 @@ class NotificationController extends AppBaseController
             $result = $models;
         } else {
             $manage_histories = Auth::user()->under_managment();
-            error_log($manage_histories);
             foreach ($manage_histories as $manage_history) {
                 $models = $model::where('owner_type', get_class($manage_history->managed))
                     ->where('owner_id', $manage_history->managed->id)->get();
@@ -332,5 +340,11 @@ class NotificationController extends AppBaseController
     {
         $study_field = StudyField::where('unique_code', $request->study_field_unique_code)->first();
         return $study_field->study_areas->pluck('title', 'unique_code');
+    }
+
+    public function send($students, $notifier_type, $notifier_id)
+    {
+        $this->authorize('send', [$notifier_type, $notifier_id]);
+        \Illuminate\Support\Facades\Notification::send($students, new NoticeNotification($notifier_type, $notifier_id, Carbon::now()));
     }
 }

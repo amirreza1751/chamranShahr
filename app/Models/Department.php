@@ -123,6 +123,11 @@ class Department extends Model
         return $this->morphMany(Notice::class, 'owner');
     }
 
+    public function news()
+    {
+        return $this->morphMany(News::class, 'owner');
+    }
+
     public function manager()
     {
         $manage_history = $this->morphMany(ManageHistory::class, 'managed')

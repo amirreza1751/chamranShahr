@@ -93,11 +93,14 @@ class NoticeController extends AppBaseController
 
         $notice = $this->noticeRepository->create($input);
 
-//        error_log($input['make_notification']);
 
         Flash::success('Notice saved successfully.');
 
-        return redirect(route('notices.index'));
+        if($input['make_notification']){
+            return redirect(route('notices.index'));
+        } else {
+            return redirect(route('notices.index'));
+        }
     }
 
     /**
