@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\Gender;
 use App\Repositories\UserRepository;
 use App\Http\Controllers\AppBaseController;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Flash;
@@ -33,6 +34,8 @@ class UserController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', User::class);
+
         $this->userRepository->pushCriteria(new RequestCriteria($request));
         $users = $this->userRepository->all();
 

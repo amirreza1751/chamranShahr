@@ -15,7 +15,7 @@ class UserPolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function index(User $user)
+    public function viewAny(User $user)
     {
         if($user->hasRole('developer')){
             return true;
@@ -24,6 +24,9 @@ class UserPolicy
             return true;
         }
         elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->hasRole('user_manager')){
             return true;
         }
 
@@ -47,6 +50,9 @@ class UserPolicy
 //        elseif ($user->hasRole('content_manager')){
 //            return true;
 //        }
+        elseif ($user->hasRole('user_manager')){
+            return true;
+        }
 
         return false;
     }
@@ -67,6 +73,9 @@ class UserPolicy
             return true;
         }
         elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->hasRole('user_manager')){
             return true;
         }
         elseif ($user->id == $model->id){ // if user request to update himself/herself

@@ -114,8 +114,11 @@ Route::group(['middleware' => 'auth:web'], function(){
     Route::get('/notices/ajaxOwner', 'NoticeController@ajaxOwner');
     Route::resource('notices', 'NoticeController');
 
-    Route::get('notifications/notifyStudents', [
+    Route::get('notifications/notifyStudents/', [
         'as' => 'notifications.showNotifyStudents', 'uses' => 'NotificationController@showNotifyStudents'
+    ]);
+    Route::get('notifications/notifyStudents/{type}/{id}', [
+        'as' => 'notifications.showNotifyStudentsFromNotifier', 'uses' => 'NotificationController@showNotifyStudentsFromNotifier'
     ]);
     Route::post('notifications/notifyStudents', [
         'as' => 'notifications.notifyStudents', 'uses' => 'NotificationController@notifyStudents'
@@ -276,6 +279,14 @@ function xmlToArray($xml, $options = array()) {
         $xml->getName() => $propertiesArray
     );
 }
+
+Route::get('temp', function (){
+    return view('users.profile');
+});
+
+Route::get('tempedit', function (){
+    return view('users.edit_profile');
+});
 
 
 

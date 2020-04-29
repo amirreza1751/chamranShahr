@@ -72,33 +72,35 @@ class NotificationController extends AppBaseController
             ->with('notifications', $notifications);
     }
 
-    /**
-     * Show the form for creating a new Notification.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        return view('notifications.create');
-    }
-
-    /**
-     * Store a newly created Notification in storage.
-     *
-     * @param CreateNotificationRequest $request
-     *
-     * @return Response
-     */
-    public function store(CreateNotificationRequest $request)
-    {
-        $input = $request->all();
-
-        $notification = $this->notificationRepository->create($input);
-
-        Flash::success('Notification saved successfully.');
-
-        return redirect(route('notifications.index'));
-    }
+//    /**
+//     * Show the form for creating a new Notification.
+//     *
+//     * @return Response
+//     */
+//    public function create()
+//    {
+//        $this->authorize('create', Notification::class);
+//
+//        return view('notifications.create');
+//    }
+//
+//    /**
+//     * Store a newly created Notification in storage.
+//     *
+//     * @param CreateNotificationRequest $request
+//     *
+//     * @return Response
+//     */
+//    public function store(CreateNotificationRequest $request)
+//    {
+//        $input = $request->all();
+//
+//        $notification = $this->notificationRepository->create($input);
+//
+//        Flash::success('Notification saved successfully.');
+//
+//        return redirect(route('notifications.index'));
+//    }
 
     /**
      * Display the specified Notification.
@@ -202,7 +204,7 @@ class NotificationController extends AppBaseController
 
     public function showNotifyStudents()
     {
-//        $this->authorize('notifyStudents', Notification::class);
+        $this->authorize('showNotifyStudents', Notification::class);
 
         $notifiers = [
             'Notice' => Notice::class,
@@ -218,45 +220,38 @@ class NotificationController extends AppBaseController
             ->with('notifiers', $notifiers);
     }
 
+    public function showNotifyStudentsFromNotifier($notifier_type, $notifier_id)
+    {
+        $this->authorize('notifyStudents', [$notifier_type, $notifier_id]);
+
+        $notifier = $notifier_type::find($notifier_id);
+
+        $notifiers = [
+            'Notice' => Notice::class,
+            'News' => News::class,
+        ];
+        $faculties = Faculty::all()->pluck('unique_code', 'title');
+        $entrance_terms = Term::orderBy('begin_date', 'desc')->pluck('unique_code', 'title');
+        $study_statuses = StudyStatus::all()->pluck('unique_code', 'title');
+        return view('notifications.notify_students')
+            ->with('faculties', $faculties)
+            ->with('entrance_terms', $entrance_terms)
+            ->with('study_statuses', $study_statuses)
+            ->with('notifiers', $notifiers)
+            ->with('notifier', $notifier);
+    }
+
     public function notifyStudents(Request $request)
     {
-
         $input = $request->all();
-
-//        if(isset($input['study_status_unique_code'])){
-//            error_log($input['study_status_unique_code']);
-//        } else {
-//            error_log('study_status_unique_code dont set');
-//        }
-//
-//        if(isset($input['faculty_unique_code'])){
-//            error_log($input['faculty_unique_code']);
-//        } else {
-//            error_log('faculty_unique_code dont set');
-//        }
-//
-//        if(isset($input['study_field_unique_code'])){
-//            error_log($input['study_field_unique_code']);
-//        } else {
-//            error_log('study_field_unique_code dont set');
-//        }
-//
-//        if(isset($input['study_area_unique_code'])){
-//            error_log($input['study_area_unique_code']);
-//        } else {
-//            error_log('study_area_unique_code dont set');
-//        }
-//
-//        if(isset($input['entrance_term_unique_code'])){
-//            error_log($input['entrance_term_unique_code']);
-//        } else {
-//            error_log('entrance_term_unique_code dont set');
-//        }
-
+        $title = null;
+        $brief_description = null;
 
         $request->validate([
             'notifier_type' => 'required|string',
             'notifier_id' => 'required|numeric',
+            'title' => 'string|nullable',
+            'brief_description' => 'string',
             'deadline' => 'required|date',
             'study_status_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyStatus::class))) . '[0-9]/',
             'faculty_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", Faculty::class))) . '[0-9]/',
@@ -264,6 +259,30 @@ class NotificationController extends AppBaseController
             'study_area_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyArea::class))) . '[0-9]/',
             'entrance_term_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", Term::class))) . '[0-9]/',
         ]);
+
+        $this->authorize('notifyStudents', [$input['notifier_type'], $input['notifier_id']]);
+
+        $notifier = $input['notifier_type']::find($input['notifier_id']);
+
+        if(isset($input['use_notifier_title']) && $input['use_notifier_title']){
+            if(isset($notifier->title)){
+                $title = $notifier->title;
+            }
+        } else {
+            if(isset($input['title'])){
+                $title = $input['title'];
+            }
+        }
+
+        if(isset($input['use_notifier_description']) && $input['use_notifier_description']){
+            if(isset($notifier->description)){
+                $brief_description = substr($notifier->description, 0, 48) . '...';
+            }
+        } else {
+            if(isset($input['brief_description'])){
+                $brief_description = $input['brief_description'];
+            }
+        }
 
         $students = Student::all();
 
@@ -287,16 +306,13 @@ class NotificationController extends AppBaseController
             $students = $students->where('entrance_term_unique_code', $input['entrance_term_unique_code']);
         }
 
-        error_log($students);
-
         if ($students->isEmpty()) {
             Flash::error('there is no student with input information');
 
             return redirect(route('notifications.index'));
         }
 
-        $this->send($students, $input['notifier_type'], $input['notifier_id']);
-//        \Illuminate\Support\Facades\Notification::send($students, new NoticeNotification($input['notifier_type'], $input['notifier_id'], Carbon::now()));
+        $this->send($students, $input['notifier_type'], $input['notifier_id'], $input['deadline'], $title, $brief_description);
 
         Flash::success('Notification sent successfully.');
 
@@ -312,7 +328,7 @@ class NotificationController extends AppBaseController
             $models = $model::all();
             foreach ($models as $model) {
                 $model->title = $model->getTitleOwnerAttribute(); // must setup on target models, define as notifiers top of this class
-                if ($model->owner_type == $request['type'] && $model->owner_id == $request['id']) {
+                if ($model->owner_type == $request['notifier_id'] && $model->owner_id == $request['id']) {
                     $model['selected'] = true;
                 }
             }
@@ -323,6 +339,9 @@ class NotificationController extends AppBaseController
                 $models = $model::where('owner_type', get_class($manage_history->managed))
                     ->where('owner_id', $manage_history->managed->id)->get();
                 foreach ($models as $model) {
+                    if ($model_name == $request['notifier_type'] && $model->id == $request['notifier_id']) {
+                        $model->selected = true;
+                    }
                     $result->push($model);
                 }
             }
@@ -342,9 +361,8 @@ class NotificationController extends AppBaseController
         return $study_field->study_areas->pluck('title', 'unique_code');
     }
 
-    public function send($students, $notifier_type, $notifier_id)
+    public function send($students, $notifier_type, $notifier_id, $deadline, $title, $brief_description)
     {
-        $this->authorize('send', [$notifier_type, $notifier_id]);
-        \Illuminate\Support\Facades\Notification::send($students, new NoticeNotification($notifier_type, $notifier_id, Carbon::now()));
+        \Illuminate\Support\Facades\Notification::send($students, new NoticeNotification($notifier_type, $notifier_id, $deadline, $title, $brief_description));
     }
 }

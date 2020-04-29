@@ -18,17 +18,21 @@ class NoticeNotification extends Notification
     private $notifier_type;
     private $notifier_id;
     private $deadline;
+    private $title;
+    private $brief_description;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($notifier_type, $notifier_id, $deadline)
+    public function __construct($notifier_type, $notifier_id, $deadline, $title, $brief_description)
     {
         $this->notifier_type = $notifier_type;
         $this->notifier_id = $notifier_id;
         $this->deadline = $deadline;
+        $this->title = $title;
+        $this->brief_description = $brief_description;
     }
 
     /**
@@ -63,11 +67,12 @@ class NoticeNotification extends Notification
      */
     public function toDatabase($notifiable)
     {
-//        error_log('#-TEST-# : notifier_id =>', $this->);
         return [
             'notifier_type' => $this->notifier_type,
             'notifier_id' => $this->notifier_id,
             'deadline' => $this->deadline,
+            'title' => $this->title,
+            'brief_description' => $this->brief_description,
             'RepliedTime' => Carbon::now()
         ];
     }

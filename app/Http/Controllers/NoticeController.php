@@ -74,7 +74,26 @@ class NoticeController extends AppBaseController
      */
     public function create()
     {
-        $creators = User::all()->pluck('full_name_scu_id', 'id');
+        $this->authorize('create', Notice::class);
+
+        $creators = collect();
+        if(Auth::user()->hasRole('developer')){
+            $creators = User::all()->pluck('full_name_scu_id', 'id');
+        }
+        elseif (Auth::user()->hasRole('admin')){
+            $creators = User::all()->pluck('full_name_scu_id', 'id');
+        }
+        elseif (Auth::user()->hasRole('content_manager')){
+            $creators = User::all()->pluck('full_name_scu_id', 'id');
+        }
+        elseif (Auth::user()->hasRole('notification_manager')){
+            $creators = User::all()->pluck('full_name_scu_id', 'id');
+        }
+        else {
+            $creators = [
+                Auth::user()->id => Auth::user()->getFullNameScuIdAttribute(),
+            ];
+        }
         return view('notices.create')
             ->with('creators', $creators)
             ->with('owner_types', $this->owner_types);
@@ -91,13 +110,28 @@ class NoticeController extends AppBaseController
     {
         $input = $request->all();
 
-        $notice = $this->noticeRepository->create($input);
+        $creator = User::find($request['creator_id']);
+        if (empty($creator)) {
+            Flash::error('Creator not found');
 
+            return redirect(route('notices.create'));
+        }
+
+        $owner = $input['owner_type']::find($input['owner_id']);
+        if (empty($owner)) {
+            Flash::error('Owner not found');
+
+            return redirect(route('notices.create'));
+        }
+
+        $this->authorize('store', [ $owner, $creator ]);
+
+        $notice = $this->noticeRepository->create($input);
 
         Flash::success('Notice saved successfully.');
 
         if($input['make_notification']){
-            return redirect(route('notices.index'));
+            return redirect(route('notifications.showNotifyStudentsFromNotifier', [ get_class($notice), $notice->id ]));
         } else {
             return redirect(route('notices.index'));
         }
@@ -113,6 +147,8 @@ class NoticeController extends AppBaseController
     public function show($id)
     {
         $notice = $this->noticeRepository->findWithoutFail($id);
+
+        $this->authorize('view', $notice);
 
         if (empty($notice)) {
             Flash::error('Notice not found');
@@ -133,6 +169,8 @@ class NoticeController extends AppBaseController
     public function edit($id)
     {
         $notice = $this->noticeRepository->findWithoutFail($id);
+
+        $this->authorize('update', $notice);
 
         if (empty($notice)) {
             Flash::error('Notice not found');
@@ -158,17 +196,38 @@ class NoticeController extends AppBaseController
     {
         $notice = $this->noticeRepository->findWithoutFail($id);
 
+        $this->authorize('update', $notice);
+
         if (empty($notice)) {
             Flash::error('Notice not found');
 
             return redirect(route('notices.index'));
         }
 
+        $creator = User::find($request['creator_id']);
+        if (empty($creator)) {
+            Flash::error('Creator not found');
+
+            return redirect(route('notices.edit'));
+        }
+
+        $owner = $request['owner_type']::find($request['owner_id']);
+        if (empty($owner)) {
+            Flash::error('Owner not found');
+
+            return redirect(route('notices.edit'));
+        }
+
         $notice = $this->noticeRepository->update($request->all(), $id);
 
         Flash::success('Notice updated successfully.');
 
-        return redirect(route('notices.index'));
+
+        if($request['make_notification']){
+            return redirect(route('notifications.showNotifyStudentsFromNotifier', [ get_class($notice), $notice->id ]));
+        } else {
+            return redirect(route('notices.index'));
+        }
     }
 
     /**
@@ -181,6 +240,8 @@ class NoticeController extends AppBaseController
     public function destroy($id)
     {
         $notice = $this->noticeRepository->findWithoutFail($id);
+
+        $this->authorize('delete', $notice);
 
         if (empty($notice)) {
             Flash::error('Notice not found');
@@ -206,13 +267,20 @@ class NoticeController extends AppBaseController
         $model_name =  $request['model_name'];
         $model = new $model_name();
         $models = $model::all();
-        foreach ($models as $model){
-            if (isset($notice)){
-                if ($notice->owner_type == $model_name && $notice->owner_id == $model->id){
-                    $model['selected'] = true;
+        $owners = collect();
+        $manage_histories = Auth::user()->under_managment();
+        foreach ($manage_histories as $manage_history){
+            foreach ($models as $model){
+                if($manage_history->managed == $model){
+                    if (isset($notice)){
+                        if ($notice->owner_type == $model_name && $notice->owner_id == $model->id){
+                            $model['selected'] = true;
+                        }
+                    }
+                    $owners->push($model);
                 }
             }
         }
-        return $models;
+        return $owners;
     }
 }

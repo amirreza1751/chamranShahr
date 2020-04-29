@@ -157,6 +157,16 @@ class Student extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function getFullNameAttribute()
+    {
+        return "{$this->user->first_name} {$this->user->last_name}";
+    }
+
+    public function getFullNameScuIdAttribute()
+    {
+        return "{$this->user->first_name} {$this->user->last_name} {$this->user->scu_id}";
+    }
+
     public function study_area()
     {
         return $this->belongsTo(StudyArea::class, 'study_area_unique_code', 'unique_code');

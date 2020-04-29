@@ -44,7 +44,9 @@ class CustomDatabaseChannel extends DatabaseChannel
             'notifier_id' => $this->getData($notifiable, $notification)['notifier_id'],
             'notifier_type' => $this->getData($notifiable, $notification)['notifier_type'],
             'deadline' => $this->getData($notifiable, $notification)['deadline'],
-            'data' => array_except($this->getData($notifiable, $notification), ['notifier_id', 'notifier_type', 'deadline']),
+            'title' => $this->getData($notifiable, $notification)['title'],
+            'brief_description' => $this->getData($notifiable, $notification)['brief_description'],
+            'data' => array_except($this->getData($notifiable, $notification), ['notifier_id', 'notifier_type', 'deadline', 'title', 'brief_description']),
             'read_at' => null,
         ];
     }

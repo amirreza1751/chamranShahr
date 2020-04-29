@@ -1,7 +1,7 @@
 <input name="make_notification" id="make_notification" type="hidden" value="{{false}}">
 @if(isset($notice)) {{--edit view--}}
     <input id="notice_id" type="hidden" value="{{$notice->id}}">
-    @if(isset($notice->notifications))
+    @if(sizeof($notice->notifications) > 0)
         <input id="has_notification" type="hidden" value="{{true}}">
     @endif
 @endif
@@ -149,7 +149,11 @@
 <script>
     $("#submit").click(function(){
         if(confirm("do you want make a notification too?")){
-            if(confirm("this notice has notifications before, create anathor one?!")){
+            if($("#has_notification").val()){
+                if(confirm("this notice has notifications before, create anathor one?!")){
+                    $("#make_notification").val(true);
+                }
+            } else {
                 $("#make_notification").val(true);
             }
         }

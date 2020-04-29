@@ -18,12 +18,12 @@
                         <input id="notification_id" type="hidden" value="{{$notification->id}}">
                     @endif
 
-                    @if(isset($notifier['type'])) {{--reditect view--}}
-                        <input id="type" type="hidden" value="{{$notifier['type']}}">
+                    @if(isset($notifier)) {{--reditect view--}}
+                        <input id="type" type="hidden" value="{{get_class($notifier)}}">
                     @endif
 
-                    @if(isset($notifier['id'])) {{--reditect view--}}
-                        <input id="id" type="hidden" value="{{$notifier['id']}}">
+                    @if(isset($notifier->id)) {{--reditect view--}}
+                        <input id="id" type="hidden" value="{{$notifier->id}}">
                     @endif
 
                 <!-- Notifier Type Field -->
@@ -33,7 +33,7 @@
                             <option disabled selected value> -- select an option -- </option>
                             @if(isset($notifier)) // edit view
                                 @foreach($notifiers as $key => $value)
-                                    @if($value == $notifier['type'])
+                                    @if($value == get_class($notifier))
                                         <option value="{{ $value }}" selected>{{ $key }}</option>
                                     @else
                                         <option value="{{ $value }}">{{ $key }}</option>
@@ -71,6 +71,7 @@
                                         console.log(data);
                                         $.each(data, function(id, notifier){
                                             if(notifier['selected']){
+                                                console.log('selected');
                                                 $('#notifier_id').append('<option selected value="'+ notifier['id'] +'">' + notifier['title'] + '</option>');
                                             } else {
                                                 $('#notifier_id').append('<option value="'+ notifier['id'] +'">' + notifier['title'] + '</option>');
@@ -91,10 +92,60 @@
                         <select class="form-control m-bot15" name="notifier_id" id="notifier_id">
                             <option disabled selected value> -- select an option -- </option>
                             @if(isset($notifier)) // edit view
-                                <option value="{{ $notifier['id'] }}" selected>{{ $notifier['title'] }}</option>
+                                <option value="{{ $notifier->id }}" selected>{{ $notifier->title }}</option>
                             @endif
                         </select>
                     </div>
+
+                    <!-- Title Field -->
+                    <div class="form-group col-sm-8">
+                            {!! Form::label('title', 'Title:') !!}
+                            {!! Form::text('title', null, ['class' => 'form-control', 'id' => 'title']) !!}
+                    </div>
+                    <div class="form-group col-sm-4">
+                            {!! Form::label('use_notifier_title', 'if select this, title will copied from notifier title', ['style' => 'color: lightgray' ]) !!}
+                            <div class="form-control checkbox" style="margin: 0;">
+                                <label><input name="use_notifier_title" id="use_notifier_title" type="checkbox" value="false">Use Notifier Title</label>
+                            </div>
+                    </div>
+                    <script>
+                        jQuery(document).ready(function(){
+                            $('#use_notifier_title').on('click', function(){
+                                if($('#use_notifier_title').is(":checked")){
+                                    $('#title').prop('disabled', true);
+                                    $('#use_notifier_title').val(false);
+                                } else {
+                                    $('#title').prop('disabled', false);
+                                    $('#use_notifier_title').val(true);
+                                }
+                            });
+                        });
+                    </script>
+
+                    <!-- Brief Description Field -->
+                    <div class="form-group col-sm-8">
+                            {!! Form::label('brief_description', 'Brief Description:') !!}
+                            {!! Form::text('brief_description', null, ['class' => 'form-control', 'id' => 'brief_description']) !!}
+                    </div>
+                    <div class="form-group col-sm-4">
+                            {!! Form::label('use_notifier_description', 'if select this, title will use notifier description', ['style' => 'color: lightgray' ]) !!}
+                            <div class="form-control checkbox" style="margin: 0;">
+                                <label><input name="use_notifier_description" id="use_notifier_description" type="checkbox" value="false">Use Notifier Description</label>
+                            </div>
+                    </div>
+                    <script>
+                        jQuery(document).ready(function(){
+                            $('#use_notifier_description').on('click', function(){
+                                if($('#use_notifier_description').is(":checked")){
+                                    $('#brief_description').prop('disabled', true);
+                                    $('#use_notifier_description').val(false);
+                                } else {
+                                    $('#brief_description').prop('disabled', false);
+                                    $('#use_notifier_description').val(true);
+                                }
+                            });
+                        });
+                    </script>
 
                     <!-- Faculty Unique Code Field -->
                     <div class="form-group col-sm-6">

@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Policies\AdPolicy;
 use App\Policies\NoticePolicy;
 use App\Policies\NotificationPolicy;
+use App\Policies\UserPolicy;
 use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -22,6 +23,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
+        User::class => UserPolicy::class,
         Ad::class => AdPolicy::class,
         Notification::class => NotificationPolicy::class,
         Notice::class => NoticePolicy::class,
@@ -43,6 +45,8 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('update_book_ad', AdPolicy::class . '@update_book_ad');
         Gate::resource('ads', AdPolicy::class);
 
-        Gate::define('send', NotificationPolicy::class . '@send');
+        Gate::define('notifyStudents', NotificationPolicy::class . '@notifyStudents');
+        Gate::define('showNotifyStudents', NotificationPolicy::class . '@showNotifyStudents');
+        Gate::define('store', NoticePolicy::class . '@store');
     }
 }

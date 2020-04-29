@@ -5,12 +5,10 @@
                 <th>Title</th>
         <th>Brief Description</th>
         <th>Type</th>
-        <th>Notifiable Type</th>
-        <th>Notifiable Id</th>
-        <th>Notifier Type</th>
-        <th>Notifier Id</th>
+        <th>Notifiable</th>
+        <th>Notifier</th>
         <th>Deadline</th>
-        <th>Data</th>
+        <th>Created At</th>
         <th>Read At</th>
                 <th colspan="3">Action</th>
             </tr>
@@ -21,12 +19,19 @@
                 <td>{!! $notification->title !!}</td>
             <td>{!! $notification->brief_description !!}</td>
             <td>{!! $notification->type !!}</td>
-            <td>{!! $notification->notifiable_type !!}</td>
-            <td>{!! $notification->notifiable_id !!}</td>
-            <td>{!! $notification->notifier_type !!}</td>
-            <td>{!! $notification->notifier_id !!}</td>
+            <td>
+                @if(isset($notification->notifiable->full_name_scu_id))
+                    {!! $notification->notifiable->full_name_scu_id !!}
+                @else
+                    <script>alert('{{$notification->id}}');</script>
+                @endif
+            <td>
+                @if(isset($notification->notifier->title))
+                    {!! $notification->notifier->title !!}
+                @endif
+            </td>
             <td>{!! $notification->deadline !!}</td>
-            <td>{!! $notification->data !!}</td>
+            <td>{!! $notification->created_at !!}</td>
             <td>{!! $notification->read_at !!}</td>
                 <td>
                     {!! Form::open(['route' => ['notifications.destroy', $notification->id], 'method' => 'delete']) !!}
