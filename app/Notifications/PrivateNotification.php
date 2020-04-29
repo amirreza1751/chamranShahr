@@ -8,19 +8,21 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use NotificationChannels\WebPush\WebPushChannel;
+use NotificationChannels\WebPush\WebPushMessage;
 
 class PrivateNotification extends Notification
 {
     use Queueable;
-
+    public $message;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($message)
     {
-        //
+        $this->message = $message;
     }
 
     /**
@@ -31,7 +33,18 @@ class PrivateNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['database', 'broadcast'];
+        return [WebPushChannel::class];
+    }
+
+
+    public function toWebPush($notifiable, $notification)
+    {
+        return (new WebPushMessage)
+            ->title('چمرانشهر - نوتیفیکیشن')
+            ->icon('https://campus.scu.ac.ir/web/static/media/Logo.eae4a32a.png?__WB_REVISION__=eae4a32a77d0d0047e42b74590bdd9d2')
+            ->body($this->message . "___" .Carbon::now()->toDateTimeString())
+//            ->image('https://static.vecteezy.com/system/resources/previews/000/165/953/original/free-business-success-icons-vector.jpg')
+            ->action('نمایش در اپلیکیشن', 'https://campus.scu.ac.ir/build');
     }
 
     /**

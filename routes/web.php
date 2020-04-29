@@ -288,5 +288,5 @@ Route::get('tempedit', function (){
     return view('users.edit_profile');
 });
 
-
-
+//make a push notification.
+Route::middleware('auth:web')->get('/push/{message?}','PushController@push')->name('push');

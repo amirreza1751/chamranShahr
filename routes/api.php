@@ -256,3 +256,7 @@ Route::get('test-broadcast/', function(Request $request){
 Route::resource('external_service_types', 'ExternalServiceTypeAPIController');
 
 Route::resource('external_services', 'ExternalServiceAPIController');
+
+
+//store a push subscriber.
+Route::post('/push','PushController@store');

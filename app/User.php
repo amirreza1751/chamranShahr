@@ -12,12 +12,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
+use NotificationChannels\WebPush\HasPushSubscriptions;
 
 class User extends Authenticatable
 {
     use Notifiable, HasApiTokens;
     use Authorizable;
     use HasRoles;
+    use HasPushSubscriptions;
 
     /**
      * The attributes that are mass assignable.
