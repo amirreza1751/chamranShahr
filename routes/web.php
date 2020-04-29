@@ -111,6 +111,16 @@ Route::group(['middleware' => 'auth:web'], function(){
 
     });
 
+    Route::get('showProfile/', [
+        'as' => 'users.showProfile', 'uses' => 'UserController@showProfile'
+    ]);
+    Route::patch('updateProfile/{user}', [
+        'as' => 'users.updateProfile', 'uses' => 'UserController@updateProfile'
+    ]);
+    Route::get('editProfile', [
+        'as' => 'users.editProfile', 'uses' => 'UserController@editProfile'
+    ]);
+
     Route::get('/notices/ajaxOwner', 'NoticeController@ajaxOwner');
     Route::resource('notices', 'NoticeController');
 
@@ -128,7 +138,10 @@ Route::group(['middleware' => 'auth:web'], function(){
     Route::get('/notifications/ajaxNotifier', 'NotificationController@ajaxNotifier');
     Route::resource('notifications', 'NotificationController');
 
-    Route::get('/home', 'HomeController@index');
+    //    Route::get('/home', 'HomeController@index');
+    Route::get('/home', [
+        'as' => 'home', 'uses' => 'HomeController@index'
+    ]);
 
     Route::resource('users', 'UserController'); // ++
 

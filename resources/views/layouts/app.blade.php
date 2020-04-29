@@ -74,7 +74,7 @@
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                        <a href="{{ route('users.showProfile') }}" class="btn btn-default btn-flat">صفحه‌ی شخصی</a>
                                     </div>
                                     <div class="pull-right">
                                         <a href="{!! url('/logout') !!}" class="btn btn-default btn-flat"

@@ -181,9 +181,4 @@ class MediaController extends AppBaseController
 
         return redirect(route('media.index'));
     }
-
-    public function owner()
-    {
-        return $this->morphTo();
-    }
 }

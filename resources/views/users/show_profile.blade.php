@@ -2,7 +2,7 @@
 <head>
 
     <style>
-        .reverse{
+        .reverse {
             float: right;
         }
 
@@ -10,18 +10,22 @@
             font-family: IRAN;
             src: url('/fonts/IRAN.ttf');
         }
+
         @font-face {
             font-family: IRANBlack;
             src: url('/fonts/IRAN_Black.ttf');
         }
+
         @font-face {
             font-family: IRANBold;
             src: url('/fonts/IRAN_Bold.ttf');
         }
+
         @font-face {
             font-family: IRANMarker;
             src: url('/fonts/IRANMarker.ttf');
         }
+
         .iran-marker {
             font-family: IRANMarker;
         }
@@ -29,25 +33,28 @@
         .iran-black {
             font-family: IRANBlack;
         }
+
         .iran-bold {
             font-family: IRANBold;
         }
+
         .iran {
             font-family: IRAN;
         }
 
-        .graylabel{
+        .graylabel {
             color: lightgray;
             margin-left: 5rem;
         }
-        .labelbox{
+
+        .labelbox {
             padding: 1rem;
             border: 1px solid rgba(0, 0, 0, 0.125);
             border-radius: 0.25rem;
             margin: 0.5rem;
         }
 
-        .titlebox{
+        .titlebox {
             min-width: 15rem;
             max-width: 15rem;
         }
@@ -195,6 +202,7 @@
                 margin-right: -15px;
                 margin-left: -15px;
             }
+
             .card-deck .card {
                 display: -ms-flexbox;
                 display: flex;
@@ -224,35 +232,43 @@
                 -ms-flex-flow: row wrap;
                 flex-flow: row wrap;
             }
+
             .card-group > .card {
                 -ms-flex: 1 0 0%;
                 flex: 1 0 0%;
                 margin-bottom: 0;
             }
+
             .card-group > .card + .card {
                 margin-left: 0;
                 border-left: 0;
             }
+
             .card-group > .card:not(:last-child) {
                 border-top-right-radius: 0;
                 border-bottom-right-radius: 0;
             }
+
             .card-group > .card:not(:last-child) .card-img-top,
             .card-group > .card:not(:last-child) .card-header {
                 border-top-right-radius: 0;
             }
+
             .card-group > .card:not(:last-child) .card-img-bottom,
             .card-group > .card:not(:last-child) .card-footer {
                 border-bottom-right-radius: 0;
             }
+
             .card-group > .card:not(:first-child) {
                 border-top-left-radius: 0;
                 border-bottom-left-radius: 0;
             }
+
             .card-group > .card:not(:first-child) .card-img-top,
             .card-group > .card:not(:first-child) .card-header {
                 border-top-left-radius: 0;
             }
+
             .card-group > .card:not(:first-child) .card-img-bottom,
             .card-group > .card:not(:first-child) .card-footer {
                 border-bottom-left-radius: 0;
@@ -274,6 +290,7 @@
                 orphans: 1;
                 widows: 1;
             }
+
             .card-columns .card {
                 display: inline-block;
                 width: 100%;
@@ -320,66 +337,78 @@
         </section>
         <div class="content">
             @include('adminlte-templates::common.errors')
+            @include('flash::message')
             <div class="box box-primary">
 
                 <div class="box-body">
-                    <div class="" >
-    {{--                    {!! Form::open(['route' => 'users.store']) !!}--}}
+                    <div class="col-sm-8" style="padding: 5rem; font-size: 1.5rem;">
 
-
-                            <div class="col-sm-8" style="padding: 5rem; font-size: 1.5rem;">
-{{--                                <!-- First Name Field -->--}}
-{{--                                <div class="labelbox">--}}
-{{--                                    {!! Form::label('first_name', 'نام:', ['class' => 'graylabel titlebox']) !!}--}}
-{{--                                    <span>محمدامین</span>--}}
-{{--                                </div>--}}
-
-{{--                                <!-- Last Name Field -->--}}
-{{--                                <div class="labelbox">--}}
-{{--                                    {!! Form::label('first_name', 'نام خانوادگی:', ['class' => 'graylabel titlebox']) !!}--}}
-{{--                                    <span>درخشانی</span>--}}
-{{--                                </div>--}}
-
-                                <!-- National Id Field -->
-                                <div class="labelbox">
-                                    {!! Form::label('first_name', 'شماره ملی:', ['class' => 'graylabel titlebox']) !!}
-                                    <span>199567401</span>
-                                </div>
-
-                                <!-- Scu Id Field -->
-                                <div class="labelbox">
-                                    {!! Form::label('first_name', 'شماره دانشگاهی:', ['class' => 'graylabel titlebox']) !!}
-                                    <span>9250013</span>
-                                </div>
-
-                                <!-- National Id Field -->
-                                <div class="labelbox">
-                                    {!! Form::label('first_name', 'شماره تلفن همراه:', ['class' => 'graylabel titlebox']) !!}
-                                    <span>09367112310</span>
-                                </div>
-
-                                <!-- Mail Field -->
-                                <div class="labelbox">
-                                    {!! Form::label('first_name', 'ایمیل:', ['class' => 'graylabel titlebox']) !!}
-                                    <span>M.Amin.Derakhshani@campus.scu.ac.ir</span>
-                                </div>
-
-                            </div>
-
-                            <div class="col-sm-4">
-                                <div class="card">
-                                    <img class="card-img-top" src="http://localhost:8000/storage/profile/wp4540696.jpg" alt="Card image" style="width:100%">
-                                    <div class="card-body">
-                                        <h4 class="card-title">محمدامین درخشانی</h4>
-                                        <p class="card-text">نوع کاربری: کارمند</p>
-                                        <a href="#" class="btn btn-primary">ویرایش</a>
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- Username Field -->
+                        <div class="labelbox">
+                            {!! Form::label('username', 'نام کاربری:', ['class' => 'graylabel titlebox']) !!}
+                            <span> @if(isset($user->username)) {{$user->username}} @endif </span>
                         </div>
 
-    {{--                    {!! Form::close() !!}--}}
+                        <!-- National Id Field -->
+                        <div class="labelbox">
+                            {!! Form::label('national_id', 'شماره ملی:', ['class' => 'graylabel titlebox']) !!}
+                            <span> @if(isset($user->national_id)) {{$user->national_id}} @endif </span>
+                        </div>
+
+                        <!-- Scu Id Field -->
+                        <div class="labelbox">
+                            {!! Form::label('scu_id', 'شماره دانشگاهی:', ['class' => 'graylabel titlebox']) !!}
+                            <span> @if(isset($user->scu_id)) {{$user->scu_id}} @endif </span>
+                        </div>
+
+                        <!-- Phone Number Field -->
+                        <div class="labelbox">
+                            {!! Form::label('phone_number', 'شماره تلفن همراه:', ['class' => 'graylabel titlebox']) !!}
+                            <span>
+                                    @if(isset($user->phone_number)) {{$user->phone_number}} @endif
+                                @if(isset($user->phone_number))
+                                    <span style="float: left;" class="label label-success">تایید شده</span></h1>
+                                @else
+                                    <span style="float: left;" class="label label-default">تایید نشده</span></h1>
+                                @endif
+                                </span>
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="labelbox">
+                            {!! Form::label('email', 'پست الکترونیک:', ['class' => 'graylabel titlebox']) !!}
+                            <span>
+                                    @if(isset($user->email)) {{$user->email}} @endif
+                                @if(isset($user->email_verified_at))
+                                    <span style="float: left;" class="label label-success">تایید شده</span></h1>
+                                @else
+                                    <span style="float: left;" class="label label-default">تایید نشده</span></h1>
+                                @endif
+                                </span>
+                        </div>
+
+                        <!-- Birthday Field -->
+                        <div class="labelbox">
+                            {!! Form::label('birthday', 'تاریخ تولد:', ['class' => 'graylabel titlebox']) !!}
+                            <span> @if(isset($user->birthday)) {{$user->birthday}} @endif </span>
+                        </div>
+
                     </div>
+
+                    <div class="col-sm-4">
+                        <div class="card">
+                            <img class="card-img-top" src="{{ $user->avatar_path }}" alt="Card image"
+                                 style="width:100%">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ $user->first_name . ' ' . $user->last_name }}</h4>
+                                <p class="card-text">نوع کاربری: </p>
+                                <p class="card-text">جنسیت: @if(isset($user->gender->title)) {{ $user->gender->title }} @endif</p>
+                                <a href="{{ route('users.editProfile') }}" class="btn btn-primary">ویرایش</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{--                    {!! Form::close() !!}--}}
                 </div>
             </div>
         </div>

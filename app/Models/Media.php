@@ -72,7 +72,7 @@ class Media extends Model
     use SoftDeletes;
 
     public $table = 'medias';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -114,5 +114,9 @@ class Media extends Model
         'owner_id' => 'required'
     ];
 
-    
+    public function owner()
+    {
+        return $this->morphTo();
+    }
+
 }

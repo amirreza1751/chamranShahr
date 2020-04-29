@@ -9,6 +9,43 @@
         .input:hover{
             border: 0.05rem lightblue solid;
         }
+        input[type="text"]:disabled {
+            /*border: none;*/
+        }
+
+        .graylabel{
+            color: lightgray;
+            margin-left: 5rem;
+        }
+
+        .darkgraylabel{
+            color: gray;
+            margin-left: 5rem;
+        }
+
+        .labelbox{
+            padding: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            border-radius: 0.25rem;
+            margin: 0.5rem;
+        }
+        /*.labelbox:disabled {*/
+        /*    background: grey;*/
+        /*    padding: unset;*/
+        /*    margin: unset;*/
+        /*}*/
+
+        .labelbutton{
+            padding: 1rem;
+            margin: 0.5rem;
+            width: 100%;
+            vertical-align: center;
+        }
+
+        .titlebox{
+            min-width: 15rem;
+            max-width: 15rem;
+        }
 
         @font-face {
             font-family: IRAN;
@@ -38,22 +75,6 @@
         }
         .iran {
             font-family: IRAN;
-        }
-
-        .graylabel{
-            color: lightgray;
-            margin-left: 5rem;
-        }
-        .labelbox{
-            padding: 1rem;
-            border: 1px solid rgba(0, 0, 0, 0.125);
-            border-radius: 0.25rem;
-            margin: 0.5rem;
-        }
-
-        .titlebox{
-            min-width: 15rem;
-            max-width: 15rem;
         }
 
         .card {
@@ -324,78 +345,123 @@
         </section>
         <div class="content">
             @include('adminlte-templates::common.errors')
+            @include('flash::message')
             <div class="box box-primary">
 
                 <div class="box-body">
-                    <div class="" >
-    {{--                    {!! Form::open(['route' => 'users.store']) !!}--}}
+                    {!! Form::model($user, ['route' => ['users.updateProfile', $user->id], 'method' => 'patch', 'enctype' => 'multipart/form-data']) !!}
 
+                    <div class="col-sm-12" style="padding: 5rem; font-size: 1.5rem;">
 
-                            <div class="col-sm-12" style="padding: 5rem; font-size: 1.5rem;">
-{{--                                <!-- First Name Field -->--}}
-{{--                                <div class="labelbox">--}}
-{{--                                    {!! Form::label('first_name', 'نام:', ['class' => 'graylabel titlebox']) !!}--}}
-{{--                                    <span>محمدامین</span>--}}
-{{--                                </div>--}}
-
-{{--                                <!-- Last Name Field -->--}}
-{{--                                <div class="labelbox">--}}
-{{--                                    {!! Form::label('first_name', 'نام خانوادگی:', ['class' => 'graylabel titlebox']) !!}--}}
-{{--                                    <span>درخشانی</span>--}}
-{{--                                </div>--}}
-
-                                <!-- First Name Field -->
-                                <div class="row">
-                                    <div class="labelbox col-sm-8">
-                                        {!! Form::text('first_name', null, ['class' => 'input']) !!}
-                                    </div>
-                                    <div class="labelbox col-sm-3">
-                                        {!! Form::label('first_name', 'نام:', ['class' => 'graylabel titlebox']) !!}
-                                    </div>
-                                </div>
-
-                                <!-- Last Name Field -->
-                                <div class="row">
-                                    <div class="labelbox col-sm-8">
-                                        {!! Form::text('first_name', null, ['class' => 'input']) !!}
-                                    </div>
-                                    <div class="labelbox col-sm-3">
-                                        {!! Form::label('first_name', 'نام خانوادگی:', ['class' => 'graylabel titlebox']) !!}
-                                    </div>
-                                </div>
-
-                                <!-- Phone Number Field -->
-                                <div class="row">
-                                    <div class="labelbox col-sm-8">
-                                        {!! Form::text('first_name', null, ['class' => 'input']) !!}
-                                    </div>
-                                    <div class="labelbox col-sm-3">
-                                        {!! Form::label('first_name', 'نام خانوادگی:', ['class' => 'graylabel titlebox']) !!}
-                                    </div>
-                                </div>
-
-
-                                <!-- Scu Id Field -->
-                                <div class="labelbox">
-                                    {!! Form::label('first_name', 'شماره دانشگاهی:', ['class' => 'graylabel titlebox']) !!}
-                                </div>
-
-                                <!-- National Id Field -->
-                                <div class="labelbox">
-                                    {!! Form::label('first_name', 'شماره تلفن همراه:', ['class' => 'graylabel titlebox']) !!}
-                                </div>
-
-                                <!-- Mail Field -->
-                                <div class="labelbox">
-                                    {!! Form::label('first_name', 'ایمیل:', ['class' => 'graylabel titlebox']) !!}
-                                </div>
-
+                        <!-- First Name Field -->
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                {!! Form::text('first_name', null, ['class' => 'input']) !!}
                             </div>
-
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('first_name', 'نام:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
                         </div>
 
-    {{--                    {!! Form::close() !!}--}}
+                        <!-- Last Name Field -->
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                {!! Form::text('last_name', null, ['class' => 'input']) !!}
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('last_name', 'نام خانوادگی:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
+                        </div>
+
+                        <!-- Birthday Field -->
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                {!! Form::date('birthday', null, ['class' => 'input']) !!}
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('birthday', 'تاریخ تولد:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                <input type="password" class="input" dir="ltr" name="password">
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('password', 'رمز عبور:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password Field -->
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                <input type="password" class="input" dir="ltr" name="confirm_password">
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('confirm_password', 'تکرار رمز عبور:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
+                        </div>
+
+                        <!-- Username Field -->
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                {!! Form::text('username', null, ['class' => 'input']) !!}
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('username', 'نام کاربری:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
+                        </div>
+
+                        <!-- Avatar Path Field -->
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                {!! Form::file('avatar_path', null, ['class' => 'input']) !!}
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('avatar_path', 'تصویر شخصی:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
+                        </div>
+
+                        <!-- Phone Number Field -->
+                        <div class="row">
+                            <div class="col-sm-2" disabled>
+                                {{--                                    <a disabled href="{!! route('users.index') !!}" class="btn btn-danger labelbutton">تغییر</a>--}}
+                                <a disabled href="" class="btn btn-danger labelbutton">تغییر</a>
+                            </div>
+                            <div class="labelbox col-sm-6" disabled>
+                                {{--                                    {!! Form::text('phone_number', null, ['class' => 'input', 'dir' => 'ltr', 'disabled']) !!}--}}
+                                {!! Form::text('phone_number', null, ['class' => 'form-control input', 'dir' => 'ltr', 'placeholder' => 'like: 0936 123 4567', 'disabled']) !!}
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('phone_number', 'شماره تلفن همراه:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="row">
+                            <div class="col-sm-2">
+                                {{--                                    <a disabled href="{!! route('users.index') !!}" class="btn btn-danger labelbutton">تغییر</a>--}}
+                                <a disabled href="" class="btn btn-danger labelbutton">تغییر</a>
+                            </div>
+                            <div class="labelbox col-sm-6" disabled>
+                                {!! Form::text('email', null, ['class' => 'form-control input', 'dir' => 'ltr', 'placeholder' => 'support@campus.scu.ac.ir', 'disabled']) !!}
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('email', 'پست الکترونیک:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
+
+                            <!-- Submit Field -->
+                            <div class="form-group col-sm-6" style="float: left">
+                                {!! Form::submit('ذخیره', ['class' => 'btn btn-primary']) !!}
+                                <a href="{!! route('users.showProfile') !!}" class="btn btn-default">انصراف</a>
+                            </div>
+                        </div>
+
+
                     </div>
+
+                    {!! Form::close() !!}
                 </div>
             </div>
         </div>

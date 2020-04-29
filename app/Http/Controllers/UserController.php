@@ -11,7 +11,9 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
@@ -150,7 +152,7 @@ class UserController extends AppBaseController
         }
 
         $input['id'] = $id;
-//        $user = $this->userRepository->update($input, $id);
+        $user = $this->userRepository->update($input, $id);
 
         Flash::success('User updated successfully.');
 
@@ -181,4 +183,91 @@ class UserController extends AppBaseController
         return redirect(route('users.index'));
     }
 
+    /**
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     *************************************************** CUSTOMIZATION *************************************************
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     */
+
+    public function showProfile()
+    {
+        $this->authorize('showProfile', User::class);
+
+        $user = $this->userRepository->findWithoutFail(Auth::user()->id);
+//        $genders = Gender::all();
+
+        if (empty($user)) {
+            Flash::error('User not found');
+
+            return redirect(route('users.index'));
+        }
+
+        $user->avatar_path = URL::to('/') . '/' . $user->avatar_path;
+
+        $user->birthday = Jalalian::fromCarbon(Carbon::parse($user->birthday))->format('d - m - Y');
+
+        return view('users.show_profile')
+            ->with('user', $user);
+//            ->with('genders', $genders);
+    }
+
+    public function editProfile()
+    {
+        $user = $this->userRepository->findWithoutFail(Auth::user()->id);
+//        $genders = Gender::all();
+
+        if (empty($user)) {
+            Flash::error('User not found');
+
+            return redirect(route('home'));
+        }
+
+        $this->authorize('updateProfile', $user);
+
+        return view('users.edit_profile')
+            ->with('user', $user);
+//            ->with('genders', $genders);
+    }
+
+    /**
+     * Update the specified User in storage.
+     *
+     * @param  int              $id
+     * @param UpdateUserRequest $request
+     *
+     * @return Response
+     */
+    public function updateProfile($id, UpdateUserRequest $request)
+    {
+        $user = $this->userRepository->findWithoutFail($id);
+        $input = $request->all();
+
+        if (empty($user)) {
+            Flash::error('User not found');
+
+            return redirect(route('home'));
+        }
+
+        $this->authorize('updateProfile', $user);
+
+        if($request->hasFile('avatar_path')){
+            $avatar_path = $request->file('avatar_path')->store('/public/profile');
+            $avatar_path = str_replace('public', 'storage', $avatar_path);
+            $input['avatar_path'] = $avatar_path;
+        }
+
+        if(isset($input['password'])){
+            $input['password'] = Hash::make($input['password']);
+        }
+
+        unset($input['password']);
+
+        $user = $this->userRepository->update($input, $id);
+
+        Flash::success('صفحه‌ی شخصی با موفقیت به روز شد');
+
+        return redirect(route('users.showProfile'));
+    }
 }
