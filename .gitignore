@@ -15,3 +15,4 @@ yarn-error.log
 /.env
 /_ide_helper.php
 .phpunit.result.cache
+/config/cookie/cookie.txt
