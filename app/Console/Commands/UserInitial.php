@@ -51,6 +51,8 @@ class UserInitial extends Command
             ],
                 true);
 
+
+
             $user = User::create([
                 'first_name' => 'Shahid Chamran',
                 'last_name' => 'University of Ahvaz',

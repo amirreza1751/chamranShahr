@@ -44,6 +44,9 @@ class AppInitial extends Command
             $user_initial_exitCode = Artisan::call('user:initial');
             $cc->print_success("========================================================================================\tuser:initial command done successfully.\n");
 
+            $passport_install_exitCode = Artisan::call('passport:install');
+            $cc->print_success("========================================================================================\tuser:initial command done successfully.\n");
+
             $role_initial_exitCode = Artisan::call('role:initial');
             $cc->print_success("========================================================================================\trole:initial command done successfully.\n");
 
@@ -55,8 +58,18 @@ class AppInitial extends Command
             $cc->print_error("\n\n\noops!");
             $cc->print_warning("initial procedure crash due to some problem with this error:");
             $cc->print_error($e->getMessage());
+
             if (!isset($user_initial_exitCode)) {
                 $cc->print_help("the exception thrown by UserInitial logic at line " . $e->getLine() . " of\t" . str_after($e->getFile(), base_path()) . "\tfile, pls check that and try again");
+                $cc->print_warning("do you want to see exception trace back?(y or n)");
+                $c = fread(STDIN, 1);
+                if ($c == 'y') {
+                    var_dump($e->getTraceAsString());
+                }
+
+            }
+            elseif (!isset($passport_install_exitCode)) {
+                $cc->print_help("the exception thrown by Passport Install logic at line " . $e->getLine() . " of\t" . str_after($e->getFile(), base_path()) . "\tfile, pls check that and try again");
                 $cc->print_warning("do you want to see exception trace back?(y or n)");
                 $c = fread(STDIN, 1);
                 if ($c == 'y') {
