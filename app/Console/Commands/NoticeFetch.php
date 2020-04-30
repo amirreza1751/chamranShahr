@@ -14,10 +14,6 @@ use Illuminate\Container\Container;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
-use Orchestra\Parser\Xml\Document;
-use Orchestra\Parser\Xml\Reader;
-use Weidner\Goutte\GoutteFacade;
-use Orchestra\Parser\Xml\Facade as XmlParser;
 
 class NoticeFetch extends Command
 {

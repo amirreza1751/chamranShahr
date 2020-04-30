@@ -149,7 +149,6 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         L5Swagger\L5SwaggerServiceProvider::class,
         Weidner\Goutte\GoutteServiceProvider::class,
-        Orchestra\Parser\XmlServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -220,7 +219,6 @@ return [
         'Html'      => Collective\Html\HtmlFacade::class,
         'Flash'     => Laracasts\Flash\Flash::class,
         'Goutte' => Weidner\Goutte\GoutteFacade::class,
-        'XmlParser' => Orchestra\Parser\Xml\Facade::class,
 
     ],
 

@@ -137,4 +137,16 @@ class Department extends Model
             return User::find($manage_history->manager_id);
         }
     }
+
+    public function manage_level()
+    {
+        return $this->belongsTo(ManageLevel::class);
+    }
+
+    public function manage_history()
+    {
+        $manage_history = $this->morphMany(ManageHistory::class, 'managed')
+            ->where('is_active', true)
+            ->orderBy('begin_date', 'desc');
+    }
 }

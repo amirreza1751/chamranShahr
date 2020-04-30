@@ -26,6 +26,7 @@ use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Laravie\Parser\Xml\Reader;
@@ -73,7 +74,7 @@ Route::group(['middleware' => 'auth:web'], function(){
 
         Route::resource('manageHierarchies', 'ManageHierarchyController'); // ++
 
-        Route::resource('departments', 'DepartmentController'); // ++
+//        Route::resource('departments', 'DepartmentController'); // ++
 
         Route::resource('faculties', 'FacultyController'); // ++
 
@@ -110,6 +111,11 @@ Route::group(['middleware' => 'auth:web'], function(){
         Route::resource('manageHistories', 'ManageHistoryController');
 
     });
+
+    Route::get('departments/{department}/showProfile/', [
+        'as' => 'departments.showProfile', 'uses' => 'DepartmentController@showProfile'
+    ]);
+    Route::resource('departments', 'DepartmentController'); // ++
 
     Route::get('showProfile/', [
         'as' => 'users.showProfile', 'uses' => 'UserController@showProfile'
@@ -294,11 +300,7 @@ function xmlToArray($xml, $options = array()) {
 }
 
 Route::get('temp', function (){
-    return view('users.profile');
-});
-
-Route::get('tempedit', function (){
-    return view('users.edit_profile');
+    Log::info('A user has arrived at the temp page.', ['user' => Auth::user()]);
 });
 
 //make a push notification.

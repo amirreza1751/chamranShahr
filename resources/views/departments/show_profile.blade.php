@@ -71,13 +71,18 @@
             -ms-flex-direction: column;
             flex-direction: column;
             min-width: 0;
-            width: 300px;
+            width: 90%;
             word-wrap: break-word;
             background-color: #EDEFF2;
             background-clip: border-box;
             border: 1px solid rgba(0, 0, 0, 0.125);
             border-radius: 0.75rem;
             margin: 25px;
+
+            margin: 0 auto; /* Added */
+            float: none; /* Added */
+            margin-top: 3rem; /* Added */
+            margin-bottom: 3rem; /* Added */
         }
 
         .card > hr {
@@ -337,7 +342,7 @@
     <div class="iran" dir="rtl" style="padding: 50px;">
         <section class="content-header">
             <h1 class="iran-bold">
-                صفحه‌ی شخصی
+                صفحه‌ی مدیریت
             </h1>
         </section>
         <div class="content">
@@ -346,104 +351,41 @@
             <div class="box box-primary">
 
                 <div class="box-body">
-                    <div class="col-sm-8" style="padding: 5rem; font-size: 1.5rem;">
-
-                        <!-- Username Field -->
-                        <div class="labelbox">
-                            {!! Form::label('username', 'نام کاربری:', ['class' => 'graylabel titlebox']) !!}
-                            <span> @if(isset($user->username)) {{$user->username}} @endif </span>
-                        </div>
-
-                        <!-- National Id Field -->
-                        <div class="labelbox">
-                            {!! Form::label('national_id', 'شماره ملی:', ['class' => 'graylabel titlebox']) !!}
-                            <span> @if(isset($user->national_id)) {{$user->national_id}} @endif </span>
-                        </div>
-
-                        <!-- Scu Id Field -->
-                        <div class="labelbox">
-                            {!! Form::label('scu_id', 'شماره دانشگاهی:', ['class' => 'graylabel titlebox']) !!}
-                            <span> @if(isset($user->scu_id)) {{$user->scu_id}} @endif </span>
-                        </div>
-
-                        <!-- Phone Number Field -->
-                        <div class="labelbox">
-                            {!! Form::label('phone_number', 'شماره تلفن همراه:', ['class' => 'graylabel titlebox']) !!}
-                            <span>
-                                    @if(isset($user->phone_number)) {{$user->phone_number}} @endif
-                                @if(isset($user->phone_number))
-                                    <span style="float: left;" class="label label-success">تایید شده</span></h1>
-                                @else
-                                    <span style="float: left;" class="label label-default">تایید نشده</span></h1>
-                                @endif
-                                </span>
-                        </div>
-
-                        <!-- Email Field -->
-                        <div class="labelbox">
-                            {!! Form::label('email', 'پست الکترونیک:', ['class' => 'graylabel titlebox']) !!}
-                            <span>
-                                    @if(isset($user->email)) {{$user->email}} @endif
-                                @if(isset($user->email_verified_at))
-                                    <span style="float: left;" class="label label-success">تایید شده</span></h1>
-                                @else
-                                    <span style="float: left;" class="label label-default">تایید نشده</span></h1>
-                                @endif
-                                </span>
-                        </div>
-
-                        <!-- Birthday Field -->
-                        <div class="labelbox">
-                            {!! Form::label('birthday', 'تاریخ تولد:', ['class' => 'graylabel titlebox']) !!}
-                            <span> @if(isset($user->birthday)) {{$user->birthday}} @endif </span>
-                        </div>
-
-                    </div>
-
-                    <div class="col-sm-4">
+                    <div class="col-sm-12">
                         <div class="card">
-                            <img class="card-img-top" src="{{ $user->avatar_path }}" alt="Card image"
+                            <img class="card-img-top" src="{{ $department->path }}" alt="Card image"
                                  style="width:100%">
                             <div class="card-body">
-                                <h4 class="card-title">{{ $user->first_name . ' ' . $user->last_name }}</h4>
-                                <p class="card-text">نوع کاربری: </p>
-                                <p class="card-text">جنسیت: @if(isset($user->gender->title)) {{ $user->gender->title }} @endif</p>
+                                <h4 class="card-title">{{ $department->title }}</h4>
+                                <p class="card-text">نوع مدیریت: @if(!is_null($department->manage_level)) {{ $department->manage_level->management_title }} @endif</p>
+                                <p class="card-text">مدیر: @if(!is_null($department->manager())) {{ $department->manager()->full_name }} @endif</p>
                                 <a href="{{ route('users.editProfile') }}" class="btn btn-primary">ویرایش</a>
                             </div>
                         </div>
+
+                        <!-- Description Field -->
+                        <div class="labelbox">
+                            {!! Form::label('description', 'توضیحات:', ['class' => 'graylabel titlebox']) !!}
+                            <span> @if(isset($department->description)) {{$department->description}} @endif </span>
+                        </div>
                     </div>
+
+{{--                    <div class="col-sm-8" style="padding: 5rem; font-size: 1.5rem;">--}}
+
+{{--                        <!-- Username Field -->--}}
+{{--                        <div class="labelbox">--}}
+{{--                            {!! Form::label('username', 'نام کاربری:', ['class' => 'graylabel titlebox']) !!}--}}
+{{--                            <span> @if(isset($user->username)) {{$user->username}} @endif </span>--}}
+{{--                        </div>--}}
+
+{{--                    </div>--}}
+
+
 
                     {{--                    {!! Form::close() !!}--}}
                 </div>
             </div>
         </div>
-
-        @if(sizeof($user->under_managment()) > 0)
-            <section class="content-header">
-                <h1 class="iran-bold">
-                    مدیریت‌ها
-                </h1>
-            </section>
-            <div class="content">
-                <div class="box box-primary">
-
-                    <div class="box-body">
-                        @foreach($user->under_managment() as $management)
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <!-- Title Field -->
-                                    <div class="labelbox">
-                                        {!! Form::label('title', 'عنوان:', ['class' => 'royallabel titlebox']) !!}
-                                        <span> @if(isset($management->managed->title)) {{$management->managed->title}} @endif </span>
-                                        <a style="float: left" href="{!! route(app($management->managed_type)->getTable() . '.showProfile', [$management->managed->id]) !!}" class='btn btn-primary btn-xs'>مشاهده</a>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        @endif
     </div>
 
 @endsection

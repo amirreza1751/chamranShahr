@@ -7,8 +7,13 @@ use App\Http\Requests\UpdateDepartmentRequest;
 use App\Models\ManageLevel;
 use App\Repositories\DepartmentRepository;
 use App\Http\Controllers\AppBaseController;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
+use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -155,4 +160,31 @@ class DepartmentController extends AppBaseController
 
         return redirect(route('departments.index'));
     }
+
+    /**
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     *************************************************** CUSTOMIZATION *************************************************
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     */
+
+    public function showProfile($id)
+    {
+//        $this->authorize('showProfile', User::class);
+
+        $department = $this->departmentRepository->findWithoutFail($id);
+
+        if (empty($department)) {
+            Flash::error('همچین مدیریتی وجود ندارد');
+
+            return redirect()->back();
+        }
+
+        $department->path = URL::to('/') . '/' . $department->path;
+
+        return view('departments.show_profile')
+            ->with('department', $department);
+    }
+
 }
