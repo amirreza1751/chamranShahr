@@ -14,7 +14,7 @@ class AddEndpointToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('endpoint',500)->unique();
+            $table->string('endpoint',250)->unique()->nullable();
         });
     }
 
@@ -25,6 +25,8 @@ class AddEndpointToUsersTable extends Migration
      */
     public function down()
     {
-
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('endpoint');
+        });
     }
 }
