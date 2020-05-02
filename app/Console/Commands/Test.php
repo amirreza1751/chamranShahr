@@ -38,6 +38,15 @@ class Test extends Command
      */
     public function handle()
     {
+        dump('scan path: ' . base_path() . "\\" . 'config');
+        print_r(scandir(base_path() . "\\" . 'config'));
+        if (is_dir('scan path: ' . base_path() . "\\" . 'config\cookie')){
+            dump('scan path: ' . base_path() . "\\" . 'config\\cookie');
+            print_r(scandir(base_path() . "\\" . 'config\\cookie'));
+        } else {
+            error_log('there is no cookie dir');
+        }
+        dump('now :');
         $login_result = app('App\Http\Controllers\API\Sama\SamaAuthController')->sama_login();
         if ($login_result){
             dump('true');
