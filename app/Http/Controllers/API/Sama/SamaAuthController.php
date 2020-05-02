@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Sama;
 use App\General\ConsoleColor;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 
 class SamaAuthController extends Controller
 {
@@ -13,12 +14,12 @@ class SamaAuthController extends Controller
         $cc = new ConsoleColor();
         $cc->print_error('sama_login is executing...');
         try {
-            if (!is_dir(base_path() . "\\" . 'config' . "\\" .'cookie')){
-                mkdir(base_path() . "\\" . 'config' . "\\" .'cookie');
+            if (!is_dir(base_path() . "/" . 'config/cookie')){
+                File::makeDirectory(base_path() . "/" . 'config/cookie');
                 $cc->print_warning('cookie directory was created');
             }
-            if(!file_exists( base_path() . "\\" . 'config' . "\\" .'cookie\\cookie.txt')){
-                $file = fopen(base_path() . "\\" . 'config' . "\\" .'cookie\\cookie.txt', 'w');
+            if(!file_exists( base_path() . "/" . 'config/cookie/cookie.txt')){
+                File::put(base_path() . "/" . 'config/cookie/cookie.txt', 'w');
                 $cc->print_warning('cookie file was created');
             }
             $cookie = config_path('cookie/cookie.txt');

@@ -39,41 +39,14 @@ class Test extends Command
      */
     public function handle()
     {
-        File::makeDirectory(base_path() . '/config/test');
-        File::put(base_path() . '/config/test/test.txt', '');
-//        /** ********************************************************************************************** */
-//        /** *************************************  Windows Version *************************************** */
-//        /** ********************************************************************************************** */
-////        dump('scan path: ' . base_path() . "\\" . 'config');
-////        print_r(scandir(base_path() . "\\" . 'config'));
-////        if (is_dir('scan path: ' . base_path() . "\\" . 'config\\cookie')){
-////            dump('scan path: ' . base_path() . "\\" . 'config\\cookie');
-////            print_r(scandir(base_path() . "\\" . 'config\\cookie'));
-////        } else {
-////            error_log('there is no cookie dir');
-////        }
-////        dump('now :');
-////        $login_result = app('App\Http\Controllers\API\Sama\SamaAuthController')->sama_login();
-////        if ($login_result){
-////            dump('true');
-////        } else {
-////            dump('scan path: ' . base_path() . "\\" . 'config');
-////            print_r(scandir(base_path() . "\\" . 'config'));
-////            if (is_dir('scan path: ' . base_path() . "\\" . 'config\\cookie')){
-////                dump('scan path: ' . base_path() . "\\" . 'config\\cookie');
-////                print_r(scandir(base_path() . "\\" . 'config\\cookie'));
-////            } else {
-////                error_log('there is no cookie dir');
-////            }
-////        }
-//        /** ********************************************************************************************** */
-//        /** *************************************  linux Version *************************************** */
-//        /** ********************************************************************************************** */
-//        dump('scan path: ' . base_path() . "/" . 'config');
-//        print_r(scandir(base_path() . "/" . 'config'));
-//        if (is_dir('scan path: ' . base_path() . "/" . 'config/cookie')){
-//            dump('scan path: ' . base_path() . "/" . 'config/cookie');
-//            print_r(scandir(base_path() . "/" . 'config/cookie'));
+        /** ********************************************************************************************** */
+        /** *************************************  Windows Version *************************************** */
+        /** ********************************************************************************************** */
+//        dump('scan path: ' . base_path() . "\\" . 'config');
+//        print_r(scandir(base_path() . "\\" . 'config'));
+//        if (is_dir('scan path: ' . base_path() . "\\" . 'config\\cookie')){
+//            dump('scan path: ' . base_path() . "\\" . 'config\\cookie');
+//            print_r(scandir(base_path() . "\\" . 'config\\cookie'));
 //        } else {
 //            error_log('there is no cookie dir');
 //        }
@@ -82,14 +55,39 @@ class Test extends Command
 //        if ($login_result){
 //            dump('true');
 //        } else {
-//            dump('scan path: ' . base_path() . "/" . 'config');
-//            print_r(scandir(base_path() . "/" . 'config'));
-//            if (is_dir('scan path: ' . base_path() . "/" . 'config/cookie')){
-//                dump('scan path: ' . base_path() . "/" . 'config/cookie');
-//                print_r(scandir(base_path() . "/" . 'config/cookie'));
+//            dump('scan path: ' . base_path() . "\\" . 'config');
+//            print_r(scandir(base_path() . "\\" . 'config'));
+//            if (is_dir('scan path: ' . base_path() . "\\" . 'config\\cookie')){
+//                dump('scan path: ' . base_path() . "\\" . 'config\\cookie');
+//                print_r(scandir(base_path() . "\\" . 'config\\cookie'));
 //            } else {
 //                error_log('there is no cookie dir');
 //            }
 //        }
+        /** ********************************************************************************************** */
+        /** *************************************  linux Version *************************************** */
+        /** ********************************************************************************************** */
+        dump('scan path: ' . base_path() . "/" . 'config');
+        print_r(scandir(base_path() . "/" . 'config'));
+        if (is_dir('scan path: ' . base_path() . "/" . 'config/cookie')){
+            dump('scan path: ' . base_path() . "/" . 'config/cookie');
+            print_r(scandir(base_path() . "/" . 'config/cookie'));
+        } else {
+            error_log('there is no cookie dir');
+        }
+        dump('now :');
+        $login_result = app('App\Http\Controllers\API\Sama\SamaAuthController')->sama_login();
+        if ($login_result){
+            dump('true');
+        } else {
+            dump('scan path: ' . base_path() . "/" . 'config');
+            print_r(scandir(base_path() . "/" . 'config'));
+            if (is_dir('scan path: ' . base_path() . "/" . 'config/cookie')){
+                dump('scan path: ' . base_path() . "/" . 'config/cookie');
+                print_r(scandir(base_path() . "/" . 'config/cookie'));
+            } else {
+                error_log('there is no cookie dir');
+            }
+        }
     }
 }
