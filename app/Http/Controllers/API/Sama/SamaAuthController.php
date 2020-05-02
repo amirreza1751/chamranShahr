@@ -11,6 +11,7 @@ class SamaAuthController extends Controller
     public function sama_login()
     {
         $cc = new ConsoleColor();
+        $cc->print_error('sama_login is executing...');
         try {
             if (!is_dir(base_path() . "\\" . 'config' . "\\" .'cookie')){
                 mkdir(base_path() . "\\" . 'config' . "\\" .'cookie');
