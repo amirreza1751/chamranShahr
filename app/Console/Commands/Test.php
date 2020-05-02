@@ -40,7 +40,7 @@ class Test extends Command
     {
         dump('scan path: ' . base_path() . "\\" . 'config');
         print_r(scandir(base_path() . "\\" . 'config'));
-        if (is_dir('scan path: ' . base_path() . "\\" . 'config\cookie')){
+        if (is_dir('scan path: ' . base_path() . "\\" . 'config\\cookie')){
             dump('scan path: ' . base_path() . "\\" . 'config\\cookie');
             print_r(scandir(base_path() . "\\" . 'config\\cookie'));
         } else {
@@ -53,7 +53,7 @@ class Test extends Command
         } else {
             dump('scan path: ' . base_path() . "\\" . 'config');
             print_r(scandir(base_path() . "\\" . 'config'));
-            if (is_dir('scan path: ' . base_path() . "\\" . 'config\cookie')){
+            if (is_dir('scan path: ' . base_path() . "\\" . 'config\\cookie')){
                 dump('scan path: ' . base_path() . "\\" . 'config\\cookie');
                 print_r(scandir(base_path() . "\\" . 'config\\cookie'));
             } else {
