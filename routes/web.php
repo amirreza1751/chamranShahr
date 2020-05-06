@@ -41,6 +41,10 @@ Route::get('/', function () {
     return view('landing');
 });
 
+Route::get('/landingtest', function (){
+    return view('landing');
+});
+
 Auth::routes();
 
 Route::group(['middleware' => 'auth:web'], function(){
