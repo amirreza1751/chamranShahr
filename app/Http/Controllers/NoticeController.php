@@ -268,19 +268,54 @@ class NoticeController extends AppBaseController
         $model = new $model_name();
         $models = $model::all();
         $owners = collect();
-        $manage_histories = Auth::user()->under_managment();
-        foreach ($manage_histories as $manage_history){
-            foreach ($models as $model){
-                if($manage_history->managed == $model){
-                    if (isset($notice)){
-                        if ($notice->owner_type == $model_name && $notice->owner_id == $model->id){
-                            $model['selected'] = true;
+        if(Auth::user()->hasRole('developer')){
+            $owners = $models;
+        }
+        elseif (Auth::user()->hasRole('admin')){
+            $owners = $models;
+        }
+        elseif (Auth::user()->hasRole('content_manager')){
+            $owners = $models;
+        }
+        elseif (Auth::user()->hasRole('notification_manager')){
+            $owners = $models;
+        } elseif (sizeof(Auth::user()->under_managment()) > 0){
+            $manage_histories = Auth::user()->under_managment();
+            foreach ($manage_histories as $manage_history){
+                foreach ($models as $model){
+                    if($manage_history->managed == $model){
+                        if (isset($notice)){
+                            if ($notice->owner_type == $model_name && $notice->owner_id == $model->id){
+                                $model['selected'] = true;
+                            }
                         }
+                        $owners->push($model);
                     }
-                    $owners->push($model);
                 }
             }
         }
         return $owners;
+    }
+
+    /**
+     * Display the specified Notice.
+     *
+     * @param  int $id
+     *
+     * @return Response
+     */
+    public function publicShow($id)
+    {
+        $notice = $this->noticeRepository->findWithoutFail($id);
+
+//        $this->authorize('view', $notice);
+
+        if (empty($notice)) {
+            Flash::error('اطلاعیه ی مورد نظر وجود ندارد');
+
+            return redirect()->back();
+        }
+
+        return view('notices.public_show')->with('notice', $notice);
     }
 }

@@ -25,8 +25,11 @@ class UpdateDepartmentRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = Department::$rules;
-        
-        return $rules;
+        return [
+            'title' => 'string',
+            'english_title' => 'string',
+            'description' => 'string',
+            'path' => 'image|mimes:jpg,jpeg|max:2048',
+        ];
     }
 }

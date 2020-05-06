@@ -37,7 +37,8 @@ use Weidner\Goutte\GoutteFacade;
 use function foo\func;
 
 Route::get('/', function () {
-    return view('welcome');
+//    return view('welcome');
+    return view('landing');
 });
 
 Auth::routes();
@@ -112,10 +113,15 @@ Route::group(['middleware' => 'auth:web'], function(){
 
     });
 
-    Route::get('departments/{department}/showProfile/', [
-        'as' => 'departments.showProfile', 'uses' => 'DepartmentController@showProfile'
+    Route::patch('departments/{department}/editProfile/', [
+        'as' => 'departments.updateProfile', 'uses' => 'DepartmentController@updateProfile'
+    ]);
+    Route::get('departments/{department}/editProfile/', [
+        'as' => 'departments.editProfile', 'uses' => 'DepartmentController@editProfile'
     ]);
     Route::resource('departments', 'DepartmentController'); // ++
+
+
 
     Route::get('showProfile/', [
         'as' => 'users.showProfile', 'uses' => 'UserController@showProfile'
@@ -152,6 +158,21 @@ Route::group(['middleware' => 'auth:web'], function(){
     Route::resource('users', 'UserController'); // ++
 
 });
+
+
+
+Route::get('departments/{department}/showProfile/', [
+    'as' => 'departments.showProfile', 'uses' => 'DepartmentController@showProfile'
+]);
+
+Route::get('notices/{notice}/public_show/', [
+    'as' => 'notices.publicShow', 'uses' => 'NoticeController@publicShow'
+]);
+
+
+Route::get('news/{news}/public_show/', [
+    'as' => 'news.publicShow', 'uses' => 'NewsController@publicShow'
+]);
 
 /** test notification page */
 Route::middleware('auth:web')->get('/test', function(){
@@ -302,6 +323,7 @@ function xmlToArray($xml, $options = array()) {
 Route::get('temp', function (){
     Log::info('A user has arrived at the temp page.', ['user' => Auth::user()]);
 });
+
 
 //make a push notification.
 Route::middleware('auth:web')->get('/push/{message?}','PushController@push')->name('push');

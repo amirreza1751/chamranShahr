@@ -11430,6 +11430,10 @@ button.bg-dark:focus {
   color: #fff !important;
 }
 
+.text-magenta {
+    color: darkmagenta !important;
+}
+
 .text-primary {
   color: #3490dc !important;
 }
@@ -11644,6 +11648,13 @@ a.text-dark:focus {
     color: inherit;
     border-color: #dee2e6;
   }
+}
+
+.text-white-75 {
+    color: rgba(255, 255, 255, 0.75);
+}
+.text-magenta-75 {
+    color: darkmagenta !important;
 }
 
 .navbar-laravel {

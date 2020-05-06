@@ -342,7 +342,7 @@
     <div class="iran container-fluid" dir="rtl" style="padding: 50px;">
         <section class="content-header">
             <h1 class="iran-bold">
-                صفحه‌ی مدیریت
+                خبر: <span> @if(isset($news->title)) {{$news->title}} @endif </span>
             </h1>
         </section>
         <div class="content">
@@ -353,21 +353,21 @@
                 <div class="box-body">
                     <div class="col-sm-12">
                         <div class="card">
-                            <img class="card-img-top" src="{{ $department->path }}" alt="Card image"
+                            <img class="card-img-top" src="{{ $news->path }}" alt="Card image"
                                  style="width:100%">
                             <div class="card-body">
-                                <h4 class="card-title">@if(isset($department->title)) {{ $department->title }} @endif<span class="small">@if(isset($department->english_title)) {{ $department->english_title }} @endif</span></h4>
-                                <p class="card-text">نوع مدیریت: @if(!is_null($department->manage_level)) {{ $department->manage_level->management_title }} @endif</p>
-                                <p class="card-text">مدیر: @if(!is_null($department->manager())) {{ $department->manager()->full_name }} @endif</p>
-                                @can('updateProfile', $department)<a href="{{ route('departments.editProfile', [$department->id]) }}" class="btn btn-primary">ویرایش</a>@endcan
+                                <p class="card-text">
+                                    @if(isset($news->link))
+                                        <a class="card-link" href="{{ $news->link }}"> انتقال به صفحه ی خبر در پورتال دانشگاه</a>
+                                    @endif
+                                </p>
                             </div>
                         </div>
 
                         <!-- Description Field -->
                         <div class="labelbox">
                             <div class="row">
-                                <div class="col-sm-9 text-justify" style="padding-left: 5rem"><span> @if(isset($department->description)) {{$department->description}} @endif </span></div>
-                                <div class="col-sm-3">{!! Form::label('description', 'مختصری در ارتباط با مدیریت:', ['class' => 'graylabel titlebox']) !!}</div>
+                                <div class="col-sm-12 text-justify" style="padding: 3rem"><span> @if(isset($news->description)) {{$news->description}} @endif </span></div>
                             </div>
                         </div>
                     </div>
@@ -387,84 +387,6 @@
                     {{--                    {!! Form::close() !!}--}}
                 </div>
             </div>
-        </div>
-
-        <div class="col-sm-6">
-            @if(sizeof($department->notices) > 0)
-                <section class="content-header">
-                    <h1 class="iran-bold">
-                        اطلاعیه‌ها
-                    </h1>
-                </section>
-                <div class="content">
-                    <div class="box box-primary">
-
-                        <div class="box-body">
-                            @foreach($department->notices as $notice)
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <!-- Title Field -->
-                                        <div class="row container-fluid">
-                                            <div class="labelbox" style="display: block; overflow: auto;">
-                                                {{--                                            {!! Form::label('title', 'عنوان:', ['class' => 'royallabel titlebox']) !!}--}}
-                                                <div class="col-sm-2">
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('notices.publicShow', [$notice->id]) !!}" class='btn btn-primary btn-xs'>مشاهده</a>
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('notices.show', [$notice->id]) !!}" class='btn btn-primary btn-xs'>ویرایش</a>
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('notices.show', [$notice->id]) !!}" class='btn btn-primary btn-xs'>حذف</a>
-                                                </div>
-                                                <div class="col-sm-10"><div><span> @if(isset($notice->title)) {{ $notice->title }} @endif </span></div></div>
-{{--                                                <div class='' style="float: left;">--}}
-{{--                                                    <a href="{!! route('notices.show', [$notice->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>--}}
-{{--                                                    <a href="{!! route('notices.edit', [$notice->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-edit"></i></a>--}}
-{{--                                                    {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}--}}
-{{--                                                </div>--}}
-                                            </div>
-                                        </div>
-                                        <div class="row container-fluid">
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endif
-        </div>
-
-        <div class="col-sm-6">
-            @if(sizeof($department->news) > 0)
-                <section class="content-header">
-                    <h1 class="iran-bold">
-                        اخبار
-                    </h1>
-                </section>
-                <div class="content">
-                    <div class="box box-primary">
-
-                        <div class="box-body">
-                            @foreach($department->news as $news)
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <!-- Title Field -->
-                                        <div class="row container-fluid">
-                                            <div class="labelbox" style="display: block; overflow: auto;">
-                                                {{--                                            {!! Form::label('title', 'عنوان:', ['class' => 'royallabel titlebox']) !!}--}}
-                                                <div class="col-sm-2">
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('news.publicShow', [$news->id]) !!}" class='btn btn-primary btn-xs'>مشاهده</a>
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('news.edit', [$news->id]) !!}" class='btn btn-primary btn-xs'>ویرایش</a>
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('news.destroy', [$news->id]) !!}" class='btn btn-primary btn-xs'>حذف</a>
-                                                </div>
-{{--                                                <a style="float: left; vertical-align: center" href="{!! route('news.show', [$news->id]) !!}" class='btn btn-primary btn-xs'>مشاهده</a>--}}
-                                                <div class="col-sm-10"><div><span> @if(isset($news->title)) {{ $news->title }} @endif </span></div></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endif
         </div>
     </div>
 

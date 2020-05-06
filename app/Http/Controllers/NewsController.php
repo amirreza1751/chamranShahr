@@ -157,4 +157,24 @@ class NewsController extends AppBaseController
     {
         $this->newsRepository->create((array)$data);
     }
+
+    /**
+     * Display the specified News.
+     *
+     * @param  int $id
+     *
+     * @return Response
+     */
+    public function publicShow($id)
+    {
+        $news = $this->newsRepository->findWithoutFail($id);
+
+        if (empty($news)) {
+            Flash::error('خبر مورد نظر وجود ندارد');
+
+            return redirect()->back();
+        }
+
+        return view('news.public_show')->with('news', $news);
+    }
 }

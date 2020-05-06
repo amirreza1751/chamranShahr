@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Ad;
+use App\Models\Department;
 use App\Models\Notice;
 use App\Models\Notification;
 use App\Policies\AdPolicy;
+use App\Policies\DepartmentPolicy;
 use App\Policies\NoticePolicy;
 use App\Policies\NotificationPolicy;
 use App\Policies\UserPolicy;
@@ -27,6 +29,7 @@ class AuthServiceProvider extends ServiceProvider
         Ad::class => AdPolicy::class,
         Notification::class => NotificationPolicy::class,
         Notice::class => NoticePolicy::class,
+        Department::class => DepartmentPolicy::class,
     ];
 
     /**

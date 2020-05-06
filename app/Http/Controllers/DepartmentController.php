@@ -187,4 +187,54 @@ class DepartmentController extends AppBaseController
             ->with('department', $department);
     }
 
+    public function editProfile($id)
+    {
+        $department = $this->departmentRepository->findWithoutFail($id);
+
+        if (empty($department)) {
+            Flash::error('مدیریت مورد نظر وجود ندارد');
+
+            return redirect()->back();
+        }
+
+//        $this->authorize('updateProfile', $department);
+
+        return view('departments.edit_profile')
+            ->with('department', $department);
+    }
+
+    /**
+     * Update the specified User in storage.
+     *
+     * @param  int              $id
+     * @param UpdateUserRequest $request
+     *
+     * @return Response
+     */
+    public function updateProfile($id, UpdateDepartmentRequest $request)
+    {
+        $department = $this->departmentRepository->findWithoutFail($id);
+        $input = $request->all();
+
+        if (empty($department)) {
+            Flash::error('مدیریت مورد نظر وجود ندارد');
+
+            return redirect()->back();
+        }
+
+//        $this->authorize('updateProfile', $user);
+
+        if($request->hasFile('path')){
+            $path = $request->file('path')->store('/public/departments/cover');
+            $path = str_replace('public', 'storage', $path);
+            $input['path'] = $path;
+        }
+
+        $department = $this->departmentRepository->update($input, $department->id);
+
+        Flash::success('صفحه‌ی مدیریت با موفقیت به روز شد');
+
+        return redirect(route('departments.showProfile', [ $department->id ]));
+    }
+
 }

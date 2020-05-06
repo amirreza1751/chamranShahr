@@ -2,30 +2,67 @@
 <head>
 
     <style>
+        .input{
+            border: none;
+            width: 100%;
+        }
+        .input:hover{
+            border: 0.05rem lightblue solid;
+        }
+        input[type="text"]:disabled {
+            /*border: none;*/
+        }
+
+        .graylabel{
+            color: lightgray;
+            margin-left: 5rem;
+        }
+
+        .darkgraylabel{
+            color: gray;
+            margin-left: 5rem;
+        }
+
+        .labelbox{
+            padding: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            border-radius: 0.25rem;
+            margin: 0.5rem;
+        }
+        /*.labelbox:disabled {*/
+        /*    background: grey;*/
+        /*    padding: unset;*/
+        /*    margin: unset;*/
+        /*}*/
+
         .labelbutton{
-            float: left;
+            padding: 1rem;
+            margin: 0.5rem;
+            width: 100%;
+            vertical-align: center;
+        }
+
+        .titlebox{
+            min-width: 15rem;
+            max-width: 15rem;
         }
 
         @font-face {
             font-family: IRAN;
             src: url('/fonts/IRAN.ttf');
         }
-
         @font-face {
             font-family: IRANBlack;
             src: url('/fonts/IRAN_Black.ttf');
         }
-
         @font-face {
             font-family: IRANBold;
             src: url('/fonts/IRAN_Bold.ttf');
         }
-
         @font-face {
             font-family: IRANMarker;
             src: url('/fonts/IRANMarker.ttf');
         }
-
         .iran-marker {
             font-family: IRANMarker;
         }
@@ -33,35 +70,11 @@
         .iran-black {
             font-family: IRANBlack;
         }
-
         .iran-bold {
             font-family: IRANBold;
         }
-
         .iran {
             font-family: IRAN;
-        }
-
-        .graylabel {
-            color: lightgray;
-            margin-left: 5rem;
-        }
-
-        .royallabel {
-            color: royalblue;
-            margin-left: 5rem;
-        }
-
-        .labelbox {
-            padding: 1rem;
-            border: 1px solid rgba(0, 0, 0, 0.125);
-            border-radius: 0.25rem;
-            margin: 0.5rem;
-        }
-
-        .titlebox {
-            min-width: 15rem;
-            max-width: 15rem;
         }
 
         .card {
@@ -71,18 +84,13 @@
             -ms-flex-direction: column;
             flex-direction: column;
             min-width: 0;
-            width: 90%;
+            width: 300px;
             word-wrap: break-word;
             background-color: #EDEFF2;
             background-clip: border-box;
             border: 1px solid rgba(0, 0, 0, 0.125);
             border-radius: 0.75rem;
             margin: 25px;
-
-            margin: 0 auto; /* Added */
-            float: none; /* Added */
-            margin-top: 3rem; /* Added */
-            margin-bottom: 3rem; /* Added */
         }
 
         .card > hr {
@@ -212,7 +220,6 @@
                 margin-right: -15px;
                 margin-left: -15px;
             }
-
             .card-deck .card {
                 display: -ms-flexbox;
                 display: flex;
@@ -242,43 +249,35 @@
                 -ms-flex-flow: row wrap;
                 flex-flow: row wrap;
             }
-
             .card-group > .card {
                 -ms-flex: 1 0 0%;
                 flex: 1 0 0%;
                 margin-bottom: 0;
             }
-
             .card-group > .card + .card {
                 margin-left: 0;
                 border-left: 0;
             }
-
             .card-group > .card:not(:last-child) {
                 border-top-right-radius: 0;
                 border-bottom-right-radius: 0;
             }
-
             .card-group > .card:not(:last-child) .card-img-top,
             .card-group > .card:not(:last-child) .card-header {
                 border-top-right-radius: 0;
             }
-
             .card-group > .card:not(:last-child) .card-img-bottom,
             .card-group > .card:not(:last-child) .card-footer {
                 border-bottom-right-radius: 0;
             }
-
             .card-group > .card:not(:first-child) {
                 border-top-left-radius: 0;
                 border-bottom-left-radius: 0;
             }
-
             .card-group > .card:not(:first-child) .card-img-top,
             .card-group > .card:not(:first-child) .card-header {
                 border-top-left-radius: 0;
             }
-
             .card-group > .card:not(:first-child) .card-img-bottom,
             .card-group > .card:not(:first-child) .card-footer {
                 border-bottom-left-radius: 0;
@@ -300,7 +299,6 @@
                 orphans: 1;
                 widows: 1;
             }
-
             .card-columns .card {
                 display: inline-block;
                 width: 100%;
@@ -339,7 +337,7 @@
 </head>
 
 @section('content')
-    <div class="iran container-fluid" dir="rtl" style="padding: 50px;">
+    <div class="iran" dir="rtl" style="padding: 50px;">
         <section class="content-header">
             <h1 class="iran-bold">
                 صفحه‌ی مدیریت
@@ -351,120 +349,78 @@
             <div class="box box-primary">
 
                 <div class="box-body">
-                    <div class="col-sm-12">
-                        <div class="card">
-                            <img class="card-img-top" src="{{ $department->path }}" alt="Card image"
-                                 style="width:100%">
-                            <div class="card-body">
-                                <h4 class="card-title">@if(isset($department->title)) {{ $department->title }} @endif<span class="small">@if(isset($department->english_title)) {{ $department->english_title }} @endif</span></h4>
-                                <p class="card-text">نوع مدیریت: @if(!is_null($department->manage_level)) {{ $department->manage_level->management_title }} @endif</p>
-                                <p class="card-text">مدیر: @if(!is_null($department->manager())) {{ $department->manager()->full_name }} @endif</p>
-                                @can('updateProfile', $department)<a href="{{ route('departments.editProfile', [$department->id]) }}" class="btn btn-primary">ویرایش</a>@endcan
+                    {!! Form::model($department, ['route' => ['departments.updateProfile', $department->id], 'method' => 'patch', 'enctype' => 'multipart/form-data']) !!}
+
+                    <div class="col-sm-12" style="padding: 5rem; font-size: 1.5rem;">
+
+                        <!-- Title Field -->
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                {!! Form::text('title', null, ['class' => 'input']) !!}
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('title', 'عنوان:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
+                        </div>
+
+                        <!-- English Title Field -->
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                {!! Form::text('english_title', null, ['class' => 'input']) !!}
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('english_title', 'عنوان انگلیسی:', ['class' => 'darkgraylabel titlebox']) !!}
                             </div>
                         </div>
 
                         <!-- Description Field -->
-                        <div class="labelbox">
-                            <div class="row">
-                                <div class="col-sm-9 text-justify" style="padding-left: 5rem"><span> @if(isset($department->description)) {{$department->description}} @endif </span></div>
-                                <div class="col-sm-3">{!! Form::label('description', 'مختصری در ارتباط با مدیریت:', ['class' => 'graylabel titlebox']) !!}</div>
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                {!! Form::textarea('description', null, ['class' => 'input']) !!}
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('description', 'توضیحات:', ['class' => 'darkgraylabel titlebox']) !!}
                             </div>
                         </div>
-                    </div>
 
-{{--                    <div class="col-sm-8" style="padding: 5rem; font-size: 1.5rem;">--}}
+                        <!-- Path Field -->
+                        <div class="row">
+                            <div class="labelbox col-sm-8">
+                                {!! Form::file('path', null, ['class' => 'input']) !!}
+                            </div>
+                            <div class="labelbox col-sm-3">
+                                {!! Form::label('path', 'تصویر:', ['class' => 'darkgraylabel titlebox']) !!}
+                            </div>
+                        </div>
 
-{{--                        <!-- Username Field -->--}}
-{{--                        <div class="labelbox">--}}
-{{--                            {!! Form::label('username', 'نام کاربری:', ['class' => 'graylabel titlebox']) !!}--}}
-{{--                            <span> @if(isset($user->username)) {{$user->username}} @endif </span>--}}
+{{--                        <!-- Phone Number Field -->--}}
+{{--                        <div class="row">--}}
+{{--                            <div class="col-sm-2" disabled>--}}
+{{--                                --}}{{--                                    <a disabled href="{!! route('users.index') !!}" class="btn btn-danger labelbutton">تغییر</a>--}}
+{{--                                <a disabled href="" class="btn btn-danger labelbutton">تغییر</a>--}}
+{{--                            </div>--}}
+{{--                            <div class="labelbox col-sm-6" disabled>--}}
+{{--                                --}}{{--                                    {!! Form::text('phone_number', null, ['class' => 'input', 'dir' => 'ltr', 'disabled']) !!}--}}
+{{--                                {!! Form::text('phone_number', null, ['class' => 'form-control input', 'dir' => 'ltr', 'placeholder' => 'like: 0936 123 4567', 'disabled']) !!}--}}
+{{--                            </div>--}}
+{{--                            <div class="labelbox col-sm-3">--}}
+{{--                                {!! Form::label('phone_number', 'شماره تلفن همراه:', ['class' => 'darkgraylabel titlebox']) !!}--}}
+{{--                            </div>--}}
 {{--                        </div>--}}
 
-{{--                    </div>--}}
+                            <!-- Submit Field -->
+                            <div class="form-group col-sm-6" style="float: left">
+                                {!! Form::submit('ذخیره', ['class' => 'btn btn-primary']) !!}
+                                <a href="{!! route('departments.showProfile', [ $department->id ]) !!}" class="btn btn-default">انصراف</a>
+                            </div>
+                        </div>
 
 
+                    </div>
 
-                    {{--                    {!! Form::close() !!}--}}
+                    {!! Form::close() !!}
                 </div>
             </div>
-        </div>
-
-        <div class="col-sm-6">
-            @if(sizeof($department->notices) > 0)
-                <section class="content-header">
-                    <h1 class="iran-bold">
-                        اطلاعیه‌ها
-                    </h1>
-                </section>
-                <div class="content">
-                    <div class="box box-primary">
-
-                        <div class="box-body">
-                            @foreach($department->notices as $notice)
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <!-- Title Field -->
-                                        <div class="row container-fluid">
-                                            <div class="labelbox" style="display: block; overflow: auto;">
-                                                {{--                                            {!! Form::label('title', 'عنوان:', ['class' => 'royallabel titlebox']) !!}--}}
-                                                <div class="col-sm-2">
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('notices.publicShow', [$notice->id]) !!}" class='btn btn-primary btn-xs'>مشاهده</a>
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('notices.show', [$notice->id]) !!}" class='btn btn-primary btn-xs'>ویرایش</a>
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('notices.show', [$notice->id]) !!}" class='btn btn-primary btn-xs'>حذف</a>
-                                                </div>
-                                                <div class="col-sm-10"><div><span> @if(isset($notice->title)) {{ $notice->title }} @endif </span></div></div>
-{{--                                                <div class='' style="float: left;">--}}
-{{--                                                    <a href="{!! route('notices.show', [$notice->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>--}}
-{{--                                                    <a href="{!! route('notices.edit', [$notice->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-edit"></i></a>--}}
-{{--                                                    {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}--}}
-{{--                                                </div>--}}
-                                            </div>
-                                        </div>
-                                        <div class="row container-fluid">
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endif
-        </div>
-
-        <div class="col-sm-6">
-            @if(sizeof($department->news) > 0)
-                <section class="content-header">
-                    <h1 class="iran-bold">
-                        اخبار
-                    </h1>
-                </section>
-                <div class="content">
-                    <div class="box box-primary">
-
-                        <div class="box-body">
-                            @foreach($department->news as $news)
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <!-- Title Field -->
-                                        <div class="row container-fluid">
-                                            <div class="labelbox" style="display: block; overflow: auto;">
-                                                {{--                                            {!! Form::label('title', 'عنوان:', ['class' => 'royallabel titlebox']) !!}--}}
-                                                <div class="col-sm-2">
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('news.publicShow', [$news->id]) !!}" class='btn btn-primary btn-xs'>مشاهده</a>
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('news.edit', [$news->id]) !!}" class='btn btn-primary btn-xs'>ویرایش</a>
-                                                    <a style="float: left; vertical-align: center; margin: 0.5rem" href="{!! route('news.destroy', [$news->id]) !!}" class='btn btn-primary btn-xs'>حذف</a>
-                                                </div>
-{{--                                                <a style="float: left; vertical-align: center" href="{!! route('news.show', [$news->id]) !!}" class='btn btn-primary btn-xs'>مشاهده</a>--}}
-                                                <div class="col-sm-10"><div><span> @if(isset($news->title)) {{ $news->title }} @endif </span></div></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endif
         </div>
     </div>
 
