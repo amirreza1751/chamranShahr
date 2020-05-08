@@ -3,7 +3,7 @@
 @section('content')
     <section class="content-header">
         <h1>
-            User
+            کاربر
         </h1>
     </section>
     <div class="content">
@@ -14,7 +14,9 @@
                 <div class="row">
                     {!! Form::open(['route' => 'users.store']) !!}
 
-                        @include('users.fields')
+                        <div class="mar2rem">
+                            @include('users.fields')
+                        </div>
 
                     {!! Form::close() !!}
                 </div>
