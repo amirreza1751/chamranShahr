@@ -46,6 +46,12 @@
     <p>{!! $user->phone_number !!}</p>
 </div>
 
+<!-- Last Login Field -->
+<div class="form-group">
+    {!! Form::label('last_login', 'آخرین ورود:') !!}
+    <p>{!! $user->last_login !!}</p>
+</div>
+
 <!-- Created At Field -->
 <div class="form-group">
     {!! Form::label('created_at', 'ساخته شده در:') !!}

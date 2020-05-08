@@ -37,6 +37,7 @@ class User extends Authenticatable
         'gender_unique_code',
         'scu_id',
         'national_id',
+        'last_login',
         'avatar_path',
         'is_verified',
         'updated_at',
