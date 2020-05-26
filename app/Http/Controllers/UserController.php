@@ -99,6 +99,10 @@ class UserController extends AppBaseController
             return redirect(route('users.index'));
         }
 
+        if (isset($user->avatar_path)){
+            $user->avatar_path = URL::to('/') . '/' . $user->avatar_path;
+        }
+
         return view('users.show')->with('user', $user);
     }
 

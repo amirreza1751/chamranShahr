@@ -6,9 +6,9 @@
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
     <!-- Bootstrap 3.3.7 -->
-{{--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">--}}
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- Latest compiled and minified CSS -->
+{{--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">--}}
 {{--    <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">--}}
 
 {{--<!-- Optional theme -->--}}
@@ -36,12 +36,11 @@
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
 
-    <!-- Customisation -->
+
+    <!-- Fonts -->
     <style>
-
-
         /*********************************************************/
-        /*                      English Digits                      */
+        /*                Vazir English Digits                      */
         /*********************************************************/
         @font-face {
             font-family: Vazir;
@@ -104,7 +103,7 @@
             font-style: normal;
         }
         /*********************************************************/
-        /*                      Farsi Digits                        */
+        /*                  Vazir Farsi Digits                      */
         /*********************************************************/
         @font-face {
             font-family: VazirFD;
@@ -167,12 +166,58 @@
             font-style: normal;
         }
 
+        /*********************************************************/
+        /*                  Iran English Digits                      */
+        /*********************************************************/
+        /*@font-face {*/
+        /*    font-family: IRAN;*/
+        /*    src: url('/fonts/IRAN.ttf');*/
+        /*}*/
+        /*@font-face {*/
+        /*    font-family: IRANBlack;*/
+        /*    src: url('/fonts/IRAN_Black.ttf');*/
+        /*}*/
+        /*@font-face {*/
+        /*    font-family: IRANBold;*/
+        /*    src: url('/fonts/IRAN_Bold.ttf');*/
+        /*}*/
+        /*@font-face {*/
+        /*    font-family: IRANMarker;*/
+        /*    src: url('/fonts/IRANMarker.ttf');*/
+        /*}*/
+        /*.iran-marker {*/
+        /*    font-family: IRANMarker;*/
+        /*}*/
+        /*.iran-black {*/
+        /*    font-family: IRANBlack;*/
+        /*}*/
+        /*.iran-bold {*/
+        /*    font-family: IRANBold;*/
+        /*}*/
+        /*.iran {*/
+        /*    font-family: IRAN;*/
+        /*}*/
+
+        .vazir-font-fd {
+            font-family: VazirFD !important;
+        }
+    </style>
+
+    <!-- Admin Lte Customisation, RTL Configuration -->
+    <style>
         :root { /* general direction */
             direction: rtl;
         }
+        /* Bootstrap 3.3.7 to Rtl */
+        .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+            float: right !important;
+        }
+        body, .sidebar-toggle {
+            line-height: 1.42857143 !important;
+            font-size: 1.15rem;
+        }
         body, h1, h2, h3, h4, h5, h6 {
             font-family: VazirFD;
-            font-size: 1.15rem;
         }
         h1, h2, h3, h4, h5, h6 {
             font-weight: bolder;
@@ -180,39 +225,16 @@
         th {
             text-align: right !important;
         }
-        .content-header > h1 > a {
-            margin-bottom: 1.7rem !important;
+        .skin-blue .main-header .logo {
+            background-color: #367fa9;
         }
         .td-action {
             width: fit-content;
             display: inline-flex;
             direction: ltr;
         }
-        .pad2rem{
-            padding: 2rem;
-        }
-        .mar2rem{
-            margin: 2rem;
-        }
-        .srightleftpad2 {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-        .srightleftmar2 {
-            margin-left: 1rem;
-            margin-right: 1rem;
-        }
-        .spad2rem{
-            padding: 0.2rem;
-        }
-        .smar2rem{
-            margin: 0.2rem;
-        }
-        .gap {
-           margin-left: 10px;
-        }
-        .gap2 {
-           margin-left: 20px;
+        .content-header > h1 > a {
+            margin-bottom: 1.7rem !important;
         }
         li.active > a {
              padding-left: 2rem;
@@ -263,14 +285,9 @@
             margin-bottom: 0;
             margin-left: 0 !important;
             margin-right: 25rem;
-            height: 5rem !important;
 
             border: none;
-            min-height: 50px;
             border-radius: 0;
-        }
-        .main-header {
-            background: red !important;
         }
         .navbar-custom-menu {
             float: left !important;
@@ -442,6 +459,10 @@
         .sidebar-mini:not(sidebar-collapse) .content-wrapper {
             margin-right: 25rem !important;
         }
+        .content-wrapper, .main-footer {
+            margin-right: 25rem !important;
+            margin-left: 0 !important;
+        }
         @media (max-width: 768px) {
             .main-sidebar {
                 transform: translate(25rem, 0) !important;
@@ -449,15 +470,561 @@
             .sidebar-mini:not(sidebar-collapse) .content-wrapper {
                 margin-right: 0 !important;
             }
+            .content-wrapper, .main-footer {
+                margin-right: 0 !important;
+                margin-left: 0 !important;
+            }
+            .sidebar-open .content-wrapper, .sidebar-open .main-footer{
+                transform: translate(-25rem, 0);
+            }
+            .sidebar-mini.sidebar-collapse .main-sidebar {
+                transform: translate(-25rem, 0);
+            }
+            .sidebar-open .main-sidebar {
+                transform: translate(0, 0) !important;
+            }
         }
-        .content-wrapper, .main-footer {
-            margin-right: 25rem !important;
-            margin-left: 0 !important;
+
+    </style>
+
+    {{-- Add Cards to Bootstrap 3 Styles --}}
+    <style>
+        .card {
+            position: relative;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #EDEFF2;
+            background-clip: border-box;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            border-radius: 0.75rem;
+        }
+
+        .card > hr {
+            margin-right: 0;
+            margin-left: 0;
+        }
+
+        .card > .list-group:first-child .list-group-item:first-child {
+            border-top-left-radius: 0.25rem;
+            border-top-right-radius: 0.25rem;
+        }
+
+        .card > .list-group:last-child .list-group-item:last-child {
+            border-bottom-right-radius: 0.25rem;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .card-body {
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 1.25rem;
+        }
+
+        .card-title {
+            margin-bottom: 0.75rem;
+            font-family: IRANMarker;
+        }
+
+        .card-subtitle {
+            margin-top: -0.375rem;
+            margin-bottom: 0;
+        }
+
+        .card-text:last-child {
+            margin-bottom: 0;
+            font-family: IRAN;
+        }
+
+        .card-link:hover {
+            text-decoration: none;
+        }
+
+        .card-link + .card-link {
+            margin-left: 1.25rem;
+        }
+
+        .card-header {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 0;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        }
+
+        .card-header:first-child {
+            border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+        }
+
+        .card-header + .list-group .list-group-item:first-child {
+            border-top: 0;
+        }
+
+        .card-footer {
+            padding: 0.75rem 1.25rem;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-top: 1px solid rgba(0, 0, 0, 0.125);
+        }
+
+        .card-footer:last-child {
+            border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
+        }
+
+        .card-header-tabs {
+            margin-right: -0.625rem;
+            margin-bottom: -0.75rem;
+            margin-left: -0.625rem;
+            border-bottom: 0;
+        }
+
+        .card-header-pills {
+            margin-right: -0.625rem;
+            margin-left: -0.625rem;
+        }
+
+        .card-img-overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            padding: 1.25rem;
+        }
+
+        .card-img {
+            width: 100%;
+            border-radius: calc(0.25rem - 1px);
+        }
+
+        .card-img-top {
+            width: 100%;
+            /*border-top-left-radius: calc(0.25rem - 1px);*/
+            border-top-left-radius: 0.75rem;
+            /*border-top-right-radius: calc(0.25rem - 1px);*/
+            border-top-right-radius: 0.75rem;
+        }
+
+        .card-img-bottom {
+            width: 100%;
+            border-bottom-right-radius: calc(0.25rem - 1px);
+            border-bottom-left-radius: calc(0.25rem - 1px);
+        }
+
+        .card-deck {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+        }
+
+        .card-deck .card {
+            margin-bottom: 15px;
+        }
+
+        @media (min-width: 576px) {
+            .card-deck {
+                -ms-flex-flow: row wrap;
+                flex-flow: row wrap;
+                margin-right: -15px;
+                margin-left: -15px;
+            }
+
+            .card-deck .card {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex: 1 0 0%;
+                flex: 1 0 0%;
+                -ms-flex-direction: column;
+                flex-direction: column;
+                margin-right: 15px;
+                margin-bottom: 0;
+                margin-left: 15px;
+            }
+        }
+
+        .card-group {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+        }
+
+        .card-group > .card {
+            margin-bottom: 15px;
+        }
+
+        @media (min-width: 576px) {
+            .card-group {
+                -ms-flex-flow: row wrap;
+                flex-flow: row wrap;
+            }
+
+            .card-group > .card {
+                -ms-flex: 1 0 0%;
+                flex: 1 0 0%;
+                margin-bottom: 0;
+            }
+
+            .card-group > .card + .card {
+                margin-left: 0;
+                border-left: 0;
+            }
+
+            .card-group > .card:not(:last-child) {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+            .card-group > .card:not(:last-child) .card-img-top,
+            .card-group > .card:not(:last-child) .card-header {
+                border-top-right-radius: 0;
+            }
+
+            .card-group > .card:not(:last-child) .card-img-bottom,
+            .card-group > .card:not(:last-child) .card-footer {
+                border-bottom-right-radius: 0;
+            }
+
+            .card-group > .card:not(:first-child) {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            .card-group > .card:not(:first-child) .card-img-top,
+            .card-group > .card:not(:first-child) .card-header {
+                border-top-left-radius: 0;
+            }
+
+            .card-group > .card:not(:first-child) .card-img-bottom,
+            .card-group > .card:not(:first-child) .card-footer {
+                border-bottom-left-radius: 0;
+            }
+        }
+
+        .card-columns .card {
+            margin-bottom: 0.75rem;
+        }
+
+        @media (min-width: 576px) {
+            .card-columns {
+                -webkit-column-count: 3;
+                -moz-column-count: 3;
+                column-count: 3;
+                -webkit-column-gap: 1.25rem;
+                -moz-column-gap: 1.25rem;
+                column-gap: 1.25rem;
+                orphans: 1;
+                widows: 1;
+            }
+
+            .card-columns .card {
+                display: inline-block;
+                width: 100%;
+            }
+        }
+
+        .accordion > .card {
+            overflow: hidden;
+        }
+
+        .accordion > .card:not(:first-of-type) .card-header:first-child {
+            border-radius: 0;
+        }
+
+        .accordion > .card:not(:first-of-type):not(:last-of-type) {
+            border-bottom: 0;
+            border-radius: 0;
+        }
+
+        .accordion > .card:first-of-type {
+            border-bottom: 0;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .accordion > .card:last-of-type {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .accordion > .card .card-header {
+            margin-bottom: -1px;
+        }
+    </style>
+    {{--    add custom file to bootstrap 3.3.7  --}}
+    <style>.input-group > .custom-file {
+            position: relative;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            width: 1%;
+            margin-bottom: 0;
+        }
+
+        .input-group > .form-control + .form-control,
+        .input-group > .form-control + .custom-select,
+        .input-group > .form-control + .custom-file,
+        .input-group > .form-control-plaintext + .form-control,
+        .input-group > .form-control-plaintext + .custom-select,
+        .input-group > .form-control-plaintext + .custom-file,
+        .input-group > .custom-select + .form-control,
+        .input-group > .custom-select + .custom-select,
+        .input-group > .custom-select + .custom-file,
+        .input-group > .custom-file + .form-control,
+        .input-group > .custom-file + .custom-select,
+        .input-group > .custom-file + .custom-file {
+            margin-left: -1px;
+        }
+        .input-group > .form-control:focus,
+        .input-group > .custom-select:focus,
+        .input-group > .custom-file .custom-file-input:focus ~ .custom-file-label {
+            z-index: 3;
+        }
+
+        .input-group > .custom-file .custom-file-input:focus {
+            z-index: 4;
+        }
+
+        .input-group > .custom-file {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+        .input-group > .custom-file:not(:last-child) .custom-file-label,
+        .input-group > .custom-file:not(:last-child) .custom-file-label::after {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .input-group > .custom-file:not(:first-child) .custom-file-label {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+
+        .custom-file {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            height: calc(1.5em + 0.75rem + 2px);
+            margin-bottom: 0;
+        }
+
+        .custom-file-input {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: calc(1.5em + 0.75rem + 2px);
+            margin: 0;
+            opacity: 0;
+        }
+
+        .custom-file-input:focus ~ .custom-file-label {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .custom-file-input:disabled ~ .custom-file-label {
+            background-color: #e9ecef;
+        }
+
+        .custom-file-input:lang(fa) ~ .custom-file-label::after {
+            content: "انتخاب کنید" !important;
+        }
+
+        .custom-file-input ~ .custom-file-label[data-browse]::after {
+            content: attr(data-browse);
+        }
+
+        .custom-file-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1;
+            height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+
+        .custom-file-label::after {
+            position: absolute;
+            top: 0;
+            /*right: 0;*/
+            bottom: 0;
+            z-index: 3;
+            display: block;
+            height: calc(1.5em + 0.75rem);
+            padding: 0.375rem 0.75rem;
+            line-height: 1.5;
+            color: #495057;
+            content: "انتخاب کنید";
+            background-color: #e9ecef;
+            /*border-left: inherit;*/
+            border-radius: 0 0.25rem 0.25rem 0;
+            left: 0;
+            right: auto;
+            border-left-width: 0;
+            border-right: inherit;
+        }
+        .custom-control-label::before,
+        .custom-file-label,
+        .custom-select {
+            transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .custom-control-label::before,
+            .custom-file-label,
+            .custom-select {
+                transition: none;
+            }
+        }
+
+        .was-validated .custom-file-input:valid ~ .custom-file-label, .custom-file-input.is-valid ~ .custom-file-label {
+            border-color: #28a745;
+        }
+
+        .was-validated .custom-file-input:valid ~ .valid-feedback,
+        .was-validated .custom-file-input:valid ~ .valid-tooltip, .custom-file-input.is-valid ~ .valid-feedback,
+        .custom-file-input.is-valid ~ .valid-tooltip {
+            display: block;
+        }
+
+        .was-validated .custom-file-input:valid:focus ~ .custom-file-label, .custom-file-input.is-valid:focus ~ .custom-file-label {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+        .was-validated .custom-file-input:invalid ~ .custom-file-label, .custom-file-input.is-invalid ~ .custom-file-label {
+            border-color: #dc3545;
+        }
+
+        .was-validated .custom-file-input:invalid ~ .invalid-feedback,
+        .was-validated .custom-file-input:invalid ~ .invalid-tooltip, .custom-file-input.is-invalid ~ .invalid-feedback,
+        .custom-file-input.is-invalid ~ .invalid-tooltip {
+            display: block;
+        }
+
+        .was-validated .custom-file-input:invalid:focus ~ .custom-file-label, .custom-file-input.is-invalid:focus ~ .custom-file-label {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
         }
     </style>
 
+    <!-- Custom Css -->
+    <style>
+        .text-ltr {
+            direction: ltr;
+        }
+        .box {
+            padding-top: 1rem;
+        }
+        .font-size-lg{
+            font-size: 125%;
+        }
+        .label-box {
+            padding: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            border-radius: 0.25rem;
+            margin: 1.2rem 0;
+        }
+        .label-box-title {
+            min-width: 15rem;
+            max-width: 15rem;
+            color: lightgray;
+        }
+        .label-box > .input{
+            border: none;
+            /*width: 100%;*/
+        }
+        .label-box > label{
+            margin-bottom: 0;
+            padding: 1px;
+        }
+        .label-box > .input {
+            width: 100%;
+        }
+        .label-box > .input:hover{
+            border: 0.05rem lightblue solid;
+        }
 
-    @yield('css')
+        .royallabel {
+            color: royalblue;
+            margin-left: 5rem;
+        }
+        .label-row {
+            display: inline-flex;
+            width: 100%;
+        }
+        .label-row .label-box:first-child {
+            margin-left: .5rem;
+        }
+        .label-row .label-box:last-child {
+            width: calc(100% - .5rem);
+        }
+        .label-row > a {
+            margin: 1.2rem .5rem;
+            line-height: 2.428571;
+        }
+        .label-box > a {
+            line-height: 0.428571;
+        }
+        .label-box {
+            display: inline-flex;
+        }
+
+        /*   mobile view   */
+        @media (max-width: 576px) {
+            .label-row {
+                display: grid;
+            }
+            .label-row .label-box:first-child {
+                padding: 0 1rem;
+                margin: 0;
+                background: grey;
+                border: none;
+                border-bottom-right-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+            .label-row .label-box:first-child > .label-box-title {
+                color: white;
+            }
+            .label-row .label-box:last-child {
+                width: 100%;
+                margin-top: 0;
+                border-top-right-radius: 0;
+                border-top-left-radius: 0;
+            }
+            .label-box > a {
+                width: 100%;
+                padding: 0;
+                margin-top: .5rem;
+            }
+            .label-box {
+                width: 100%;
+                display: grid;
+            }
+            .label-box > span {
+                display: table-row;
+            }
+            .label-row > a {
+                margin: 0;
+                line-height: 1.428571;
+            }
+        }
+
+    </style>
+
+
+@yield('css')
 
 
 
