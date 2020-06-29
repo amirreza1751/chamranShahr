@@ -6,10 +6,12 @@ use App\Models\Ad;
 use App\Models\Department;
 use App\Models\Notice;
 use App\Models\Notification;
+use App\Models\Student;
 use App\Policies\AdPolicy;
 use App\Policies\DepartmentPolicy;
 use App\Policies\NoticePolicy;
 use App\Policies\NotificationPolicy;
+use App\Policies\StudentPolicy;
 use App\Policies\UserPolicy;
 use App\User;
 use Illuminate\Support\Facades\Gate;
@@ -26,6 +28,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
         User::class => UserPolicy::class,
+        Student::class => StudentPolicy::class,
         Ad::class => AdPolicy::class,
         Notification::class => NotificationPolicy::class,
         Notice::class => NoticePolicy::class,

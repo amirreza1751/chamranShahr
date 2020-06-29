@@ -6,6 +6,8 @@ use App\Http\Requests\API\CreateStudentAPIRequest;
 use App\Http\Requests\API\UpdateStudentAPIRequest;
 use App\Models\Student;
 use App\Repositories\StudentRepository;
+use App\Repositories\UserRepository;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
@@ -21,10 +23,12 @@ class StudentAPIController extends AppBaseController
 {
     /** @var  StudentRepository */
     private $studentRepository;
+    private $userRepository;
 
-    public function __construct(StudentRepository $studentRepo)
+    public function __construct(StudentRepository $studentRepo, UserRepository $userRepo)
     {
         $this->studentRepository = $studentRepo;
+        $this->userRepository = $userRepo;
     }
 
     /**
@@ -277,5 +281,160 @@ class StudentAPIController extends AppBaseController
         $student->delete();
 
         return $this->sendResponse($id, 'Student deleted successfully');
+    }
+
+
+    /**
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     *************************************************** CUSTOMIZATION *************************************************
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     */
+
+
+    /**
+     * @param Request $request
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="/students/byScuId/{scu_id}",
+     *      summary="Display the specified User by scu_id",
+     *      tags={"User"},
+     *      description="Get User by scu_id",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="scu_id",
+     *          description="scu_id of User",
+     *          type="string",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="App/User"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function showByScuId(Request $request)
+    {
+        /** @var User $user */
+        $user = User::where('scu_id', $request['scu_id'])->first();
+
+        if (empty($user)) {
+            return $this->sendError('User not found');
+        }
+
+        $student = Student::where('user_id', $user->id)->first();
+
+        if (empty($student)) {
+            return $this->sendError('Student not found');
+        }
+
+        $this->authorize('show', $user);
+
+        $user->student = $student;
+
+        return $this->sendResponse($user->toArray(), 'User retrieved successfully');
+    }
+
+
+    /**
+     * @param Request $request
+     * @return Response
+     *
+     * @SWG\Put(
+     *      path="/students/updateProfile",
+     *      summary="Update Profile Information",
+     *      tags={"Student"},
+     *      description="Update Profile Information",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="first_name",
+     *          description="first_name of User",
+     *          type="string",
+     *          required=false,
+     *          in="path"
+     *      ),
+     *      @SWG\Parameter(
+     *          name="last_name",
+     *          description="last_name of User",
+     *          type="string",
+     *          required=false,
+     *          in="path"
+     *      ),
+     *      @SWG\Parameter(
+     *          name="birthday",
+     *          description="birthday of User",
+     *          type="string",
+     *          required=false,
+     *          in="path"
+     *      ),
+     *      @SWG\Parameter(
+     *          name="in_dormitory",
+     *          description="in_dormitory of Student",
+     *          type="boolean",
+     *          required=false,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="App/User"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function updateProfile(Request $request)
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('User not found');
+        }
+
+        $student = Student::where('user_id', $user->id)->first();
+
+        if (empty($student)) {
+            return $this->sendError('Student not found');
+        }
+
+        $this->authorize('updateProfile', $user);
+
+        $input = $request->all();
+        $user = $this->userRepository->update($input, $user->id);
+        $user->student = $this->studentRepository->update($input, $student->id);
+
+
+        return $this->sendResponse($user->toArray(), 'Profile updated successfully');
     }
 }
