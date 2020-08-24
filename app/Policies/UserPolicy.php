@@ -268,4 +268,28 @@ class UserPolicy
 
         return false;
     }
+
+    /**
+     * Determine whether the user can update the model.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function userInfo(User $user)
+    {
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif ($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->hasRole('verified')){
+            return true;
+        }
+
+        return true;
+    }
 }

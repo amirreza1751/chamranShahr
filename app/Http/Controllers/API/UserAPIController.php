@@ -497,4 +497,35 @@ class UserAPIController extends AppBaseController
             ], 400);
         }
     }
+
+    public function userInfo(Request $request)
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا به سامانه وارد شوید');
+        }
+
+        return response()->json([
+            'status' => 'درخواست موفقیت آمیز بود.',
+            'user' => collect($user->toArray())
+                ->only([
+                    'first_name',
+                    'last_name',
+                    'email',
+                    'phone_number',
+                    'birthday',
+                    'username',
+                    'gender_unique_code',
+                    'scu_id',
+                    'national_id',
+                    'last_login',
+                    'avatar_path',
+                    'is_verified',
+                    'updated_at',
+                ])
+                ->all(),
+        ]);
+    }
 }

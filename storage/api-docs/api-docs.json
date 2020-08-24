@@ -3986,6 +3986,37 @@
                 }
             }
         },
+        "/userInfo": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Retrieve User Info",
+                "description": "Retrieve basic information of specified Authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "$ref": "App/User"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/students": {
             "get": {
                 "tags": [

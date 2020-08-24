@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
 
 Route::group([
     'prefix' => 'auth',
@@ -40,6 +40,9 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     /** User Apis which needs Authenticated user */
     Route::put('users/{id}/update_scu_id', 'UserAPIController@updateScuId');
     Route::put('users/verify', 'UserAPIController@verify');
+    Route::get('users/userInfo', 'UserAPIController@userInfo');
+    /** User Roles and Permissions Apis which needs Authenticated user */
+    Route::post('users/hasRole', 'RolePermissionAPIController@hasRole');
 
     /** Ad Apis which needs Authenticated user */
     Route::get('ads/show_book_ad/{id}', 'AdAPIController@show_book_ad'); /** Displaying a book advertisement (Custom Method) */
