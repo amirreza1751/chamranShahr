@@ -6,6 +6,7 @@ use App\Http\Controllers\API\Sama\SamaRequestController;
 use App\Http\Requests\API\CreateUserAPIRequest;
 use App\Http\Requests\API\UpdateUserAPIRequest;
 use App\Models\Gender;
+use App\Models\Student;
 use App\Models\StudyArea;
 use App\Models\StudyLevel;
 use App\Models\StudyStatus;
@@ -366,52 +367,6 @@ class UserAPIController extends AppBaseController
         return $this->sendResponse($user->national_id_to_update, 'Scu Id Change Request is submitted successfully');
     }
 
-    /**
-     * @param int $id
-     * @param Request $request
-     * @return \Illuminate\Http\Response
-     *
-     * @SWG\Put(
-     *      path="/users/{id}/verify",
-     *      summary="Verify the specified User in storage",
-     *      tags={"User"},
-     *      description="Verify User",
-     *      produces={"application/json"},
-     *      @SWG\Parameter(
-     *          name="id",
-     *          description="id of User",
-     *          type="integer",
-     *          required=true,
-     *          in="path"
-     *      ),
-     *      @SWG\Parameter(
-     *          name="body",
-     *          in="body",
-     *          description="User that should be updated",
-     *          required=false,
-     *          @SWG\Schema(ref="App/User")
-     *      ),
-     *      @SWG\Response(
-     *          response=200,
-     *          description="successful operation",
-     *          @SWG\Schema(
-     *              type="object",
-     *              @SWG\Property(
-     *                  property="success",
-     *                  type="boolean"
-     *              ),
-     *              @SWG\Property(
-     *                  property="data",
-     *                  ref="App/User"
-     *              ),
-     *              @SWG\Property(
-     *                  property="message",
-     *                  type="string"
-     *              )
-     *          )
-     *      )
-     * )
-     */
     public function verify(Request $request)
     {
         $request->validate([
@@ -425,10 +380,29 @@ class UserAPIController extends AppBaseController
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
 
         if (empty($user)) {
-            return $this->sendError('User not found');
+            return $this->sendError('ابتدا وارد سامانه شوید');
         }
 
-        if (is_null($user->student)) { // not verified user
+        $student = Student::withTrashed()->findOrFail($user->id);
+
+        if ($student->trashed()) { // user verified, but has soft deleted before
+            $student->restore();
+            $user->assignRole('verified');
+            $user->is_verified = true;
+
+            $user['student'] = $user->student;
+
+            return response()->json([
+                'status' => 'اطلاعات دانشگاهی کاربر با موفقیت بازیابی شد.',
+                'result' => $user,
+            ]);
+        }
+        elseif (isset($student)) { // verified user
+            return response()->json([
+                'status' => 'کاربر اطلاعات دانشگاهی خود را قبلا احراز کرده است.'
+            ], 400);
+        }
+        elseif (empty($student)) { // user not verified
             try {
                 $student_fetch = SamaRequestController::sama_request('StudentService', 'GetStudentPersonInfo', ['studentNumber' => $input['scu_id']]);
                 if ($student_fetch->StudentNumber == $input['scu_id']) { // Student with entered Scu Id is exist
@@ -491,20 +465,44 @@ class UserAPIController extends AppBaseController
                     'e' => $e
                 ], 500);
             }
-        } else { // verified user
-            return response()->json([
-                'status' => 'This user has been verified before.'
-            ], 400);
         }
     }
 
+
+
+    /**
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="/users/userInfo",
+     *      summary="Retrieve User",
+     *      tags={"User"},
+     *      description="Retrieve information of authenticated user",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
     public function userInfo(Request $request)
     {
         /** @var User $user */
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
 
         if (empty($user)) {
-            return $this->sendError('ابتدا به سامانه وارد شوید');
+            return $this->sendError('ابتدا وارد سامانه شوید');
         }
 
         return response()->json([

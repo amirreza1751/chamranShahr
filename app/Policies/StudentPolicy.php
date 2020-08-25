@@ -37,11 +37,11 @@ class StudentPolicy
         elseif ($user->hasRole('content_manager')){
             return true;
         }
-        elseif ($user->id == $model->id){ // if user request to show himself/herself
-            if ($user->hasRole('verified')){
-                return true;
-            }
-        }
+//        elseif ($user->id == $model->id){ // if user request to show himself/herself
+//            if ($user->hasRole('verified')){
+//                return true;
+//            }
+//        }
 
         return false;
     }

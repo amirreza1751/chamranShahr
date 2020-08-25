@@ -4185,13 +4185,13 @@
                 }
             }
         },
-        "/students/byScuId/{scu_id}": {
-            "get": {
+        "/students/verify": {
+            "put": {
                 "tags": [
-                    "User"
+                    "Student"
                 ],
-                "summary": "Display the specified User by scu_id",
-                "description": "Get User by scu_id",
+                "summary": "Verify User (as student)",
+                "description": "Verify University information (as student) of authenticated User",
                 "produces": [
                     "application/json"
                 ],
@@ -4199,9 +4199,16 @@
                     {
                         "name": "scu_id",
                         "in": "path",
-                        "description": "scu_id of User",
+                        "description": "scu_id field of users table",
                         "required": true,
-                        "type": "string"
+                        "type": "integer"
+                    },
+                    {
+                        "name": "national_id",
+                        "in": "path",
+                        "description": "national_id field of users table",
+                        "required": true,
+                        "type": "integer"
                     }
                 ],
                 "responses": {
@@ -4213,7 +4220,106 @@
                                     "type": "boolean"
                                 },
                                 "data": {
-                                    "$ref": "App/User"
+                                    "$ref": "#/definitions/Student"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/unVerify": {
+            "put": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Soft Delete Student",
+                "description": "Soft Delete Student information of authenticated user",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/byScuId": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Display the specified Student",
+                "description": "Display the specified Student by scu_id",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "scu_id",
+                        "in": "path",
+                        "description": "scu_id of Student",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/Student"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/studentInfo": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Retrieve Student",
+                "description": "Retrieve Student information of authenticated user",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/Student"
                                 },
                                 "message": {
                                     "type": "string"
@@ -4230,8 +4336,8 @@
                 "tags": [
                     "Student"
                 ],
-                "summary": "Update Profile Information",
-                "description": "Update Profile Information",
+                "summary": "Update Profile information",
+                "description": "Update Profile information of authenticated user",
                 "produces": [
                     "application/json"
                 ],
@@ -4274,7 +4380,7 @@
                                     "type": "boolean"
                                 },
                                 "data": {
-                                    "$ref": "App/User"
+                                    "$ref": "#/definitions/Student"
                                 },
                                 "message": {
                                     "type": "string"
@@ -5480,33 +5586,15 @@
                 }
             }
         },
-        "/users/{id}/verify": {
-            "put": {
+        "/users/userInfo": {
+            "get": {
                 "tags": [
                     "User"
                 ],
-                "summary": "Verify the specified User in storage",
-                "description": "Verify User",
+                "summary": "Retrieve User",
+                "description": "Retrieve information of authenticated user",
                 "produces": [
                     "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "id of User",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "body",
-                        "in": "body",
-                        "description": "User that should be updated",
-                        "required": false,
-                        "schema": {
-                            "$ref": "App/User"
-                        }
-                    }
                 ],
                 "responses": {
                     "200": {
@@ -5515,9 +5603,6 @@
                             "properties": {
                                 "success": {
                                     "type": "boolean"
-                                },
-                                "data": {
-                                    "$ref": "App/User"
                                 },
                                 "message": {
                                     "type": "string"

@@ -39,7 +39,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
 
     /** User Apis which needs Authenticated user */
     Route::put('users/{id}/update_scu_id', 'UserAPIController@updateScuId');
-    Route::put('users/verify', 'UserAPIController@verify');
+//    Route::put('users/verify', 'UserAPIController@verify');
     Route::get('users/userInfo', 'UserAPIController@userInfo');
     /** User Roles and Permissions Apis which needs Authenticated user */
     Route::post('users/hasRole', 'RolePermissionAPIController@hasRole');
@@ -54,8 +54,11 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
 
 
     /** Student Apis which needs Authenticated user */
-    Route::get('students/byScuId', 'StudentAPIController@showByScuId'); /** retrieve user by scu_id */
-    Route::put('students/updateProfile', 'StudentAPIController@updateProfile'); /** Update Profile Information */
+    Route::get('students/byScuId', 'StudentAPIController@byScuId'); /** retrieve user by scu_id */
+    Route::put('students/updateProfile', 'StudentAPIController@updateProfile'); /** Update Profile Information of authenticated user */
+    Route::put('students/verify', 'StudentAPIController@verify'); /** Verify University information (as student) of authenticated User */
+    Route::delete('students/unVerify', 'StudentAPIController@unVerify'); /** Soft Delete Student information of authenticated user */
+    Route::get('students/studentInfo', 'StudentAPIController@studentInfo'); /** Retrieve Student information of authenticated user */
 
 
     Route::group(['middleware' => ['role:admin|developer']], function(){
