@@ -364,7 +364,9 @@ class StudentAPIController extends AppBaseController
 
         $input = $request->all();
 
-        $student = Student::withTrashed()->find($user->student->id);
+		if (isset($user->student)){
+			$student = Student::withTrashed()->find($user->student->id);
+		}
 
         if (isset($student) && $student->trashed()) { // user verified, but has soft deleted before
             $student->restore();
