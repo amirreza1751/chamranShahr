@@ -306,6 +306,58 @@ class StudentAPIController extends AppBaseController
 
 
     /**
+     * @return Response
+     *
+     * @SWG\Delete(
+     *      path="/students/hardDelete",
+     *      summary="Hard Delete Student",
+     *      tags={"Student"},
+     *      description="hard Delete Student information of authenticated user",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function hardDelete()
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        $student = Student::withTrashed()->where('user_id', $user->id)->first();
+
+        if (empty($student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+
+        $student->forceDelete();
+        $user->removeRole('Verified');
+        $user->is_verified = false;
+
+        return response()->json([
+            'status' => 'دانشجو با موفقیت حذف شد.',
+        ]);
+    }
+
+    /**
      * @param Request $request
      * @return \Illuminate\Http\Response
      *

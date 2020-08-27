@@ -59,6 +59,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     Route::put('students/updateProfile', 'StudentAPIController@updateProfile'); /** Update Profile Information of authenticated user */
     Route::put('students/verify', 'StudentAPIController@verify'); /** Verify University information (as student) of authenticated User */
     Route::delete('students/unVerify', 'StudentAPIController@unVerify'); /** Soft Delete Student information of authenticated user */
+    Route::delete('students/hardDelete', 'StudentAPIController@hardDelete'); /** Hard Delete Student information of authenticated user */
     Route::get('students/studentInfo', 'StudentAPIController@studentInfo'); /** Retrieve Student information of authenticated user */
     Route::get('students/notifications', 'StudentAPIController@notifications'); /** Retrieve notifications of authenticated studentRetrieve notifications of authenticated student */
     Route::get('students/readNotifications', 'StudentAPIController@readNotifications'); /** Retrieve read notifications of authenticated student */
