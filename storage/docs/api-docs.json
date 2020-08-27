@@ -4185,6 +4185,34 @@
                 }
             }
         },
+        "/students/hardDelete": {
+            "delete": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Hard Delete Student",
+                "description": "hard Delete Student information of authenticated user",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/students/verify": {
             "put": {
                 "tags": [
@@ -4381,6 +4409,238 @@
                                 },
                                 "data": {
                                     "$ref": "#/definitions/Student"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "students/notifications": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Get Student Notifictions",
+                "description": "Get list of authenticated Student Notifications",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Notification"
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "students/unreadNotifications": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Get Student Unread Notifictions",
+                "description": "Get list of authenticated Student Unread Notifications",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Notification"
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "students/readNotifications": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Get Student Read Notifictions",
+                "description": "Get list of authenticated Student Read Notifications",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Notification"
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/notifications/markAsRead": {
+            "put": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Mark as Read Notifications",
+                "description": "Update the notifications shold be mark as read by authenticated Student",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/notifications/markAsUnread": {
+            "put": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Mark as Unread Notifications",
+                "description": "Update the notifications shold be mark as unread by authenticated Student",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/notification/markAsRead": {
+            "put": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Mark as Read Notification",
+                "description": "Update the notification shold be mark as read by authenticated Student",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "$notifications_id",
+                        "in": "path",
+                        "description": "id of notification",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/notification/markAsUnread": {
+            "put": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Mark as Unread Notification",
+                "description": "Update the notification shold be mark as unread by authenticated Student",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "$notification_id",
+                        "in": "path",
+                        "description": "id of notification",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
                                 },
                                 "message": {
                                     "type": "string"
@@ -5603,6 +5863,40 @@
                             "properties": {
                                 "success": {
                                     "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "users/notifications": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get User Notifictions",
+                "description": "Get list of authenticated User Notifications",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Notification"
+                                    }
                                 },
                                 "message": {
                                     "type": "string"

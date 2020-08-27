@@ -974,13 +974,6 @@ class StudentAPIController extends AppBaseController
      *      tags={"Student"},
      *      description="Update the notifications shold be mark as read by authenticated Student",
      *      produces={"application/json"},
-     *      @SWG\Parameter(
-     *          name="$notifications_id",
-     *          description="array of notifications id",
-     *          type="array",
-     *          required=true,
-     *          in="path"
-     *      ),
      *      @SWG\Response(
      *          response=200,
      *          description="successful operation",
@@ -1057,13 +1050,6 @@ class StudentAPIController extends AppBaseController
      *      tags={"Student"},
      *      description="Update the notifications shold be mark as unread by authenticated Student",
      *      produces={"application/json"},
-     *      @SWG\Parameter(
-     *          name="$notifications_id",
-     *          description="array of notifications id",
-     *          type="array",
-     *          required=true,
-     *          in="path"
-     *      ),
      *      @SWG\Response(
      *          response=200,
      *          description="successful operation",
@@ -1142,7 +1128,7 @@ class StudentAPIController extends AppBaseController
      *      @SWG\Parameter(
      *          name="$notifications_id",
      *          description="id of notification",
-     *          type="int",
+     *          type="integer",
      *          required=true,
      *          in="path"
      *      ),
@@ -1210,7 +1196,7 @@ class StudentAPIController extends AppBaseController
      *      @SWG\Parameter(
      *          name="$notification_id",
      *          description="id of notification",
-     *          type="int",
+     *          type="integer",
      *          required=true,
      *          in="path"
      *      ),
