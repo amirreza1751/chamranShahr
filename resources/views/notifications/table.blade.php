@@ -23,7 +23,7 @@
                 @if(isset($notification->notifiable->full_name_scu_id))
                     {!! $notification->notifiable->full_name_scu_id !!}
                 @else
-                    <script>alert('{{$notification->id}}');</script>
+{{--                    <script>alert('{{$notification->id}}');</script>--}}
                 @endif
             <td>
                 @if(isset($notification->notifier->title))

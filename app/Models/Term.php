@@ -67,7 +67,7 @@ class Term extends Model
     use SoftDeletes;
 
     public $table = 'terms';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -111,5 +111,9 @@ class Term extends Model
         'end_date' => 'required'
     ];
 
-    
+    public function students()
+    {
+        return $this->hasMany(Student::class, 'entrance_term_unique_code', 'unique_code');
+    }
+
 }

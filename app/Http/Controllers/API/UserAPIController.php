@@ -526,4 +526,43 @@ class UserAPIController extends AppBaseController
                 ->all(),
         ]);
     }
+
+    /** ************************************************** Notification **************************************************/
+
+    /**
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="users/notifications",
+     *      summary="Get User Notifictions",
+     *      tags={"User"},
+     *      description="Get list of authenticated User Notifications",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @SWG\Items(ref="#/definitions/Notification")
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function notifications()
+    {
+        $notifications = Auth::user()->notifications;
+        return $this->sendResponse($notifications->toArray(), 'عملیات موفقیت آمیز بود.');
+    }
 }

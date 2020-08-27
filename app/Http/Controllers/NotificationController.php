@@ -13,6 +13,7 @@ use App\Models\StudyArea;
 use App\Models\StudyField;
 use App\Models\StudyStatus;
 use App\Models\Term;
+use App\Notifications\EducationalNotification;
 use App\Notifications\NoticeNotification;
 use App\Repositories\NotificationRepository;
 use App\Http\Controllers\AppBaseController;
@@ -286,16 +287,14 @@ class NotificationController extends AppBaseController
 
         $students = Student::all();
 
-        if (isset($input['study_status_unique_code'])) {
-            $students = $students->where('study_status_unique_code', $input['study_status_unique_code']);
-        }
-
         if (isset($input['faculty_unique_code'])) {
-            $students = $students->where('faculty_unique_code', $input['faculty_unique_code']);
+//            $students = $students->where('faculty_unique_code', $input['faculty_unique_code']);
+            $students = Faculty::where('unique_code', $input['faculty_unique_code'])->first()->students();
         }
 
         if (isset($input['study_field_unique_code'])) {
-            $students = $students->where('study_field_unique_code', $input['study_field_unique_code']);
+//            $students = $students->where('study_field_unique_code', $input['study_field_unique_code']);
+            $students = StudyField::where('unique_code', $input['study_field_unique_code'])->first()->students();
         }
 
         if (isset($input['study_area_unique_code'])) {
@@ -306,8 +305,12 @@ class NotificationController extends AppBaseController
             $students = $students->where('entrance_term_unique_code', $input['entrance_term_unique_code']);
         }
 
+        if (isset($input['study_status_unique_code'])) {
+            $students = $students->where('study_status_unique_code', $input['study_status_unique_code']);
+        }
+
         if ($students->isEmpty()) {
-            Flash::error('there is no student with input information');
+            Flash::error('دانشجویی با شخصات انتخابی پیدا نشد.');
 
             return redirect(route('notifications.index'));
         }
@@ -363,6 +366,6 @@ class NotificationController extends AppBaseController
 
     public function send($students, $notifier_type, $notifier_id, $deadline, $title, $brief_description)
     {
-        \Illuminate\Support\Facades\Notification::send($students, new NoticeNotification($notifier_type, $notifier_id, $deadline, $title, $brief_description));
+        \Illuminate\Support\Facades\Notification::send($students, new EducationalNotification($notifier_type, $notifier_id, $deadline, $title, $brief_description));
     }
 }

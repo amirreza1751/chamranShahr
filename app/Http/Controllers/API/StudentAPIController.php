@@ -5,9 +5,11 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\API\Sama\SamaRequestController;
 use App\Http\Requests\API\CreateStudentAPIRequest;
 use App\Http\Requests\API\UpdateStudentAPIRequest;
+use App\Models\Faculty;
 use App\Models\Gender;
 use App\Models\Student;
 use App\Models\StudyArea;
+use App\Models\StudyField;
 use App\Models\StudyLevel;
 use App\Models\StudyStatus;
 use App\Models\Term;
@@ -736,5 +738,479 @@ class StudentAPIController extends AppBaseController
 
 
         return $this->sendResponse($user->toArray(), 'Profile updated successfully');
+    }
+
+    /** ************************************************** Notification **************************************************/
+
+    /**
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="students/notifications",
+     *      summary="Get Student Notifictions",
+     *      tags={"Student"},
+     *      description="Get list of authenticated Student Notifications",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @SWG\Items(ref="#/definitions/Notification")
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function notifications()
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->notifications()->get();
+
+        if (sizeof($notifications) == 0)
+            return response()->json([
+                'status' => 'هیچ نوتیفیکیشنی پیدا نشد'
+            ], 404);
+
+        return $this->sendResponse($notifications->toArray(), 'عملیات موفقیت آمیز بود.');
+    }
+
+    /**
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="students/unreadNotifications",
+     *      summary="Get Student Unread Notifictions",
+     *      tags={"Student"},
+     *      description="Get list of authenticated Student Unread Notifications",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @SWG\Items(ref="#/definitions/Notification")
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function unreadNotifications()
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->unreadNotifications()->get();
+
+        if (sizeof($notifications) == 0)
+            return response()->json([
+                'status' => 'نوتیفیکیشن خوانده نشده‌ای پیدا نشد'
+            ], 404);
+
+        return $this->sendResponse($notifications->toArray(), 'عملیات موفقیت آمیز بود.');
+    }
+
+    /**
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="students/readNotifications",
+     *      summary="Get Student Read Notifictions",
+     *      tags={"Student"},
+     *      description="Get list of authenticated Student Read Notifications",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @SWG\Items(ref="#/definitions/Notification")
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function readNotifications()
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->readNotifications()->get();
+
+        if (sizeof($notifications) == 0)
+            return response()->json([
+                'status' => 'نوتیفیکیشن خوانده شده‌ای پیدا نشد'
+            ], 404);
+
+        return $this->sendResponse($notifications->toArray(), 'عملیات موفقیت آمیز بود.');
+    }
+
+    /**
+     * @return Response
+     *
+     * @SWG\Put(
+     *      path="/students/notifications/markAsRead",
+     *      summary="Mark as Read Notifications",
+     *      tags={"Student"},
+     *      description="Update the notifications shold be mark as read by authenticated Student",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="$notifications_id",
+     *          description="array of notifications id",
+     *          type="array",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function markAsReadNotifications(Request $request)
+    {
+        $request->validate([
+            'notifications_id' => 'required|array'
+        ]);
+
+        $input = $request->all();
+
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->unreadNotifications()->get();
+
+        if (sizeof($notifications) == 0)
+            return response()->json([
+                'status' => 'نوتیفیکیشن خوانده نشده‌ای پیدا نشد'
+            ], 404);
+
+        $notFoundNotificationsId = array();
+        foreach ($input['notifications_id'] as $index => $notification_id){
+            $notification = $notifications->find($notification_id);
+            if(isset($notification))
+                $notification->markAsRead();
+            else
+                array_push($notFoundNotificationsId, $notification_id);
+        }
+
+        if (sizeof($notFoundNotificationsId) > 0)
+            return response()->json([
+                'status' => 'بعضی از نوتیفیکیشن ها در لیست خوانده نشده‌ها وجود ندارند',
+                'data' => $notFoundNotificationsId,
+            ]);
+        return response()->json([
+            'status' => 'عملیات موفقیت آمیز بود'
+        ]);
+//        return $this->sendResponse($notifications->toArray(), 'Student updated successfully');
+    }
+
+
+    /**
+     * @return Response
+     *
+     * @SWG\Put(
+     *      path="/students/notifications/markAsUnread",
+     *      summary="Mark as Unread Notifications",
+     *      tags={"Student"},
+     *      description="Update the notifications shold be mark as unread by authenticated Student",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="$notifications_id",
+     *          description="array of notifications id",
+     *          type="array",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function markAsUnreadNotifications(Request $request)
+    {
+        $request->validate([
+            'notifications_id' => 'required|array'
+        ]);
+
+        $input = $request->all();
+
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->readNotifications()->get();
+
+        if (sizeof($notifications) == 0)
+            return response()->json([
+                'status' => 'نوتیفیکیشن خوانده شده‌ای پیدا نشد'
+            ], 404);
+
+        $notFoundNotificationsId = array();
+        foreach ($input['notifications_id'] as $index => $notification_id){
+            $notification = $notifications->find($notification_id);
+            if(isset($notification))
+                $notification->markAsUnread();
+            else
+                array_push($notFoundNotificationsId, $notification_id);
+        }
+
+        if (sizeof($notFoundNotificationsId) > 0)
+            return response()->json([
+                'status' => 'بعضی از نوتیفیکیشن ها در لیست خوانده شده‌ها وجود ندارند',
+                'data' => $notFoundNotificationsId,
+            ]);
+        return response()->json([
+            'status' => 'عملیات موفقیت آمیز بود'
+        ]);
+//        return $this->sendResponse($notifications->toArray(), 'Student updated successfully');
+    }
+
+    /**
+     * @return Response
+     *
+     * @SWG\Put(
+     *      path="/students/notification/markAsRead",
+     *      summary="Mark as Read Notification",
+     *      tags={"Student"},
+     *      description="Update the notification shold be mark as read by authenticated Student",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="$notifications_id",
+     *          description="id of notification",
+     *          type="int",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function markAsReadNotification(Request $request)
+    {
+        $request->validate([
+            'notification_id' => 'required|string'
+        ]);
+
+        $input = $request->all();
+
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notification = $student->unreadNotifications()->find($input['notification_id']);
+        if(isset($notification)){
+            $notification->markAsRead();
+            return response()->json([
+                'status' => 'عملیات موفقیت آمیز بود'
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'نوتیفیکیشن خوانده نشده‌ای با این مشخصات پیدا نشد'
+        ], 404);
+    }
+
+    /**
+     * @return Response
+     *
+     * @SWG\Put(
+     *      path="/students/notification/markAsUnread",
+     *      summary="Mark as Unread Notification",
+     *      tags={"Student"},
+     *      description="Update the notification shold be mark as unread by authenticated Student",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="$notification_id",
+     *          description="id of notification",
+     *          type="int",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function markAsUnreadNotification(Request $request)
+    {
+        $request->validate([
+            'notification_id' => 'required|string'
+        ]);
+
+        $input = $request->all();
+
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notification = $student->readNotifications()->find($input['notification_id']);
+        if(isset($notification)){
+            $notification->markAsUnread();
+            return response()->json([
+                'status' => 'عملیات موفقیت آمیز بود'
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'نوتیفیکیشن خوانده شده‌ای با این مشخصات پیدا نشد'
+        ], 404);
     }
 }

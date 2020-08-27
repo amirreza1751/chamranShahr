@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     Route::put('users/{id}/update_scu_id', 'UserAPIController@updateScuId');
 //    Route::put('users/verify', 'UserAPIController@verify');
     Route::get('users/userInfo', 'UserAPIController@userInfo');
+    Route::get('users/notifications', 'UserAPIController@notifications'); /** Retrieve notifications of authenticated user */
     /** User Roles and Permissions Apis which needs Authenticated user */
     Route::post('users/hasRole', 'RolePermissionAPIController@hasRole');
 
@@ -59,6 +60,13 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     Route::put('students/verify', 'StudentAPIController@verify'); /** Verify University information (as student) of authenticated User */
     Route::delete('students/unVerify', 'StudentAPIController@unVerify'); /** Soft Delete Student information of authenticated user */
     Route::get('students/studentInfo', 'StudentAPIController@studentInfo'); /** Retrieve Student information of authenticated user */
+    Route::get('students/notifications', 'StudentAPIController@notifications'); /** Retrieve notifications of authenticated studentRetrieve notifications of authenticated student */
+    Route::get('students/readNotifications', 'StudentAPIController@readNotifications'); /** Retrieve read notifications of authenticated student */
+    Route::get('students/unreadNotifications', 'StudentAPIController@unreadNotifications'); /** Retrieve Unread notifications of authenticated student */
+    Route::put('students/notification/markAsRead', 'StudentAPIController@markAsReadNotification'); /** Update the notification should be mark as read by authenticated Student */
+    Route::put('students/notifications/markAsRead', 'StudentAPIController@markAsReadNotifications'); /** Update the notifications should be mark as read by authenticated Student */
+    Route::put('students/notification/markAsUnread', 'StudentAPIController@markAsUnreadNotification'); /** Update the notification should be mark as unread by authenticated Student */
+    Route::put('students/notifications/markAsUnread', 'StudentAPIController@markAsUnreadNotifications'); /** Update the notifications should be mark as unread by authenticated Student */
 
 
     Route::group(['middleware' => ['role:admin|developer']], function(){

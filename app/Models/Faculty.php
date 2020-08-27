@@ -100,4 +100,15 @@ class Faculty extends Model
     {
         return "{$this->department->title}";
     }
+
+    public function students()
+    {
+        $students = collect();
+        foreach ($this->study_fields as $studyField){
+            foreach ($studyField->study_areas as $studyArea){
+                $students = $students->merge($studyArea->students);
+            }
+        }
+        return $students;
+    }
 }

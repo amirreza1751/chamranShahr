@@ -109,6 +109,15 @@ class StudyField extends Model
         return $this->belongsTo(Faculty::class, 'faculty_unique_code', 'unique_code');
     }
 
+    public function students()
+    {
+        $students = collect();
+        foreach ($this->study_areas as $studyArea){
+            $students = $students->merge($studyArea->students);
+        }
+        return $students;
+    }
+
     public function getTitleAttribute()
     {
         return "{$this->department->title}";
