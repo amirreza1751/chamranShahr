@@ -772,6 +772,7 @@ class StudentAPIController extends AppBaseController
         $studyArea = $student->study_area->retrieve();
         $studyField = $student->study_area->study_field->retrieve();
         $faculty = $student->study_area->study_field->faculty->retrieve();
+        $entranceTerm = $student->entrance_term->retrieve();
 
         $student = collect($student->toArray())
         ->only([
@@ -792,6 +793,7 @@ class StudentAPIController extends AppBaseController
         $student['studyArea'] = $studyArea;
         $student['studyField'] = $studyField;
         $student['faculty'] = $faculty;
+        $student['entranceTerm'] = $entranceTerm;
 
         return response()->json([
             'status' => 'درخواست موفقیت آمیز بود.',

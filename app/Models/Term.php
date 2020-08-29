@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Morilog\Jalali\Jalalian;
 
 /**
  * @SWG\Definition(
@@ -114,6 +115,20 @@ class Term extends Model
     public function students()
     {
         return $this->hasMany(Student::class, 'entrance_term_unique_code', 'unique_code');
+    }
+
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'title',
+                'unique_code',
+                'term_code',
+            ])
+            ->all();
+        $retrieve['begin_date'] = Jalalian::fromCarbon($this->begin_date)->format('Y-m-d');
+        $retrieve['end_date'] = Jalalian::fromCarbon($this->end_date)->format('Y-m-d');
+        return $retrieve;
     }
 
 }
