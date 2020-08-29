@@ -505,25 +505,34 @@ class UserAPIController extends AppBaseController
             return $this->sendError('ابتدا وارد سامانه شوید');
         }
 
+        $roles = array();
+        foreach ($user->roles as $role){
+            array_push($roles, $role->only(['name', 'guard_name']));
+        }
+
+        $user = collect($user->toArray())
+            ->only([
+                'first_name',
+                'last_name',
+                'email',
+                'phone_number',
+                'birthday',
+                'username',
+                'gender_unique_code',
+                'scu_id',
+                'national_id',
+                'last_login',
+                'avatar_path',
+                'is_verified',
+                'updated_at',
+            ])
+            ->all();
+
+        $user['roles'] = $roles;
+
         return response()->json([
             'status' => 'درخواست موفقیت آمیز بود.',
-            'user' => collect($user->toArray())
-                ->only([
-                    'first_name',
-                    'last_name',
-                    'email',
-                    'phone_number',
-                    'birthday',
-                    'username',
-                    'gender_unique_code',
-                    'scu_id',
-                    'national_id',
-                    'last_login',
-                    'avatar_path',
-                    'is_verified',
-                    'updated_at',
-                ])
-                ->all(),
+            'user' => $user,
         ]);
     }
 

@@ -113,14 +113,14 @@ class RolePermissionAPIController extends Controller
             return $this->sendError('ابتدا به سامانه وارد شوید');
         }
 
+        $result = array();
+        foreach ($user->roles as $role){
+            array_push($result, $role->only(['name', 'guard_name']));
+        }
+
         return response()->json([
             'status' => 'درخواست موفقیت آمیز بود.',
-            'result' => collect($user->roles())
-                ->only([
-                    'name',
-                    'guard_name',
-                ])
-                ->all(),
+            'result' => $result,
         ]);
 
     }

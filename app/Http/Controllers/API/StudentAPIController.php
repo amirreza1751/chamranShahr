@@ -634,6 +634,12 @@ class StudentAPIController extends AppBaseController
             ])
             ->all();
 
+        $roles = array();
+        foreach ($user->roles as $role){
+            array_push($roles, $role->only(['name', 'guard_name']));
+        }
+        $student['user']['roles'] = $roles;
+
         return response()->json([
             'status' => 'درخواست موفقیت آمیز بود.',
             'student' => $student,
@@ -704,6 +710,12 @@ class StudentAPIController extends AppBaseController
                 'updated_at',
             ])
             ->all();
+
+        $roles = array();
+        foreach ($user->roles as $role){
+            array_push($roles, $role->only(['name', 'guard_name']));
+        }
+        $student['user']['roles'] = $roles;
 
         return response()->json([
             'status' => 'درخواست موفقیت آمیز بود.',
