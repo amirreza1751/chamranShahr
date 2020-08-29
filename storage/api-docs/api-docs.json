@@ -3986,6 +3986,72 @@
                 }
             }
         },
+        "/users/hasRole": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Has Role",
+                "description": "specify the authenticated has requested role or not",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "description": "role to check",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "true": {},
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/roles": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Retrieve User Roles",
+                "description": "retrieve the authenticated user roles",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/students": {
             "get": {
                 "tags": [

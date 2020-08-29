@@ -349,7 +349,8 @@ class StudentAPIController extends AppBaseController
         /** @var Student $student */
 
         $student->forceDelete();
-        $user->removeRole('Verified');
+        $user->removeRole('verified');
+        $user->removeRole('student');
         $user->is_verified = false;
 
         return response()->json([
@@ -423,6 +424,7 @@ class StudentAPIController extends AppBaseController
         if (isset($student) && $student->trashed()) { // user verified, but has soft deleted before
             $student->restore();
             $user->assignRole('verified');
+            $user->assignRole('student');
             $user->is_verified = true;
 
             $user['student'] = $user->student;
@@ -462,6 +464,7 @@ class StudentAPIController extends AppBaseController
                         $user = $this->userRepository->update($user_information, $user->id);
 
                         $user->assignRole('verified');
+                        $user->assignRole('student');
 
                         /**
                          * static part of unique_code      CONCAT      numeric part of unique_code retrieve from SAMA
@@ -549,6 +552,7 @@ class StudentAPIController extends AppBaseController
 
         $student->delete();
         $user->removeRole('verified');
+        $user->removeRole('student');
         $user->is_verified = false;
 
         return response()->json([

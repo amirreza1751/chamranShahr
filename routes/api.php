@@ -44,6 +44,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     Route::get('users/notifications', 'UserAPIController@notifications'); /** Retrieve notifications of authenticated user */
     /** User Roles and Permissions Apis which needs Authenticated user */
     Route::post('users/hasRole', 'RolePermissionAPIController@hasRole');
+    Route::get('users/roles', 'RolePermissionAPIController@roles');
 
     /** Ad Apis which needs Authenticated user */
     Route::get('ads/show_book_ad/{id}', 'AdAPIController@show_book_ad'); /** Displaying a book advertisement (Custom Method) */

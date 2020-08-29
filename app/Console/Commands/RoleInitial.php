@@ -47,11 +47,11 @@ class RoleInitial extends Command
         if ($answer == 'HellYeah') {
 
             $gf->truncate([
-                'roles',
-                'permissions',
-                'role_has_permissions',
-                'model_has_permissions',
-                'model_has_roles'],
+                'roles'],
+//                'permissions',
+//                'role_has_permissions',
+//                'model_has_permissions',
+//                'model_has_roles'],
                 true);
 
             $role = Role::create([
@@ -68,6 +68,26 @@ class RoleInitial extends Command
 
             $role = Role::create([
                 'name' => 'content_manager',
+                'guard_name' => 'web',
+            ]);
+            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
+
+            $role = Role::create([
+                'name' => 'student',
+                'guard_name' => 'web',
+            ]);
+            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
+
+
+            $role = Role::create([
+                'name' => 'professor',
+                'guard_name' => 'web',
+            ]);
+            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
+
+
+            $role = Role::create([
+                'name' => 'employee',
                 'guard_name' => 'web',
             ]);
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
