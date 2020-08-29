@@ -115,7 +115,12 @@ class RolePermissionAPIController extends Controller
 
         return response()->json([
             'status' => 'درخواست موفقیت آمیز بود.',
-            'result' => $user->roles,
+            'result' => collect($user->roles->toArray())
+                ->only([
+                    'name',
+                    'guard_name',
+                ])
+                ->all(),
         ]);
 
     }
