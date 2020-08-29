@@ -427,11 +427,36 @@ class StudentAPIController extends AppBaseController
             $user->assignRole('student');
             $user->is_verified = true;
 
-            $user['student'] = $user->student;
+
+            $roles = array();
+            foreach ($user->roles as $role){
+                array_push($roles, $role->only(['name', 'guard_name']));
+            }
+
+            $user = collect($user->toArray())
+                ->only([
+                    'first_name',
+                    'last_name',
+                    'email',
+                    'phone_number',
+                    'birthday',
+                    'username',
+                    'gender_unique_code',
+                    'scu_id',
+                    'national_id',
+                    'last_login',
+                    'avatar_path',
+                    'is_verified',
+                    'updated_at',
+                ])
+                ->all();
+
+            $user['roles'] = $roles;
+            $user['student'] = $student;
 
             return response()->json([
                 'status' => 'اطلاعات دانشگاهی کاربر با موفقیت بازیابی شد.',
-                'result' => $user,
+                'user' => $user,
             ]);
         }
         elseif (isset($student)) { // verified user
@@ -486,7 +511,33 @@ class StudentAPIController extends AppBaseController
                             'user_id' => $user->id,
                         );
                         $student = $this->studentRepository->create($student_information);
+
+                        $roles = array();
+                        foreach ($user->roles as $role){
+                            array_push($roles, $role->only(['name', 'guard_name']));
+                        }
+
+                        $user = collect($user->toArray())
+                            ->only([
+                                'first_name',
+                                'last_name',
+                                'email',
+                                'phone_number',
+                                'birthday',
+                                'username',
+                                'gender_unique_code',
+                                'scu_id',
+                                'national_id',
+                                'last_login',
+                                'avatar_path',
+                                'is_verified',
+                                'updated_at',
+                            ])
+                            ->all();
+
+                        $user['roles'] = $roles;
                         $user['student'] = $student;
+
                         return response()->json($user);
 
                     } else {
@@ -616,8 +667,12 @@ class StudentAPIController extends AppBaseController
 
         $this->authorize('show', $user);
 
+        $roles = array();
+        foreach ($user->roles as $role){
+            array_push($roles, $role->only(['name', 'guard_name']));
+        }
 
-        $user = collect($user->toArray())
+        $student['user'] = collect($user->toArray())
             ->only([
                 'first_name',
                 'last_name',
@@ -635,10 +690,6 @@ class StudentAPIController extends AppBaseController
             ])
             ->all();
 
-        $roles = array();
-        foreach ($user->roles as $role){
-            array_push($roles, $role->only(['name', 'guard_name']));
-        }
         $user['roles'] = $roles;
         $student['user'] = $user;
 
@@ -695,6 +746,11 @@ class StudentAPIController extends AppBaseController
         /** @var Student $student */
         $student = $this->studentRepository->findWithoutFail($user->student->id);
 
+        $roles = array();
+        foreach ($user->roles as $role){
+            array_push($roles, $role->only(['name', 'guard_name']));
+        }
+
         $user = collect($user->toArray())
             ->only([
                 'first_name',
@@ -713,10 +769,6 @@ class StudentAPIController extends AppBaseController
             ])
             ->all();
 
-        $roles = array();
-        foreach ($user->roles as $role){
-            array_push($roles, $role->only(['name', 'guard_name']));
-        }
         $user['roles'] = $roles;
         $student['user'] = $user;
 
