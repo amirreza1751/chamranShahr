@@ -125,4 +125,25 @@ class StudyArea extends Model
     {
         return $this->belongsTo(StudyField::class, 'study_field_unique_code', 'unique_code');
     }
+
+    public function studyLevel()
+    {
+        return $this->belongsTo(StudyLevel::class, 'study_level_unique_code', 'unique_code');
+    }
+
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'title',
+                'english_title',
+                'unique_code',
+                'is_active',
+            ])
+            ->all();
+        $retrieve['studyLevel'] = $this->studyLevel;
+        $retrieve['studyfield'] = $this->study_field;
+
+        return $retrieve;
+    }
 }

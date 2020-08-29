@@ -111,4 +111,16 @@ class Faculty extends Model
         }
         return $students;
     }
+
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'unique_code',
+            ])
+            ->all();
+        $retrieve['department'] = $this->department;
+
+        return $retrieve;
+    }
 }

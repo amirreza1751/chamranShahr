@@ -118,6 +118,19 @@ class StudyField extends Model
         return $students;
     }
 
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'unique_code',
+            ])
+            ->all();
+        $retrieve['department'] = $this->department;
+        $retrieve['faculty'] = $this->faculty;
+
+        return $retrieve;
+    }
+
     public function getTitleAttribute()
     {
         return "{$this->department->title}";

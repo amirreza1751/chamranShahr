@@ -769,8 +769,29 @@ class StudentAPIController extends AppBaseController
             ])
             ->all();
 
+        $studyArea = $student->study_area->retrieve();
+        $studyField = $student->study_area->study_field->retrieve();
+        $faculty = $student->study_area->study_field->faculty->retrieve();
+
+        $student = collect($student->toArray())
+        ->only([
+            'total_average',
+            'is_active',
+            'is_guest',
+            'is_iranian',
+            'in_dormitory',
+            'created_at',
+            'updated_at',
+        ])
+        ->all();
+
         $user['roles'] = $roles;
+
         $student['user'] = $user;
+
+        $student['studyArea'] = $studyArea;
+        $student['studyField'] = $studyField;
+        $student['faculty'] = $faculty;
 
         return response()->json([
             'status' => 'درخواست موفقیت آمیز بود.',
