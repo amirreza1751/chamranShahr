@@ -616,7 +616,8 @@ class StudentAPIController extends AppBaseController
 
         $this->authorize('show', $user);
 
-        $student['user'] = collect($user->toArray())
+
+        $user = collect($user->toArray())
             ->only([
                 'first_name',
                 'last_name',
@@ -638,7 +639,8 @@ class StudentAPIController extends AppBaseController
         foreach ($user->roles as $role){
             array_push($roles, $role->only(['name', 'guard_name']));
         }
-        $student['user']['roles'] = $roles;
+        $user['roles'] = $roles;
+        $student['user'] = $user;
 
         return response()->json([
             'status' => 'درخواست موفقیت آمیز بود.',
@@ -693,7 +695,7 @@ class StudentAPIController extends AppBaseController
         /** @var Student $student */
         $student = $this->studentRepository->findWithoutFail($user->student->id);
 
-        $student['user'] = collect($user->toArray())
+        $user = collect($user->toArray())
             ->only([
                 'first_name',
                 'last_name',
@@ -715,7 +717,8 @@ class StudentAPIController extends AppBaseController
         foreach ($user->roles as $role){
             array_push($roles, $role->only(['name', 'guard_name']));
         }
-        $student['user']['roles'] = $roles;
+        $user['roles'] = $roles;
+        $student['user'] = $user;
 
         return response()->json([
             'status' => 'درخواست موفقیت آمیز بود.',
