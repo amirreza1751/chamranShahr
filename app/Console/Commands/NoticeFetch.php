@@ -179,7 +179,7 @@ class NoticeFetch extends Command
                                  */
                                 $extension = explode("?", $pathinfo['extension'])[0];
 
-                                if (str_contains(strtolower($extension), GeneralVariable::$inbound_acceptable_media)) { // acceptable extension such png and jpg
+                                if ($this->str_contains_array(strtolower($extension), GeneralVariable::$inbound_acceptable_media)) { // acceptable extension such png and jpg
                                     /** < get media size > */
                                     if ($clen < 2097152) { // if media size < 2MiB
 
@@ -275,5 +275,14 @@ class NoticeFetch extends Command
                 var_dump($e->getTraceAsString());
             }
         }
+    }
+
+    public function str_contains_array($extension, $acceptables)
+    {
+        foreach ($acceptables as $acceptable){
+            if(str_contains($extension, $acceptable))
+                return true;
+        }
+        return false;
     }
 }

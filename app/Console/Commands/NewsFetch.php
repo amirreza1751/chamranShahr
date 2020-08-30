@@ -331,7 +331,7 @@ class NewsFetch extends Command
                                         $extension = explode( "?", $pathinfo['extension'])[0];
                                     }
 
-                                    if(isset($extension) && str_contains(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
+                                    if(isset($extension) && $this->str_contains_array(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
                                         /** < get media size > */
                                         if ($clen < 2097152) { // if media size < 2MiB
 
@@ -426,5 +426,14 @@ class NewsFetch extends Command
          */
 
 
+    }
+
+    public function str_contains_array($extension, $acceptables)
+    {
+        foreach ($acceptables as $acceptable){
+            if(str_contains($extension, $acceptable))
+                return true;
+        }
+        return false;
     }
 }
