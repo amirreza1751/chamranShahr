@@ -201,6 +201,10 @@ class NoticeFetch extends Command
                                         $path = '/' . str_replace('public', 'storage', $path);
                                         $notice['path'] = $path;
 
+                                        /**
+                                         * create thumbnail of the original image
+                                         * this image will store with a postfix '-thumbnail' beside the original image
+                                         */
                                         $destinationPath = public_path('storage/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
                                         $img = Image::make($file);
                                         // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/

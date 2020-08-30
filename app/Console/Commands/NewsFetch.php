@@ -345,10 +345,24 @@ class NewsFetch extends Command
                                             fclose($fp);
                                             //put media to relative folder to its owner such department
                                             $path = Storage::putFile('public/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
+                                            $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
+                                            $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
+                                            // retrieve the stored media
+                                            $file = Storage::get($path);
                                             // create laravel symbolic link for this media
                                             $path = URL::to('/') . '/' . str_replace('public', 'storage', $path);
                                             $news['path'] = $path;
 
+                                            /**
+                                             * create thumbnail of the original image
+                                             * this image will store with a postfix '-thumbnail' beside the original image
+                                             */
+                                            $destinationPath = public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
+                                            $img = Image::make($file);
+                                            // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
+                                            $img->resize(100, 100, function ($constraint) {
+                                                $constraint->aspectRatio();
+                                            })->save($destinationPath.'/' . $file_name . '-thumbnail.' . $file_extension);
 
                                             /**
                                              * ************************* VERY IMPORTANT
