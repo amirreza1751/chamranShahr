@@ -6,6 +6,7 @@ use App\Http\Requests\API\CreateDepartmentAPIRequest;
 use App\Http\Requests\API\UpdateDepartmentAPIRequest;
 use App\Models\Department;
 use App\Repositories\DepartmentRepository;
+use App\Repositories\NoticeRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
@@ -21,10 +22,12 @@ class DepartmentAPIController extends AppBaseController
 {
     /** @var  DepartmentRepository */
     private $departmentRepository;
+    private $noticeRepository;
 
-    public function __construct(DepartmentRepository $departmentRepo)
+    public function __construct(DepartmentRepository $departmentRepo, NoticeRepository $noticeRepo)
     {
         $this->departmentRepository = $departmentRepo;
+        $this->noticeRepository = $noticeRepo;
     }
 
     /**
@@ -282,5 +285,67 @@ class DepartmentAPIController extends AppBaseController
         $department->delete();
 
         return $this->sendResponse($id, 'Department deleted successfully');
+    }
+
+    /**
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     *************************************************** CUSTOMIZATION *************************************************
+     *******************************************************************************************************************
+     *******************************************************************************************************************
+     */
+
+    /**
+     * @param int $id
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="/departments/{id}/notices",
+     *      summary="Retrieve Department Notices",
+     *      tags={"Department"},
+     *      description="retrieve the specified department notices",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of Department",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @SWG\Items(ref="#/definitions/Notice")
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function notices($id)
+    {
+        /** @var Department $department */
+        $department = $this->departmentRepository->findWithoutFail($id);
+
+        if (empty($department)) {
+            return $this->sendError('دپارتمان وجود ندارد');
+        }
+        /** **** Customization **** */
+
+        $this->authorize('view', $department);
+
+        return $department->notices()->orderBy('created_at', 'desc')->paginate(5)->toArray();
     }
 }
