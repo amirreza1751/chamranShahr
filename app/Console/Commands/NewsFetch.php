@@ -350,7 +350,7 @@ class NewsFetch extends Command
                                             // retrieve the stored media
                                             $file = Storage::get($path);
                                             // create laravel symbolic link for this media
-                                            $path = URL::to('/') . '/' . str_replace('public', 'storage', $path);
+                                            $path = '/' . str_replace('public', 'storage', $path);
                                             $news['path'] = $path;
 
                                             /**
