@@ -171,4 +171,20 @@ class Department extends Model
 
         return $retrieve;
     }
+
+    public function retrieveWithManager(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'title',
+                'english_title',
+                'description',
+                'path',
+            ])
+            ->all();
+        $retrieve['manageLevel'] = $this->manage_level->retrieve();
+        $retrieve['manager'] = $this->manager();
+
+        return $retrieve;
+    }
 }

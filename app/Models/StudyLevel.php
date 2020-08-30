@@ -55,7 +55,7 @@ class StudyLevel extends Model
     use SoftDeletes;
 
     public $table = 'study_levels';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -93,5 +93,16 @@ class StudyLevel extends Model
         'unique_code' => 'required'
     ];
 
-    
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'title',
+                'english_title',
+                'unique_code'
+            ])
+            ->all();
+
+        return $retrieve;
+    }
 }

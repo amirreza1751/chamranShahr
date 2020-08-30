@@ -346,6 +346,6 @@ class DepartmentAPIController extends AppBaseController
 
         $this->authorize('view', $department);
 
-        return $department->notices()->orderBy('created_at', 'desc')->paginate(5)->toArray();
+        return $this->sendResponse($department->notices()->orderBy('created_at', 'desc')->take(5)->get(), 'Notices retrieved successfully');
     }
 }

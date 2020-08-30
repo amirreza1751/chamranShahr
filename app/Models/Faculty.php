@@ -112,6 +112,12 @@ class Faculty extends Model
         return $students;
     }
 
+    public function studentsCount()
+    {
+        $count = $this->students()->count();
+        return $count;
+    }
+
     public function retrieve(){
         $retrieve = collect($this->toArray())
             ->only([
@@ -119,7 +125,8 @@ class Faculty extends Model
                 'unique_code',
             ])
             ->all();
-        $retrieve['department'] = $this->department;
+        $retrieve['department'] = $this->department->retrieveWithManager();
+        $retrieve['studentsCount'] = $this->studentsCount();
 
         return $retrieve;
     }

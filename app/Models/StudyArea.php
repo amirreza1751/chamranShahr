@@ -141,8 +141,8 @@ class StudyArea extends Model
                 'is_active',
             ])
             ->all();
-        $retrieve['studyLevel'] = $this->studyLevel;
-        $retrieve['studyfield'] = $this->study_field;
+        $retrieve['studyLevel'] = $this->studyLevel->retrieve();
+//        $retrieve['studyfield'] = $this->study_field->retrieve();
 
         return $retrieve;
     }

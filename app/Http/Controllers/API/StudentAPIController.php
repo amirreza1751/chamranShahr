@@ -771,7 +771,7 @@ class StudentAPIController extends AppBaseController
             ->all();
 
         $studyArea = $student->study_area->retrieve();
-        $studyField = $student->study_area->study_field->retrieve();
+        $studyField = $student->study_area->study_field->retrieveWithDepartment();
         $faculty = $student->study_area->study_field->faculty->retrieve();
         $entranceTerm = $student->entrance_term->retrieve();
 
