@@ -58,7 +58,7 @@ class NewsFetch extends Command
 
         ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
         $cc = new ConsoleColor();
-        $default_image_dir = URL::to('/') . Storage::url('news_images/news_default_image.jpg');
+        $default_image_dir = Storage::url('news_images/news_default_image.jpg');
 
         try {
             /**

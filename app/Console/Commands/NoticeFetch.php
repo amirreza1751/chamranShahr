@@ -58,7 +58,7 @@ class NoticeFetch extends Command
     {
         ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
         $cc = new ConsoleColor();
-        $default_image_dir = URL::to('/') . Storage::url('notices_images/notice_default_image.jpg');
+        $default_image_dir = Storage::url('notices_images/notice_default_image.jpg');
         try {
             /**
              * get all external services which are notice type
