@@ -159,10 +159,15 @@ class DepartmentAPIController extends AppBaseController
         $department = $this->departmentRepository->findWithoutFail($id);
 
         if (empty($department)) {
-            return $this->sendError('Department not found');
+            return $this->sendError('دپارتمان وجود ندارد');
         }
+        /** **** Customization **** */
 
-        return $this->sendResponse($department->toArray(), 'Department retrieved successfully');
+        $this->authorize('view', $department);
+
+        $department->retrieve();
+
+        return $this->sendResponse($department, 'Department retrieved successfully');
     }
 
     /**

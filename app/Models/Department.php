@@ -162,6 +162,12 @@ class Department extends Model
             ->all();
         $retrieve['manageLevel'] = $this->manage_level->retrieve();
         $retrieve['manager'] = $this->manager();
+        if (isset($this->faculty)){
+            $retrieve['faculty'] = $this->faculty;
+        }
+        if (isset($this->study_field)){
+            $retrieve['studyField'] = $this->study_field;
+        }
 
         return $retrieve;
     }

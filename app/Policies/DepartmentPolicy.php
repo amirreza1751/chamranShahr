@@ -14,12 +14,32 @@ class DepartmentPolicy
      * Determine whether the user can view the department.
      *
      * @param  \App\User  $user
-     * @param  \App\Department  $department
+     * @param  \App\Models\Department  $department
      * @return mixed
      */
     public function view(User $user, Department $department)
     {
-        //
+        return true;
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif ($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->hasRole('notification_manager')){
+            return true;
+        }
+        elseif (!empty($user->under_managment())){
+            return true;
+        }
+        elseif ($user->hasRole('verified')){
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -73,6 +73,9 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     Route::put('students/notification/markAsUnread', 'StudentAPIController@markAsUnreadNotification'); /** Update the notification should be mark as unread by authenticated Student */
     Route::put('students/notifications/markAsUnread', 'StudentAPIController@markAsUnreadNotifications'); /** Update the notifications should be mark as unread by authenticated Student */
 
+    /** Department Apis which doesnt needs Authenticated user */
+    Route::get('departments/{id}', 'DepartmentAPIController@show');
+
 
     Route::group(['middleware' => ['role:admin|developer']], function(){
 
@@ -222,8 +225,8 @@ Route::group(['middleware' => 'cors'], function() {
     /** ManageHierarchy Routes, that's it */
 
     /** Department Apis which doesnt needs Authenticated user */
-    Route::get('departments', 'DepartmentAPIController@index');
-    Route::get('departments/{department}', 'DepartmentAPIController@show');
+//    Route::get('departments', 'DepartmentAPIController@index');
+//    Route::get('departments/{department}', 'DepartmentAPIController@show');
     /** Department Routes, that's it */
 
     /** Faculty Apis which doesnt needs Authenticated user */
