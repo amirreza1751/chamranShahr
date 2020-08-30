@@ -125,11 +125,11 @@ class User extends Authenticatable
             ->only([
                 'first_name',
                 'last_name',
-                'full_name',
                 'avatar_path',
             ])
             ->all();
         $retrieve['gender'] = $this->gender->retrieve();
+        $retrieve['full_name'] = $this->full_name;
 
         return $retrieve;
     }
