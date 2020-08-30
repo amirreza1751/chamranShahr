@@ -123,7 +123,7 @@ class News extends Model
         return "{$this->owner->title} : {$this->title}";
     }
 
-    public function getPathAttribute()
+    public function getAbsolutePathAttribute()
     {
         return URL::to('/') . $this->path;
     }
