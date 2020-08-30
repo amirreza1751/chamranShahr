@@ -14,6 +14,7 @@ use Illuminate\Container\Container;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Intervention\Image\Facades\Image;
 
 class NoticeFetch extends Command
 {
@@ -192,10 +193,20 @@ class NoticeFetch extends Command
                                         fclose($fp);
                                         //put media to relative folder to its owner such department
                                         $path = Storage::putFile('public/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
+                                        $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
+                                        $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
+                                        // retrieve the stored media
+                                        $file = Storage::get($path);
                                         // create laravel symbolic link for this media
-                                        $path = URL::to('/') . '/' . str_replace('public', 'storage', $path);
+                                        $path = '/' . str_replace('public', 'storage', $path);
                                         $notice['path'] = $path;
 
+                                        $destinationPath = public_path('storage/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
+                                        $img = Image::make($file);
+                                        // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
+                                        $img->resize(100, 100, function ($constraint) {
+                                            $constraint->aspectRatio();
+                                        })->save($destinationPath.'/' . $file_name . '-thumbnail.' . $file_extension);
 
                                         /**
                                          * ************************* SO IMPORTANT

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Morilog\Jalali\Jalalian;
 
 /**
  * @SWG\Definition(
@@ -153,5 +154,25 @@ class Notification extends Model
     public function notifiable()
     {
         return $this->morphTo();
+    }
+
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'title',
+                'brief_description',
+                'type',
+                'notifier_type',
+                'notifier_id',
+                'deadline',
+                'read_at',
+                'created_at',
+                'updated_at',
+            ])
+            ->all();
+        $retrieve['thumbnail'] = $this->notifier->thumbnail;
+        $retrieve['path'] = $this->notifier->absolute_path;
+        return $retrieve;
     }
 }

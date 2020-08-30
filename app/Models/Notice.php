@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\URL;
 
 /**
  * @SWG\Definition(
@@ -108,6 +109,11 @@ class Notice extends Model
         'owner_id' => 'required',
     ];
 
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifier');
+    }
+
     public function owner()
     {
         return $this->morphTo();
@@ -118,9 +124,13 @@ class Notice extends Model
         return "{$this->owner->title} : {$this->title}";
     }
 
-    public function notifications()
+    public function getAbsolutePathAttribute()
     {
-        return $this->morphMany(Notification::class, 'notifier');
+        return URL::to('/') . $this->path;
     }
 
+    public function getThumbnailAttribute()
+    {
+        return URL::to('/') . pathinfo($this->path, PATHINFO_DIRNAME) . '/' . pathinfo(basename($this->path), PATHINFO_FILENAME) . '-thumbnail.' . pathinfo(basename($this->path), PATHINFO_EXTENSION);
+    }
 }

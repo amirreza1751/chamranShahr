@@ -7,6 +7,7 @@ use App\Http\Requests\API\CreateStudentAPIRequest;
 use App\Http\Requests\API\UpdateStudentAPIRequest;
 use App\Models\Faculty;
 use App\Models\Gender;
+use App\Models\Notification;
 use App\Models\Student;
 use App\Models\StudyArea;
 use App\Models\StudyField;
@@ -942,7 +943,12 @@ class StudentAPIController extends AppBaseController
                 'status' => 'هیچ نوتیفیکیشنی پیدا نشد'
             ], 404);
 
-        return $this->sendResponse($notifications->toArray(), 'عملیات موفقیت آمیز بود.');
+        $retrieves = array();
+        foreach ($notifications as $notification){
+            array_push($retrieves, Notification::find($notification->id)->retrieve());
+        }
+
+        return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
     }
 
     /**
