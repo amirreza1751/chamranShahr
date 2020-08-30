@@ -119,4 +119,18 @@ class User extends Authenticatable
             ->where('end_date', null)->get();
 
     }
+
+    public function retrieveAsManager(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'first_name',
+                'last_name',
+                'full_name',
+                'avatar_path',
+            ])
+            ->all();
+        $retrieve['gender'] = $this->gender->retrieve();
+
+        return $retrieve;
+    }
 }

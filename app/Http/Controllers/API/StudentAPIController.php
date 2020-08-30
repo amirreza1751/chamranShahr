@@ -936,19 +936,19 @@ class StudentAPIController extends AppBaseController
         /** @var Student $student */
         $student = $this->studentRepository->findWithoutFail($user->student->id);
 
-        $notifications = $student->notifications()->get();
+        $notifications = $student->notifications;
 
         if (sizeof($notifications) == 0)
             return response()->json([
                 'status' => 'هیچ نوتیفیکیشنی پیدا نشد'
             ], 404);
 
-        $retrieves = array();
-        foreach ($notifications as $notification){
-            array_push($retrieves, Notification::find($notification->id)->retrieve());
-        }
+//        $retrieves = array();
+//        foreach ($notifications as $notification){
+//            array_push($retrieves, Notification::find($notification->id)->retrieve());
+//        }
 
-        return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
+        return $this->sendResponse($notifications, 'عملیات موفقیت آمیز بود.');
     }
 
     /**

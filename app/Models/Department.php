@@ -134,7 +134,7 @@ class Department extends Model
             ->where('is_active', true)
             ->orderBy('begin_date', 'desc')->first();
         if (isset($manage_history)){
-            return User::find($manage_history->manager_id);
+            return User::find($manage_history->manager_id)->retrieveAsManager();
         }
     }
 
@@ -148,5 +148,21 @@ class Department extends Model
         $manage_history = $this->morphMany(ManageHistory::class, 'managed')
             ->where('is_active', true)
             ->orderBy('begin_date', 'desc');
+    }
+
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'title',
+                'english_title',
+                'description',
+                'path',
+            ])
+            ->all();
+        $retrieve['manageLevel'] = $this->manage_level->retrieve();
+        $retrieve['manager'] = $this->manager();
+
+        return $retrieve;
     }
 }

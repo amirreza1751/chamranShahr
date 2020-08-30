@@ -46,6 +46,9 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     Route::post('users/hasRole', 'RolePermissionAPIController@hasRole');
     Route::get('users/roles', 'RolePermissionAPIController@roles');
 
+    /** Notifications Apis which needs Authenticated user */
+    Route::get('notifications/{id}/notifierOwner', 'NotificationAPIController@notifierOwner');
+
     /** Ad Apis which needs Authenticated user */
     Route::get('ads/show_book_ad/{id}', 'AdAPIController@show_book_ad'); /** Displaying a book advertisement (Custom Method) */
     Route::get('ads/index_book_ads', 'AdAPIController@index_book_ads'); /** Displaying all book advertisements (Custom Method) */
@@ -254,8 +257,8 @@ Route::group(['middleware' => 'cors'], function() {
     /** ManageHistory Routes, that's it */
 
     /** Notification Apis which doesnt needs Authenticated user */
-    Route::post('notifications/notify_students', 'NotificationAPIController@notify_students');
-    Route::get('notifications/{notification}', 'NotificationAPIController@show');
+//    Route::post('notifications/notify_students', 'NotificationAPIController@notify_students');
+//    Route::get('notifications/{notification}', 'NotificationAPIController@show');
     /** Notification Routes, that's it */
 
 //Route::get('/notification/test/{message}', function ($message){

@@ -339,4 +339,63 @@ class NotificationAPIController extends AppBaseController
 
         return 'OK';
     }
+
+    /**
+     * @param int $id
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="/notifications/{id}/notifierOwner",
+     *      summary="Display Notifier Owner",
+     *      tags={"Notification"},
+     *      description="Get the specified Notification Notifier Owner",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of Notification",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="#/definitions/Department"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function notifierOwner($id)
+    {
+
+        /** @var Notification $notification */
+        $notification = $this->notificationRepository->findWithoutFail($id);
+
+        $this->authorize('view', $notification);
+
+        if (empty($notification)) {
+            return $this->sendError('این نوتیفیکیشن وجود ندارد.');
+        }
+
+        if (empty($notification->notifier)){
+            return $this->sendError('مرجع نامشخص');
+        }
+
+        $department = $notification->notifier->owner->retrieve();
+
+        return $this->sendResponse($department, 'Notification retrieved successfully');
+    }
 }

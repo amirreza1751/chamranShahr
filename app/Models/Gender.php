@@ -97,4 +97,16 @@ class Gender extends Model
     {
         return $this->hasMany(User::class, 'gender_unique_code', 'unique_code');
     }
+
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'title',
+                'english_title',
+                'unique_code'
+            ])
+            ->all();
+
+        return $retrieve;
+    }
 }

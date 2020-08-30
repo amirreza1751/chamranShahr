@@ -39,6 +39,36 @@ class NotificationPolicy
     }
 
     /**
+     * Determine whether the user can update the notification.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Models\Notification  $notification
+     * @return mixed
+     */
+    public function view(User $user, Notification $notification)
+    {
+        $user_available_notification = $user->notifications()->find($notification->id);
+        $student_available_notification = $user->student->notifications()->find($notification->id);
+        if($user->hasRole('developer')){
+            return true;
+        }
+        elseif ($user->hasRole('admin')){
+            return true;
+        }
+        elseif ($user->hasRole('content_manager')){
+            return true;
+        }
+        elseif ($user->hasRole('notification_manager')){
+            return true;
+        }
+        elseif(isset($user_available_notification) || isset($student_available_notification)){ // user has
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Determine whether the user can create notifications.
      *
      * @param  \App\User  $user

@@ -171,8 +171,10 @@ class Notification extends Model
                 'updated_at',
             ])
             ->all();
-        $retrieve['thumbnail'] = $this->notifier->thumbnail;
-        $retrieve['path'] = $this->notifier->absolute_path;
+        if(isset($this->notifier)){
+            $retrieve['thumbnail'] = $this->notifier->thumbnail;
+            $retrieve['path'] = $this->notifier->absolute_path;
+        }
         return $retrieve;
     }
 }

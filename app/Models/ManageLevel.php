@@ -113,4 +113,19 @@ class ManageLevel extends Model
         return "{$this->management_title} {$this->level}";
     }
 
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'management_title',
+                'english_management_title',
+                'manager_title',
+                'english_manager_title',
+                'level'
+            ])
+            ->all();
+
+        return $retrieve;
+    }
+
 }
