@@ -5,13 +5,18 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\CreateAdAPIRequest;
 use App\Http\Requests\API\UpdateAdAPIRequest;
 use App\Models\Ad;
+use App\Models\Media;
 use App\Repositories\AdRepository;
 use App\Repositories\BookRepository;
+use App\Repositories\MediaRepository;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
+use Monolog\Handler\IFTTTHandler;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -25,11 +30,13 @@ class AdAPIController extends AppBaseController
     /** @var  AdRepository */
     private $adRepository;
     private $bookRepository;
+    private $mediaRepository;
 
-    public function __construct(AdRepository $adRepo, BookRepository $bookRepo)
+    public function __construct(AdRepository $adRepo, BookRepository $bookRepo, MediaRepository $mediaRepository)
     {
         $this->adRepository = $adRepo;
         $this->bookRepository = $bookRepo;
+        $this->mediaRepository = $mediaRepository;
     }
 
     /**
@@ -294,7 +301,6 @@ class AdAPIController extends AppBaseController
      */
 
     public function create_book_ad(Request $request){
-
         $this->authorize('create_book_ad', Auth::user());
 
         $this->validate($request, [
@@ -303,6 +309,7 @@ class AdAPIController extends AppBaseController
             'phone_number' => 'required',
             'book_title' => 'required',
             'book_length' => 'required',
+            'isbn' => 'unique:books'
         ]);
 
         $book_info = [
@@ -341,6 +348,24 @@ class AdAPIController extends AppBaseController
         ];
 
         $new_ad = $this->adRepository->create($ad_info);
+
+        $images = array();
+        if($files=$request->file('images')){
+            foreach($files as $file){
+                $image_path = Storage::disk()->put("/public/images/ads", $file);
+                $image_path = str_replace('public', 'storage', $image_path);
+                $images[]=$image_path;
+            }
+        }
+        foreach ($images as $image){
+            $new_ad->medias($this->mediaRepository->create([
+                "title" => "Ad Image",
+                "path" => $image,
+                "owner_type" => Ad::class,
+                "owner_id" => $new_ad->id
+            ]));
+        }
+
         return $this->sendResponse($new_ad->toArray(), 'Book ad created successfully.');
 
     }
@@ -349,13 +374,13 @@ class AdAPIController extends AppBaseController
     public function show_book_ad($id){
         /** User can view a specific advertisement. */
 
-        $ad = $this->adRepository->with(['adType', 'category', 'advertisable.size', 'advertisable.language', 'advertisable.edition'])->where('id', $id)->get();
+        $ad = $this->adRepository->with(['adType', 'category', 'medias', 'advertisable.size', 'advertisable.language', 'advertisable.edition'])->where('id', $id)->get();
 
         if (empty($ad)) {
             return $this->sendError('Ad not found');
         }
 
-        $this->authorize('show_book_ad', $ad);
+//        $this->authorize('show_book_ad', $ad);
 
         return $this->sendResponse($ad, 'Ad retrieved successfully');
     }
@@ -365,7 +390,7 @@ class AdAPIController extends AppBaseController
     public function index_book_ads(Request $request){
         /** Displays all the book advertisements. */
 
-        $this->authorize('index_book_ads');
+//        $this->authorize('index_book_ads');
 
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));

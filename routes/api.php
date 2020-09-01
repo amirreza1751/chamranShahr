@@ -49,14 +49,6 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     /** Notifications Apis which needs Authenticated user */
     Route::get('notifications/{id}/notifierOwner', 'NotificationAPIController@notifierOwner');
 
-    /** Ad Apis which needs Authenticated user */
-    Route::get('ads/show_book_ad/{id}', 'AdAPIController@show_book_ad'); /** Displaying a book advertisement (Custom Method) */
-    Route::get('ads/index_book_ads', 'AdAPIController@index_book_ads'); /** Displaying all book advertisements (Custom Method) */
-    Route::get('ads/my_book_ads', 'AdAPIController@my_book_ads'); /** Displaying user's book advertisements (Custom Method) */
-    Route::post('ads/create_book_ad', 'AdAPIController@create_book_ad'); /** Adding a book advertisement (Custom Method) */
-    Route::get('ads/remove_book_ad/{id}', 'AdAPIController@remove_book_ad'); /** Displaying user's book advertisements (Custom Method) */
-    Route::get('ads/update_book_ad/{id}', 'AdAPIController@update_book_ad'); /** Updating user's book advertisements (Custom Method) */
-
 
     /** Student Apis which needs Authenticated user */
     Route::get('students/byScuId', 'StudentAPIController@byScuId'); /** retrieve user by scu_id */

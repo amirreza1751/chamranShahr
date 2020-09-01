@@ -207,4 +207,9 @@ class Ad extends Model
     public function advertisable(){
         return $this->morphTo();
     }
+
+    public function medias()
+    {
+        return $this->morphMany(Media::class, 'owner');
+    }
 }
