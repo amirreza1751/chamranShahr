@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Enums\MediaType;
 use App\Http\Requests\API\CreateAdAPIRequest;
 use App\Http\Requests\API\UpdateAdAPIRequest;
 use App\Models\Ad;
@@ -10,6 +11,7 @@ use App\Repositories\AdRepository;
 use App\Repositories\BookRepository;
 use App\Repositories\MediaRepository;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Support\Facades\App;
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Monolog\Handler\IFTTTHandler;
+use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -309,14 +312,17 @@ class AdAPIController extends AppBaseController
             'phone_number' => 'required',
             'book_title' => 'required',
             'book_length' => 'required',
-            'isbn' => 'unique:books'
+//            'isbn' => 'unique:books'
+            'images.*' => 'file|max:500'
         ]);
 
         $book_info = [
             'title' => $request->get('book_title'),
             'edition_id' => $request->get('edition_id'),
             'publisher' => $request->get('publisher'),
-            'publication_date' => $request->get('publication_date'),
+            'publish_date' => Jalalian::fromFormat(
+                "Y-m-d", $request->get('publish_year')."-". $request->get('publish_month') ."-01"
+            )->toCarbon()->toDateString(),
             'book_length' => $request->get('book_length'),
             'language_id' => $request->get('language_id'),
             'isbn' => $request->get('isbn'),
@@ -328,7 +334,7 @@ class AdAPIController extends AppBaseController
         ];
 
 
-        $new_book = $this->bookRepository->create($book_info);
+        $new_book = $this->bookRepository->firstOrCreate($book_info);
 
 
         $ad_info = [
@@ -362,7 +368,8 @@ class AdAPIController extends AppBaseController
                 "title" => "Ad Image",
                 "path" => $image,
                 "owner_type" => Ad::class,
-                "owner_id" => $new_ad->id
+                "owner_id" => $new_ad->id,
+                "type" => MediaType::Img
             ]));
         }
 
@@ -380,7 +387,7 @@ class AdAPIController extends AppBaseController
             return $this->sendError('Ad not found');
         }
 
-//        $this->authorize('show_book_ad', $ad);
+        $this->authorize('show_book_ad', $ad);
 
         return $this->sendResponse($ad, 'Ad retrieved successfully');
     }
@@ -390,11 +397,11 @@ class AdAPIController extends AppBaseController
     public function index_book_ads(Request $request){
         /** Displays all the book advertisements. */
 
-//        $this->authorize('index_book_ads');
+        $this->authorize('index_book_ads');
 
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $ads = $this->adRepository->with('advertisable')->paginate(10);
+        $ads = $this->adRepository->with(['advertisable', 'medias'])->where('ad_type_id', $request->get('ad_type_id'))->paginate(10);
 
         return $this->sendResponse($ads->toArray(), 'Ads retrieved successfully');
     }
@@ -406,7 +413,7 @@ class AdAPIController extends AppBaseController
 
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $my_book_ads = $this->adRepository->with('advertisable')->where('creator_id', Auth('api')->user()->id)->paginate(10);
+        $my_book_ads = $this->adRepository->with(['advertisable', 'medias'])->where('creator_id', Auth('api')->user()->id)->paginate(10);
         return $this->sendResponse($my_book_ads->toArray(), 'Ads retrieved successfully');
     }
 

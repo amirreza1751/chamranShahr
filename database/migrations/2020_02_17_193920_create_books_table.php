@@ -19,8 +19,8 @@ class CreateBooksTable extends Migration
 //            $table->string('edition');
             $table->unsignedInteger('edition_id')->nullable();
             $table->string('publisher')->nullable();
-            $table->dateTime('publication_date')->nullable();
-            $table->unsignedInteger('book_length'); /** number of pages */
+            $table->date('publish_date')->nullable();
+            $table->unsignedInteger('book_length')->nullable(); /** number of pages */
 //            $table->string('language');
             $table->unsignedInteger('language_id')->nullable();
             $table->string('isbn')->nullable();
