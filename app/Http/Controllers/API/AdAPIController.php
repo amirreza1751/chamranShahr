@@ -406,7 +406,7 @@ class AdAPIController extends AppBaseController
 
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $ads = $this->adRepository->with(['advertisable', 'medias'])->where('ad_type_id', $request->get('ad_type_id'))->paginate(10);
+        $ads = $this->adRepository->with(['advertisable', 'medias', 'category'])->where('ad_type_id', $request->get('ad_type_id'))->paginate(10);
 
         return $this->sendResponse($ads->toArray(), 'Ads retrieved successfully');
     }
@@ -418,7 +418,7 @@ class AdAPIController extends AppBaseController
 
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $my_book_ads = $this->adRepository->with(['advertisable', 'medias'])->where('creator_id', Auth('api')->user()->id)->paginate(10);
+        $my_book_ads = $this->adRepository->with(['advertisable', 'medias', 'category'])->where('creator_id', Auth('api')->user()->id)->paginate(10);
         return $this->sendResponse($my_book_ads->toArray(), 'Ads retrieved successfully');
     }
 
