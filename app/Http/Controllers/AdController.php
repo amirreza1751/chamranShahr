@@ -174,7 +174,7 @@ class AdController extends AppBaseController
          *
         /** Check for Admin Role */
 
-        if (!Auth('web')->user()->hasRole('admin')){
+        if (!Auth('web')->user()->hasRole('admin') || !Auth('web')->user()->hasRole('developer')){
             Flash::error('You do not have the "admin" role.');
 
             return redirect(route('ads.index'));

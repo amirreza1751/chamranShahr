@@ -46,6 +46,7 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::routes();
 
+        Gate::define('show_book_ad', AdPolicy::class . '@show_book_ad');
         Gate::define('create_book_ad', AdPolicy::class . '@create_book_ad');
         Gate::define('remove_book_ad', AdPolicy::class . '@remove_book_ad');
         Gate::define('update_book_ad', AdPolicy::class . '@update_book_ad');
