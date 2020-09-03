@@ -304,7 +304,7 @@ class AdAPIController extends AppBaseController
      */
 
     public function create_book_ad(Request $request){
-        $this->authorize('create_book_ad', Auth::user());
+//        $this->authorize('create_book_ad', Ad::class);
 
         $this->validate($request, [
             'title' => 'required',
@@ -387,7 +387,7 @@ class AdAPIController extends AppBaseController
             return $this->sendError('Ad not found');
         }
 
-        $this->authorize('show_book_ad', $ad);
+//        $this->authorize('show_book_ad', $ad);
 
         return $this->sendResponse($ad, 'Ad retrieved successfully');
     }
@@ -397,7 +397,7 @@ class AdAPIController extends AppBaseController
     public function index_book_ads(Request $request){
         /** Displays all the book advertisements. */
 
-        $this->authorize('index_book_ads');
+//        $this->authorize('index_book_ads');
 
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
@@ -409,7 +409,7 @@ class AdAPIController extends AppBaseController
     public function my_book_ads(Request $request){
         /** User can view a list of their advertisements which are created. */
 
-        $this->authorize('my_book_ads');
+//        $this->authorize('my_book_ads');
 
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
@@ -421,7 +421,7 @@ class AdAPIController extends AppBaseController
         /** User can remove their ads. Only the ads which they create themselves. */
         $ad = $this->adRepository->findWithoutFail($id);
 
-        $this->authorize('remove_book_ad', $ad);
+//        $this->authorize('remove_book_ad', $ad);
 
         if (empty($ad)) {
             return $this->sendError('Ad not found');
@@ -441,7 +441,7 @@ class AdAPIController extends AppBaseController
         /** @var Ad $ad */
         $ad = $this->adRepository->findWithoutFail($id);
 
-        $this->authorize('update_book_ad', $ad);
+//        $this->authorize('update_book_ad', $ad);
 
         if (empty($ad)) {
             return $this->sendError('Ad not found');

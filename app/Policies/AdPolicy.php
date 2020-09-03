@@ -157,12 +157,11 @@ class AdPolicy
         elseif ($user->hasRole('content_manager')){
             return true;
         }
-        elseif($user->is_verified){
+        elseif($user->hasRole('verified')){
             return true;
         }
-        else{
-            return false;
-        }
+
+        return false;
     }
 
     /**
