@@ -314,7 +314,9 @@ class AdAPIController extends AppBaseController
             'book_title' => 'required',
             'book_length' => 'required',
 //            'isbn' => 'unique:books'
-            'images.*' => 'image|mimes:jpg,jpeg,png|max:512'
+            'images.*' => 'image|mimes:jpg,jpeg,png|max:512',
+            'publish_month' => 'required|numeric|min:2',
+            'publish_year' => 'required|numeric|min:4',
         ]);
 
         $book_info = [
