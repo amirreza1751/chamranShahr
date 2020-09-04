@@ -25,6 +25,7 @@ use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class StudentController
@@ -895,7 +896,7 @@ class StudentAPIController extends AppBaseController
      * @SWG\Get(
      *      path="students/notifications",
      *      summary="Get Student Notifictions",
-     *      tags={"Student"},
+     *      tags={"Student Notification"},
      *      description="Get list of authenticated Student Notifications",
      *      produces={"application/json"},
      *      @SWG\Response(
@@ -938,17 +939,73 @@ class StudentAPIController extends AppBaseController
 
         $notifications = $student->notifications;
 
-        if (sizeof($notifications) == 0)
+        $retrieves = Notification::staticRetrieves($notifications);
+
+        if (sizeof($retrieves) == 0)
             return response()->json([
                 'status' => 'هیچ نوتیفیکیشنی پیدا نشد'
             ], 404);
 
-//        $retrieves = array();
-//        foreach ($notifications as $notification){
-//            array_push($retrieves, Notification::find($notification->id)->retrieve());
-//        }
+        return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
+    }
 
-        return $this->sendResponse($notifications, 'عملیات موفقیت آمیز بود.');
+    /**
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="students/notificationsWithTrashed",
+     *      summary="Get Student Notifictions With Trashed",
+     *      tags={"Student Notification"},
+     *      description="Get list of authenticated Student Notifications, including soft deleted ones",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @SWG\Items(ref="#/definitions/Notification")
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function notificationsWithTrashed()
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->notifications;
+
+        $retrieves = Notification::staticRetrievesWithTrashed($notifications);
+
+        if (sizeof($retrieves) == 0)
+            return response()->json([
+                'status' => 'هیچ نوتیفیکیشنی پیدا نشد'
+            ], 404);
+
+        return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
     }
 
     /**
@@ -957,7 +1014,7 @@ class StudentAPIController extends AppBaseController
      * @SWG\Get(
      *      path="students/unreadNotifications",
      *      summary="Get Student Unread Notifictions",
-     *      tags={"Student"},
+     *      tags={"Student Notification"},
      *      description="Get list of authenticated Student Unread Notifications",
      *      produces={"application/json"},
      *      @SWG\Response(
@@ -998,14 +1055,16 @@ class StudentAPIController extends AppBaseController
         /** @var Student $student */
         $student = $this->studentRepository->findWithoutFail($user->student->id);
 
-        $notifications = $student->unreadNotifications()->get();
+        $notifications = $student->unreadNotifications;
 
-        if (sizeof($notifications) == 0)
+        $retrieves = Notification::staticRetrieves($notifications);
+
+        if (sizeof($retrieves) == 0)
             return response()->json([
                 'status' => 'نوتیفیکیشن خوانده نشده‌ای پیدا نشد'
             ], 404);
 
-        return $this->sendResponse($notifications->toArray(), 'عملیات موفقیت آمیز بود.');
+        return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
     }
 
     /**
@@ -1014,7 +1073,7 @@ class StudentAPIController extends AppBaseController
      * @SWG\Get(
      *      path="students/readNotifications",
      *      summary="Get Student Read Notifictions",
-     *      tags={"Student"},
+     *      tags={"Student Notification"},
      *      description="Get list of authenticated Student Read Notifications",
      *      produces={"application/json"},
      *      @SWG\Response(
@@ -1057,12 +1116,15 @@ class StudentAPIController extends AppBaseController
 
         $notifications = $student->readNotifications()->get();
 
-        if (sizeof($notifications) == 0)
+        $retrieves = Notification::staticRetrieves($notifications);
+
+
+        if (sizeof($retrieves) == 0)
             return response()->json([
                 'status' => 'نوتیفیکیشن خوانده شده‌ای پیدا نشد'
             ], 404);
 
-        return $this->sendResponse($notifications->toArray(), 'عملیات موفقیت آمیز بود.');
+        return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
     }
 
     /**
@@ -1071,7 +1133,7 @@ class StudentAPIController extends AppBaseController
      * @SWG\Put(
      *      path="/students/notifications/markAsRead",
      *      summary="Mark as Read Notifications",
-     *      tags={"Student"},
+     *      tags={"Student Notification"},
      *      description="Update the notifications shold be mark as read by authenticated Student",
      *      produces={"application/json"},
      *      @SWG\Response(
@@ -1113,7 +1175,9 @@ class StudentAPIController extends AppBaseController
         /** @var Student $student */
         $student = $this->studentRepository->findWithoutFail($user->student->id);
 
-        $notifications = $student->unreadNotifications()->get();
+        $notifications = $student->unreadNotifications;
+
+        $notifications = Notification::staticRemoveTrashed($notifications); /** check for soft deleted notifications */
 
         if (sizeof($notifications) == 0)
             return response()->json([
@@ -1147,7 +1211,7 @@ class StudentAPIController extends AppBaseController
      * @SWG\Put(
      *      path="/students/notifications/markAsUnread",
      *      summary="Mark as Unread Notifications",
-     *      tags={"Student"},
+     *      tags={"Student Notification"},
      *      description="Update the notifications shold be mark as unread by authenticated Student",
      *      produces={"application/json"},
      *      @SWG\Response(
@@ -1189,7 +1253,9 @@ class StudentAPIController extends AppBaseController
         /** @var Student $student */
         $student = $this->studentRepository->findWithoutFail($user->student->id);
 
-        $notifications = $student->readNotifications()->get();
+        $notifications = $student->readNotifications;
+
+        $notifications = Notification::staticRemoveTrashed($notifications); /** check for soft deleted notifications */
 
         if (sizeof($notifications) == 0)
             return response()->json([
@@ -1199,7 +1265,7 @@ class StudentAPIController extends AppBaseController
         $notFoundNotificationsId = array();
         foreach ($input['notifications_id'] as $index => $notification_id){
             $notification = $notifications->find($notification_id);
-            if(isset($notification))
+            if(isset($notification)) /** check for soft deleted notifications */
                 $notification->markAsUnread();
             else
                 array_push($notFoundNotificationsId, $notification_id);
@@ -1216,13 +1282,300 @@ class StudentAPIController extends AppBaseController
 //        return $this->sendResponse($notifications->toArray(), 'Student updated successfully');
     }
 
+
+    /**
+     * @return Response
+     *
+     * @SWG\Delete(
+     *      path="/students/notifications/delete",
+     *      summary="Soft Delete Notifications",
+     *      tags={"Student Notification"},
+     *      description="soft delete the notifications should be deleted by authenticated Student",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function deleteNotifications(Request $request)
+    {
+        $request->validate([
+            'notifications_id' => 'required|array'
+        ]);
+
+        $input = $request->all();
+
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->notifications;
+
+        $notifications = Notification::staticRemoveTrashed($notifications); /** check for soft deleted notifications */
+
+        if (sizeof($notifications) == 0)
+            return response()->json([
+                'status' => 'هیچ نوتیفیکیشنی پیدا نشد'
+            ], 404);
+
+        $notFoundNotificationsId = array();
+        foreach ($input['notifications_id'] as $index => $notification_id){
+            $notification = $notifications->find($notification_id);
+            if(isset($notification)){
+//                $notification->markAsUnread();
+                $notification->deleted_at = Carbon::now();
+                $notification->save();
+            }
+            else
+                array_push($notFoundNotificationsId, $notification_id);
+        }
+
+        if (sizeof($notFoundNotificationsId) > 0)
+            return response()->json([
+                'status' => 'بعضی از نوتیفیکیشن ها در لیست خوانده شده‌ها وجود ندارند',
+                'data' => $notFoundNotificationsId,
+            ]);
+        return response()->json([
+            'status' => 'عملیات موفقیت آمیز بود'
+        ]);
+//        return $this->sendResponse($notifications->toArray(), 'Student updated successfully');
+    }
+
+
+    /**
+     * @return Response
+     *
+     * @SWG\Delete(
+     *      path="/students/notifications/deleteAll",
+     *      summary="Soft Delete All Notifications",
+     *      tags={"Student Notification"},
+     *      description="soft delete all the notifications should be deleted by authenticated Student",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function deleteAllNotifications()
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->notifications;
+
+        $notifications = Notification::staticRemoveTrashed($notifications); /** check for soft deleted notifications */
+
+        if (sizeof($notifications) == 0)
+            return response()->json([
+                'status' => 'هیچ نوتیفیکیشنی پیدا نشد'
+            ], 404);
+
+        foreach ($notifications as $notification){
+            $notification->deleted_at = Carbon::now();
+            $notification->save();
+        }
+
+        return response()->json([
+            'status' => 'عملیات موفقیت آمیز بود'
+        ]);
+    }
+
+
+    /**
+     * @return Response
+     *
+     * @SWG\Put(
+     *      path="/students/notifications/restore",
+     *      summary="Restore soft deleted Notifications",
+     *      tags={"Student Notification"},
+     *      description="restore notifications has been deleted by authenticated Student",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function restoreNotifications(Request $request)
+    {
+        $request->validate([
+            'notifications_id' => 'required|array'
+        ]);
+
+        $input = $request->all();
+
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->notifications;
+
+        $notifications = Notification::staticRemoveUnTrashed($notifications); /** check for soft deleted notifications */
+
+        if (sizeof($notifications) == 0)
+            return response()->json([
+                'status' => 'هیچ نوتیفیکیشن حذف شدهای پیدا نشد'
+            ], 404);
+
+        $notFoundNotificationsId = array();
+        foreach ($input['notifications_id'] as $index => $notification_id){
+            $notification = $notifications->find($notification_id);
+            if(isset($notification)){
+//                $notification->markAsUnread();
+                $notification->deleted_at = null;
+                $notification->save();
+            }
+            else
+                array_push($notFoundNotificationsId, $notification_id);
+        }
+
+        if (sizeof($notFoundNotificationsId) > 0)
+            return response()->json([
+                'status' => 'بعضی از نوتیفیکیشن ها در لیست خوانده شده‌ها وجود ندارند',
+                'data' => $notFoundNotificationsId,
+            ]);
+        return response()->json([
+            'status' => 'عملیات موفقیت آمیز بود'
+        ]);
+//        return $this->sendResponse($notifications->toArray(), 'Student updated successfully');
+    }
+
+
+    /**
+     * @return Response
+     *
+     * @SWG\Put(
+     *      path="/students/notifications/restoreAll",
+     *      summary="Restore All soft deleted Notifications",
+     *      tags={"Student Notification"},
+     *      description="restore all notifications has been deleted by authenticated Student",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function restoreAllNotifications()
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->notifications;
+
+        $notifications = Notification::staticRemoveUnTrashed($notifications); /** check for soft deleted notifications */
+
+        if (sizeof($notifications) == 0)
+            return response()->json([
+                'status' => 'هیچ نوتیفیکیشن حذف شده ای پیدا نشد'
+            ], 404);
+
+        $notFoundNotificationsId = array();
+        foreach ($notifications as $notification){
+            $notification->deleted_at = null;
+            $notification->save();
+        }
+
+        return response()->json([
+            'status' => 'عملیات موفقیت آمیز بود'
+        ]);
+    }
+
     /**
      * @return Response
      *
      * @SWG\Put(
      *      path="/students/notification/markAsRead",
      *      summary="Mark as Read Notification",
-     *      tags={"Student"},
+     *      tags={"Student Notification"},
      *      description="Update the notification shold be mark as read by authenticated Student",
      *      produces={"application/json"},
      *      @SWG\Parameter(
@@ -1272,7 +1625,8 @@ class StudentAPIController extends AppBaseController
         $student = $this->studentRepository->findWithoutFail($user->student->id);
 
         $notification = $student->unreadNotifications()->find($input['notification_id']);
-        if(isset($notification)){
+        if(isset($notification) && empty($notification->deleted_at)) /** check for soft deleted notifications */
+        {
             $notification->markAsRead();
             return response()->json([
                 'status' => 'عملیات موفقیت آمیز بود'
@@ -1290,7 +1644,7 @@ class StudentAPIController extends AppBaseController
      * @SWG\Put(
      *      path="/students/notification/markAsUnread",
      *      summary="Mark as Unread Notification",
-     *      tags={"Student"},
+     *      tags={"Student Notification"},
      *      description="Update the notification shold be mark as unread by authenticated Student",
      *      produces={"application/json"},
      *      @SWG\Parameter(
@@ -1340,7 +1694,8 @@ class StudentAPIController extends AppBaseController
         $student = $this->studentRepository->findWithoutFail($user->student->id);
 
         $notification = $student->readNotifications()->find($input['notification_id']);
-        if(isset($notification)){
+        if(isset($notification) && empty($notification->deleted_at)) /** check for soft deleted notifications */
+        {
             $notification->markAsUnread();
             return response()->json([
                 'status' => 'عملیات موفقیت آمیز بود'
@@ -1349,6 +1704,147 @@ class StudentAPIController extends AppBaseController
 
         return response()->json([
             'status' => 'نوتیفیکیشن خوانده شده‌ای با این مشخصات پیدا نشد'
+        ], 404);
+    }
+
+    /**
+     * @return Response
+     *
+     * @SWG\Delete(
+     *      path="/students/notification/delete",
+     *      summary="Soft Delete Notification",
+     *      tags={"Student Notification"},
+     *      description="soft delete the notification should be deleted by authenticated Student",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="$notification_id",
+     *          description="id of notification",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function deleteNotification(Request $request)
+    {
+        $request->validate([
+            'notification_id' => 'required|string'
+        ]);
+
+        $input = $request->all();
+
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notification = $student->notifications()->find($input['notification_id']);
+        $console = new ConsoleOutput();
+        if(isset($notification) && empty($notification->deleted_at)) /** check for notifications has been deleted  */
+        {
+            $notification->deleted_at = Carbon::now();
+            $notification->save();
+            return response()->json([
+                'status' => 'عملیات موفقیت آمیز بود'
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'نوتیفیکیشنی با این مشخصات پیدا نشد'
+        ], 404);
+    }
+
+    /**
+     * @return Response
+     *
+     * @SWG\Put(
+     *      path="/students/notification/restore",
+     *      summary="Restore soft deleted Notification",
+     *      tags={"Student Notification"},
+     *      description="restore the notification has been deleted by authenticated Student",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="$notification_id",
+     *          description="id of notification",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function restoreNotification(Request $request)
+    {
+        $request->validate([
+            'notification_id' => 'required|string'
+        ]);
+
+        $input = $request->all();
+
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notification = $student->notifications()->find($input['notification_id']);
+        if(isset($notification) && isset($notification->deleted_at)) /** check for notifications has been deleted  */
+        {
+            $notification->deleted_at = null;
+            $notification->save();
+            return response()->json([
+                'status' => 'عملیات موفقیت آمیز بود'
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'نوتیفیکیشنی با این مشخصات پیدا نشد'
         ], 404);
     }
 }

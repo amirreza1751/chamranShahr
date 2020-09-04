@@ -1598,6 +1598,49 @@
                 }
             }
         },
+        "/departments/{id}/notices": {
+            "get": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Retrieve Department Notices",
+                "description": "retrieve the specified department notices",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Department",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Notice"
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/externalServices": {
             "get": {
                 "tags": [
@@ -3986,6 +4029,112 @@
                 }
             }
         },
+        "/notifications/{id}/notifierOwner": {
+            "get": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Display Notifier Owner",
+                "description": "Get the specified Notification Notifier Owner",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Notification",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/Department"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/hasRole": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Has Role",
+                "description": "specify the authenticated has requested role or not",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "description": "role to check",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "true": {},
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/roles": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Retrieve User Roles",
+                "description": "retrieve the authenticated user roles",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/students": {
             "get": {
                 "tags": [
@@ -4423,7 +4572,7 @@
         "students/notifications": {
             "get": {
                 "tags": [
-                    "Student"
+                    "Student Notification"
                 ],
                 "summary": "Get Student Notifictions",
                 "description": "Get list of authenticated Student Notifications",
@@ -4454,10 +4603,44 @@
                 }
             }
         },
+        "students/notificationsWithTrashed": {
+            "get": {
+                "tags": [
+                    "Student Notification"
+                ],
+                "summary": "Get Student Notifictions With Trashed",
+                "description": "Get list of authenticated Student Notifications, including soft deleted ones",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Notification"
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "students/unreadNotifications": {
             "get": {
                 "tags": [
-                    "Student"
+                    "Student Notification"
                 ],
                 "summary": "Get Student Unread Notifictions",
                 "description": "Get list of authenticated Student Unread Notifications",
@@ -4491,7 +4674,7 @@
         "students/readNotifications": {
             "get": {
                 "tags": [
-                    "Student"
+                    "Student Notification"
                 ],
                 "summary": "Get Student Read Notifictions",
                 "description": "Get list of authenticated Student Read Notifications",
@@ -4525,7 +4708,7 @@
         "/students/notifications/markAsRead": {
             "put": {
                 "tags": [
-                    "Student"
+                    "Student Notification"
                 ],
                 "summary": "Mark as Read Notifications",
                 "description": "Update the notifications shold be mark as read by authenticated Student",
@@ -4553,7 +4736,7 @@
         "/students/notifications/markAsUnread": {
             "put": {
                 "tags": [
-                    "Student"
+                    "Student Notification"
                 ],
                 "summary": "Mark as Unread Notifications",
                 "description": "Update the notifications shold be mark as unread by authenticated Student",
@@ -4578,10 +4761,122 @@
                 }
             }
         },
+        "/students/notifications/delete": {
+            "delete": {
+                "tags": [
+                    "Student Notification"
+                ],
+                "summary": "Soft Delete Notifications",
+                "description": "soft delete the notifications should be deleted by authenticated Student",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/notifications/deleteAll": {
+            "delete": {
+                "tags": [
+                    "Student Notification"
+                ],
+                "summary": "Soft Delete All Notifications",
+                "description": "soft delete all the notifications should be deleted by authenticated Student",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/notifications/restore": {
+            "put": {
+                "tags": [
+                    "Student Notification"
+                ],
+                "summary": "Restore soft deleted Notifications",
+                "description": "restore notifications has been deleted by authenticated Student",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/notifications/restoreAll": {
+            "put": {
+                "tags": [
+                    "Student Notification"
+                ],
+                "summary": "Restore All soft deleted Notifications",
+                "description": "restore all notifications has been deleted by authenticated Student",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/students/notification/markAsRead": {
             "put": {
                 "tags": [
-                    "Student"
+                    "Student Notification"
                 ],
                 "summary": "Mark as Read Notification",
                 "description": "Update the notification shold be mark as read by authenticated Student",
@@ -4618,10 +4913,84 @@
         "/students/notification/markAsUnread": {
             "put": {
                 "tags": [
-                    "Student"
+                    "Student Notification"
                 ],
                 "summary": "Mark as Unread Notification",
                 "description": "Update the notification shold be mark as unread by authenticated Student",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "$notification_id",
+                        "in": "path",
+                        "description": "id of notification",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/notification/delete": {
+            "delete": {
+                "tags": [
+                    "Student Notification"
+                ],
+                "summary": "Soft Delete Notification",
+                "description": "soft delete the notification should be deleted by authenticated Student",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "$notification_id",
+                        "in": "path",
+                        "description": "id of notification",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/notification/restore": {
+            "put": {
+                "tags": [
+                    "Student Notification"
+                ],
+                "summary": "Restore soft deleted Notification",
+                "description": "restore the notification has been deleted by authenticated Student",
                 "produces": [
                     "application/json"
                 ],

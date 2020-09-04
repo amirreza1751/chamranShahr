@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\User;
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\DatabaseNotificationCollection;
+use Illuminate\Support\Facades\Auth;
 use Morilog\Jalali\Jalalian;
 
 /**
@@ -169,6 +172,7 @@ class Notification extends Model
                 'read_at',
                 'created_at',
                 'updated_at',
+                'deleted_at',
             ])
             ->all();
         if(isset($this->notifier)){
@@ -176,5 +180,53 @@ class Notification extends Model
             $retrieve['path'] = $this->notifier->absolute_path;
         }
         return $retrieve;
+    }
+
+    public static function staticRetrieves($notifications)
+    {
+        $retrieves = array();
+        foreach ($notifications as $notification){
+            $item = Notification::find($notification->id);
+            if (isset($item))
+                array_push($retrieves, $item->retrieve());
+        }
+
+        return $retrieves;
+    }
+
+    public static function staticRetrievesWithTrashed($notifications)
+    {
+        $retrieves = array();
+        foreach ($notifications as $notification){
+            $item = Notification::withTrashed()->find($notification->id);
+            if (isset($item))
+                array_push($retrieves, $item->retrieve());
+        }
+
+        return $retrieves;
+    }
+
+    public static function staticRemoveTrashed($notifications)
+    {
+        $result = new DatabaseNotificationCollection();
+        foreach ($notifications as $notification){
+            if(empty($notification->deleted_at)){
+                $result->push($notification);
+            }
+        }
+
+        return $result;
+    }
+
+    public static function staticRemoveUnTrashed($notifications)
+    {
+        $result = new DatabaseNotificationCollection();
+        foreach ($notifications as $notification){
+            if(isset($notification->deleted_at)){
+                $result->push($notification);
+            }
+        }
+
+        return $result;
     }
 }

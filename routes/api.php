@@ -57,13 +57,24 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     Route::delete('students/unVerify', 'StudentAPIController@unVerify'); /** Soft Delete Student information of authenticated user */
     Route::delete('students/hardDelete', 'StudentAPIController@hardDelete'); /** Hard Delete Student information of authenticated user */
     Route::get('students/studentInfo', 'StudentAPIController@studentInfo'); /** Retrieve Student information of authenticated user */
-    Route::get('students/notifications', 'StudentAPIController@notifications'); /** Retrieve notifications of authenticated studentRetrieve notifications of authenticated student */
+
+    /** Student Notifications API which needs Authenticated user*/
+    Route::get('students/notifications', 'StudentAPIController@notifications'); /** Retrieve notifications of authenticated student */
+    Route::get('students/notificationsWithTrashed', 'StudentAPIController@notificationsWithTrashed'); /** Retrieve all notifications of authenticated student, including soft deleted ones */
     Route::get('students/readNotifications', 'StudentAPIController@readNotifications'); /** Retrieve read notifications of authenticated student */
     Route::get('students/unreadNotifications', 'StudentAPIController@unreadNotifications'); /** Retrieve Unread notifications of authenticated student */
-    Route::put('students/notification/markAsRead', 'StudentAPIController@markAsReadNotification'); /** Update the notification should be mark as read by authenticated Student */
+
     Route::put('students/notifications/markAsRead', 'StudentAPIController@markAsReadNotifications'); /** Update the notifications should be mark as read by authenticated Student */
-    Route::put('students/notification/markAsUnread', 'StudentAPIController@markAsUnreadNotification'); /** Update the notification should be mark as unread by authenticated Student */
+    Route::delete('students/notifications/delete', 'StudentAPIController@deleteNotifications'); /** Soft Delete the notifications should be deleted by authenticated Student */
+    Route::delete('students/notifications/deleteAll', 'StudentAPIController@deleteAllNotifications'); /** soft delete all the notifications should be deleted by authenticated Student */
+    Route::put('students/notifications/restore', 'StudentAPIController@restoreNotifications'); /** restore notifications has been deleted by authenticated Student */
+    Route::put('students/notifications/restoreAll', 'StudentAPIController@restoreAllNotifications'); /** restore all notifications has been deleted by authenticated Student */
     Route::put('students/notifications/markAsUnread', 'StudentAPIController@markAsUnreadNotifications'); /** Update the notifications should be mark as unread by authenticated Student */
+
+    Route::put('students/notification/markAsRead', 'StudentAPIController@markAsReadNotification'); /** Update the notification should be mark as read by authenticated Student */
+    Route::put('students/notification/markAsUnread', 'StudentAPIController@markAsUnreadNotification'); /** Update the notification should be mark as unread by authenticated Student */
+    Route::Delete('students/notification/delete', 'StudentAPIController@deleteNotification'); /** soft delete the notification should be deleted by authenticated Student */
+    Route::put('students/notification/restore', 'StudentAPIController@restoreNotification'); /** restore the notification has been deleted by authenticated Student */
 
 
 
