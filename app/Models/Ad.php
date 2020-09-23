@@ -212,4 +212,46 @@ class Ad extends Model
     {
         return $this->morphMany(Media::class, 'owner');
     }
+
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'title',
+                'english_title',
+                'ad_location',
+                'english_ad_location',
+                'advertisable_type',
+                'advertisable_id',
+                'offered_price',
+                'phone_number',
+                'description',
+                'is_verified',
+                'is_special',
+                'category_id',
+                'ad_type_id',
+                'created_at',
+                'updated_at',
+            ])
+            ->all();
+        $retrieve['medias'] = $this->medias;
+        $retrieve['category'] = $this->category;
+        $retrieve['advertisable'] = $this->advertisable;
+        if(isset($this->creator)){
+            $retrieve['creator'] = $this->creator->full_name;
+        }
+        return $retrieve;
+    }
+
+    public static function staticRetrieves($ads)
+    {
+        $retrieves = collect();
+        foreach ($ads as $ad){
+            $item = Ad::find($ad->id);
+            if (isset($item))
+                $retrieves->push($item->retrieve());
+        }
+
+        return $retrieves;
+    }
 }

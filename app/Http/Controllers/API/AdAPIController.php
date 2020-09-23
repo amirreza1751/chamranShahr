@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\CollectionHelper;
 use App\Enums\MediaType;
 use App\Http\Requests\API\CreateAdAPIRequest;
 use App\Http\Requests\API\UpdateAdAPIRequest;
@@ -408,9 +409,16 @@ class AdAPIController extends AppBaseController
 
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $ads = $this->adRepository->with(['advertisable', 'medias', 'category'])->where('ad_type_id', $request->get('ad_type_id'))->paginate(10);
+//        $ads = $this->adRepository->with(['advertisable', 'medias', 'category'])->where('ad_type_id', $request->get('ad_type_id'))->paginate(10);
+        $ads = $this->adRepository->where('ad_type_id', $request->get('ad_type_id'))->get();
 
-        return $this->sendResponse($ads->toArray(), 'Ads retrieved successfully');
+        $ads = Ad::staticRetrieves($ads);
+
+        $pageSize = 10;
+
+        $paginated = CollectionHelper::paginate($ads, sizeof($ads), $pageSize);
+
+        return $this->sendResponse($paginated->toArray(), 'Ads retrieved successfully');
     }
 
     public function my_book_ads(Request $request){
