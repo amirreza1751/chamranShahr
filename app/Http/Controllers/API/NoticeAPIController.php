@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\CollectionHelper;
 use App\Http\Requests\API\CreateNoticeAPIRequest;
 use App\Http\Requests\API\UpdateNoticeAPIRequest;
 use App\Models\Notice;
@@ -64,10 +65,16 @@ class NoticeAPIController extends AppBaseController
     {
         $this->noticeRepository->pushCriteria(new RequestCriteria($request));
         $this->noticeRepository->pushCriteria(new LimitOffsetCriteria($request));
-//        $notices = $this->noticeRepository->all();
 
-//        return $this->sendResponse($notices->toArray(), 'Notices retrieved successfully');
-        return DB::table('notices')->orderBy('created_at', 'asc')->paginate(10)->toArray();
+        $notices = Notice::orderBy('created_at', 'desc')->get();
+
+        $notices = Notice::staticRetrieves($notices);
+
+        $pageSize = 10;
+
+        $paginated = CollectionHelper::paginate($notices, sizeof($notices), $pageSize);
+
+        return $this->sendResponse($paginated->toArray(), 'Notices retrieved successfully');
     }
 
     /**
