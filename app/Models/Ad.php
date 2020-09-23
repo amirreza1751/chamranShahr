@@ -234,7 +234,7 @@ class Ad extends Model
             ->all();
         $retrieve['medias'] = Media::staticRetrieves($this->medias);
         $retrieve['category'] = $this->category;
-        $retrieve['advertisable'] = $this->advertisable;
+        $retrieve['advertisable'] = $this->advertisable->retrieve();
         $retrieve['adType'] = $this->adType;
         if(isset($this->creator)){
             $retrieve['creator'] = $this->creator->full_name;

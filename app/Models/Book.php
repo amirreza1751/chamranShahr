@@ -198,4 +198,31 @@ class Book extends Model
     public function ad(){
         return $this->morphOne('App\Models\Ad', 'advertisable');
     }
+
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'title',
+                'edition_id',
+                'publisher',
+                'publish_date',
+                'book_length',
+                'language_id',
+                'isbn',
+                'author',
+                'translator',
+                'price',
+                'size_id',
+                'is_grayscale',
+                'created_at',
+                'updated_at',
+            ])
+            ->all();
+        $retrieve['edition'] = $this->edition;
+        $retrieve['language'] = $this->language;
+        $retrieve['size'] = $this->size;
+
+        return $retrieve;
+    }
 }
