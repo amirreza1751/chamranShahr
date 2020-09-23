@@ -7,6 +7,7 @@ use App\Http\Requests\API\CreateNewsAPIRequest;
 use App\Http\Requests\API\UpdateNewsAPIRequest;
 use App\Models\News;
 use App\Repositories\NewsRepository;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Support\Facades\DB;
@@ -65,23 +66,16 @@ class NewsAPIController extends AppBaseController
     {
         $this->newsRepository->pushCriteria(new RequestCriteria($request));
         $this->newsRepository->pushCriteria(new LimitOffsetCriteria($request));
-//        $news = $this->newsRepository->orderBy('created_at', 'desc')->all();
 
-//        $total = $news->count();
-//        $pageSize = 10;
-//        $paginated = CollectionHelper::paginate($news, $total, $pageSize);
+        $news = News::orderBy('created_at', 'desc')->get();
 
-//        return $this->sendResponse($paginated->toArray(), 'News retrieved successfully');
-        return DB::table('news')->orderBy('created_at', 'desc')->paginate(10)->toArray(); // uncomment this for https test
+        $news = News::staticRetrieves($news);
 
+        $pageSize = 10;
 
-        // comment this section for get back to normal >
-//        $paginated = DB::table('news')->orderBy('created_at', 'desc')->paginate(10)->toArray();
-//        foreach ($paginated['data'] as $pagi){
-//            $pagi->path = 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png';
-//        }
-//        return $paginated;
-        // comment this section for get back to normal <
+        $paginated = CollectionHelper::paginate($news, sizeof($news), $pageSize);
+
+        return $this->sendResponse($paginated->toArray(), 'News retrieved successfully');
     }
 
     /**

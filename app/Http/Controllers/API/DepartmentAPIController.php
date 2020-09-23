@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\CreateDepartmentAPIRequest;
 use App\Http\Requests\API\UpdateDepartmentAPIRequest;
 use App\Models\Department;
+use App\Models\Notice;
 use App\Repositories\DepartmentRepository;
 use App\Repositories\NoticeRepository;
 use Illuminate\Http\Request;
@@ -346,6 +347,10 @@ class DepartmentAPIController extends AppBaseController
 
         $this->authorize('view', $department);
 
-        return $this->sendResponse($department->notices()->orderBy('created_at', 'desc')->take(5)->get(), 'Notices retrieved successfully');
+        $notices = $department->notices()->orderBy('created_at', 'desc')->take(5)->get();
+
+        $notices = Notice::staticRetrieves($notices);
+
+        return $this->sendResponse($notices, 'Notices retrieved successfully');
     }
 }

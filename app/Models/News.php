@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use Eloquent as Model;
+use App\User;
+use Illuminate\Database\Eloquent\Model as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\URL;
 
@@ -131,5 +132,43 @@ class News extends Model
     public function getThumbnailAttribute()
     {
         return URL::to('/') . pathinfo($this->path, PATHINFO_DIRNAME) . '/' . pathinfo(basename($this->path), PATHINFO_FILENAME) . '-thumbnail.' . pathinfo(basename($this->path), PATHINFO_EXTENSION);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'title',
+                'link',
+                'description',
+                'owner_type',
+                'owner_id',
+                'created_at',
+                'updated_at',
+            ])
+            ->all();
+        $retrieve['thumbnail'] = $this->thumbnail;
+        $retrieve['path'] = $this->absolute_path;
+        if(isset($this->creator)){
+            $retrieve['creator'] = $this->creator->full_name;
+        }
+        return $retrieve;
+    }
+
+    public static function staticRetrieves($news)
+    {
+        $retrieves = collect();
+        foreach ($news as $single_news){
+            $item = News::find($single_news->id);
+            if (isset($item))
+                $retrieves->push($item->retrieve());
+        }
+
+        return $retrieves;
     }
 }
