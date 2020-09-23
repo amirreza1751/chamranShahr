@@ -367,7 +367,7 @@ class AdAPIController extends AppBaseController
             foreach($files as $file){
                 $mimes[] = $file->getMimeType();
                 $image_path = Storage::disk()->put("/public/images/ads", $file);
-                $image_path = str_replace('public', 'storage', $image_path);
+                $image_path = str_replace('public', '/storage', $image_path);
                 $images[]=$image_path;
             }
         }
