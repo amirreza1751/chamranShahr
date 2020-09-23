@@ -389,7 +389,8 @@ class AdAPIController extends AppBaseController
     public function show_book_ad($id){
         /** User can view a specific advertisement. */
 
-        $ad = $this->adRepository->with(['adType', 'category', 'medias', 'advertisable.size', 'advertisable.language', 'advertisable.edition'])->where('id', $id)->get();
+//        $ad = $this->adRepository->with(['adType', 'category', 'medias', 'advertisable.size', 'advertisable.language', 'advertisable.edition'])->where('id', $id)->get();
+        $ad = Ad::where('id', $id)->first();
 
         if (empty($ad)) {
             return $this->sendError('Ad not found');
@@ -397,7 +398,7 @@ class AdAPIController extends AppBaseController
 
 //        $this->authorize('show_book_ad', $ad);
 
-        return $this->sendResponse($ad, 'Ad retrieved successfully');
+        return $this->sendResponse($ad->retrieve(), 'Ad retrieved successfully');
     }
 
 

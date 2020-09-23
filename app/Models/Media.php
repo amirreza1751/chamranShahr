@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\URL;
 
 /**
  * @SWG\Definition(
@@ -117,6 +118,39 @@ class Media extends Model
     public function owner()
     {
         return $this->morphTo();
+    }
+
+    public function getAbsolutePathAttribute()
+    {
+        return URL::to('/') . $this->path;
+    }
+
+    public function retrieve(){
+        $retrieve = collect($this->toArray())
+            ->only([
+                'id',
+                'title',
+                'caption',
+                'type',
+                'owner_type',
+                'owner_id'
+            ])
+            ->all();
+        $retrieve['path'] = $this->absolute_path;
+
+        return $retrieve;
+    }
+
+    public static function staticRetrieves($medias)
+    {
+        $retrieves = collect();
+        foreach ($medias as $media){
+            $item = Media::find($media->id);
+            if (isset($item))
+                $retrieves->push($item->retrieve());
+        }
+
+        return $retrieves;
     }
 
 }

@@ -228,15 +228,14 @@ class Ad extends Model
                 'description',
                 'is_verified',
                 'is_special',
-                'category_id',
-                'ad_type_id',
                 'created_at',
                 'updated_at',
             ])
             ->all();
-        $retrieve['medias'] = $this->medias;
+        $retrieve['medias'] = Media::staticRetrieves($this->medias);
         $retrieve['category'] = $this->category;
         $retrieve['advertisable'] = $this->advertisable;
+        $retrieve['adType'] = $this->adType;
         if(isset($this->creator)){
             $retrieve['creator'] = $this->creator->full_name;
         }
