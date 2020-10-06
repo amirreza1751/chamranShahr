@@ -33,7 +33,7 @@ Route::group([
         Route::get('user', 'AuthController@user');
     });
 });
-Route::post('/send_otp', 'OtpController@send_otp');
+Route::middleware('cors')->post('/send_otp', 'OtpController@send_otp');
 
 Route::group(['middleware' => ['auth:api', 'cors']], function(){
 
