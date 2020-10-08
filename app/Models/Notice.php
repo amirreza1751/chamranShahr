@@ -161,11 +161,11 @@ class Notice extends Model
         return $retrieve;
     }
 
-    public static function staticRetrieves($news)
+    public static function staticRetrieves($notices)
     {
         $retrieves = collect();
-        foreach ($news as $single_news){
-            $item = News::find($single_news->id);
+        foreach ($notices as $notice){
+            $item = Notice::find($notice->id);
             if (isset($item))
                 $retrieves->push($item->retrieve());
         }
