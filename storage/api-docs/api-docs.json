@@ -1641,6 +1641,46 @@
                 }
             }
         },
+        "/departments/{id}/noticeCount": {
+            "get": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Retrieve number of Department Notices",
+                "description": "retrieve number of the specified department notices",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of Department",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "count": {
+                                    "type": "integer"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/externalServices": {
             "get": {
                 "tags": [
