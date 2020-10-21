@@ -45,13 +45,51 @@ Route::get('/landingtest', function (){
     return view('landing');
 });
 
-Route::get('/landingtest', function (){
-    return view('landing');
-});
-
 Auth::routes();
 
 Route::group(['middleware' => 'auth:web'], function(){
+
+    Route::get('profile', 'ProfileController@profile')->name('profile');
+
+    Route::get('showProfile/', [
+        'as' => 'users.showProfile', 'uses' => 'UserController@showProfile'
+    ]);
+    Route::patch('updateProfile/{user}', [
+        'as' => 'users.updateProfile', 'uses' => 'UserController@updateProfile'
+    ]);
+    Route::get('editProfile', [
+        'as' => 'users.editProfile', 'uses' => 'UserController@editProfile'
+    ]);
+
+    Route::patch('departments/{department}/editProfile/', [
+        'as' => 'departments.updateProfile', 'uses' => 'DepartmentController@updateProfile'
+    ]);
+    Route::get('departments/{department}/editProfile/', [
+        'as' => 'departments.editProfile', 'uses' => 'DepartmentController@editProfile'
+    ]);
+    Route::resource('departments', 'DepartmentController'); // ++
+
+    Route::get('/notices/ajaxOwner', 'NoticeController@ajaxOwner');
+    Route::resource('notices', 'NoticeController');
+
+    Route::get('notifications/notifyStudents/', [
+        'as' => 'notifications.showNotifyStudents', 'uses' => 'NotificationController@showNotifyStudents'
+    ]);
+    Route::get('notifications/notifyStudents/{type}/{id}', [
+        'as' => 'notifications.showNotifyStudentsFromNotifier', 'uses' => 'NotificationController@showNotifyStudentsFromNotifier'
+    ]);
+    Route::post('notifications/notifyStudents', [
+        'as' => 'notifications.notifyStudents', 'uses' => 'NotificationController@notifyStudents'
+    ]);
+    Route::get('/notifications/ajaxStudyField', 'NotificationController@ajaxStudyField');
+    Route::get('/notifications/ajaxStudyArea', 'NotificationController@ajaxStudyArea');
+    Route::get('/notifications/ajaxNotifier', 'NotificationController@ajaxNotifier');
+    Route::resource('notifications', 'NotificationController');
+
+    //    Route::get('/home', 'HomeController@index');
+    Route::get('/home', [
+        'as' => 'home', 'uses' => 'HomeController@index'
+    ]);
 
     Route::group(['middleware' => ['role:admin|developer']], function(){
 
@@ -120,48 +158,6 @@ Route::group(['middleware' => 'auth:web'], function(){
         Route::resource('manageHistories', 'ManageHistoryController');
 
     });
-
-    Route::patch('departments/{department}/editProfile/', [
-        'as' => 'departments.updateProfile', 'uses' => 'DepartmentController@updateProfile'
-    ]);
-    Route::get('departments/{department}/editProfile/', [
-        'as' => 'departments.editProfile', 'uses' => 'DepartmentController@editProfile'
-    ]);
-    Route::resource('departments', 'DepartmentController'); // ++
-
-
-
-    Route::get('showProfile/', [
-        'as' => 'users.showProfile', 'uses' => 'UserController@showProfile'
-    ]);
-    Route::patch('updateProfile/{user}', [
-        'as' => 'users.updateProfile', 'uses' => 'UserController@updateProfile'
-    ]);
-    Route::get('editProfile', [
-        'as' => 'users.editProfile', 'uses' => 'UserController@editProfile'
-    ]);
-
-    Route::get('/notices/ajaxOwner', 'NoticeController@ajaxOwner');
-    Route::resource('notices', 'NoticeController');
-
-    Route::get('notifications/notifyStudents/', [
-        'as' => 'notifications.showNotifyStudents', 'uses' => 'NotificationController@showNotifyStudents'
-    ]);
-    Route::get('notifications/notifyStudents/{type}/{id}', [
-        'as' => 'notifications.showNotifyStudentsFromNotifier', 'uses' => 'NotificationController@showNotifyStudentsFromNotifier'
-    ]);
-    Route::post('notifications/notifyStudents', [
-        'as' => 'notifications.notifyStudents', 'uses' => 'NotificationController@notifyStudents'
-    ]);
-    Route::get('/notifications/ajaxStudyField', 'NotificationController@ajaxStudyField');
-    Route::get('/notifications/ajaxStudyArea', 'NotificationController@ajaxStudyArea');
-    Route::get('/notifications/ajaxNotifier', 'NotificationController@ajaxNotifier');
-    Route::resource('notifications', 'NotificationController');
-
-    //    Route::get('/home', 'HomeController@index');
-    Route::get('/home', [
-        'as' => 'home', 'uses' => 'HomeController@index'
-    ]);
 
     Route::resource('users', 'UserController'); // ++
 

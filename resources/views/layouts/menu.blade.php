@@ -57,7 +57,6 @@
 <li class="{{ Request::is('ads*') ? 'active' : '' }}">
     <a href="{{ route('ads.index') }}"><i class="fa fa-edit"></i><span>Ads</span></a>
 </li>
-
 <li class="{{ Request::is('bookEditions*') ? 'active' : '' }}">
     <a href="{{ route('bookEditions.index') }}"><i class="fa fa-edit"></i><span>Book Editions</span></a>
 </li>
@@ -122,7 +121,7 @@
 </li>
 
 <li>
-    <a href="{!! url('/logout') !!}" class="btn-danger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+    <a href="{!! url('/logout') !!}" class="btn-danger" style="color: white;" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
         <i class="fa fa-sign-out"></i><span>خروج</span></a>
     <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
         {{ csrf_field() }}

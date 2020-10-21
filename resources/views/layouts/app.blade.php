@@ -236,7 +236,7 @@
         .content-header > h1 > a {
             margin-bottom: 1.7rem !important;
         }
-        li.active > a {
+        ul.sidebar-menu > li.active > a {
              padding-left: 2rem;
              padding-right: 2rem;
              color: yellow !important;
@@ -501,6 +501,23 @@
                 transform: translate(0, 0) !important;
             }
         }
+
+        /* Tab Nav bar RTL style*/
+        ul.nav.nav-tabs.pull-right {
+            padding-inline-start: 0px;
+        }
+        .content-header > .breadcrumb {
+            direction: ltr !important;
+            left: 10px;
+            right: 0;
+        }
+        /* Tab Nav bar RTL style*/
+
+        /*  Profile Image Box RTL  */
+        .list-group {
+            padding-right: 0;
+        }
+        /*  Profile Image Box RTL  */
 
     </style>
 
@@ -771,7 +788,8 @@
         }
     </style>
     {{--    add custom file to bootstrap 3.3.7  --}}
-    <style>.input-group > .custom-file {
+    <style>
+        .input-group > .custom-file {
             position: relative;
             -ms-flex: 1 1 auto;
             flex: 1 1 auto;
@@ -1039,6 +1057,22 @@
         }
 
     </style>
+    @yield('css')
+
+<!-- jQuery 3.1.1 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.3/js/adminlte.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/icheck.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
+
+    @yield('scripts')
 
 </head>
 
@@ -1067,7 +1101,7 @@
                             <!-- Menu Toggle Button -->
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <!-- The user image in the navbar-->
-                                <img src="http://infyom.com/images/logo/blue_logo_150x150.jpg"
+                                <img src="{{ Auth::user()->avatar() }}"
                                      class="user-image" alt="User Image"/>
                                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
                                 <span class="hidden-xs">{!! Auth::user()->first_name . ' ' . Auth::user()->last_name!!}</span>
@@ -1075,7 +1109,7 @@
                             <ul class="dropdown-menu">
                                 <!-- The user image in the menu -->
                                 <li class="user-header">
-                                    <img src="http://infyom.com/images/logo/blue_logo_150x150.jpg"
+                                    <img src="{{ Auth::user()->avatar() }}"
                                          class="img-circle" alt="User Image"/>
                                     <p>
                                         {!! Auth::user()->name !!}
@@ -1113,7 +1147,7 @@
 
         <!-- Main Footer -->
         <footer class="main-footer" style="max-height: 100px;text-align: center">
-            <strong>Copyright © 2016 <a href="#">Company</a>.</strong> All rights reserved.
+            تیم توسعه‌ی <strong><a>چمران‌شهر</a></strong>
         </footer>
 
     </div>
@@ -1164,24 +1198,5 @@
     </div>
     @endif
 
-
-
-
-@yield('css')
-
-<!-- jQuery 3.1.1 -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-
-<!-- AdminLTE App -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.3/js/adminlte.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/icheck.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
-
-@yield('scripts')
 </body>
 </html>

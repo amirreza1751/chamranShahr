@@ -9,6 +9,7 @@ use App\Models\Student;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\URL;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
@@ -120,6 +121,13 @@ class User extends Authenticatable
 
     }
 
+    public function managements()
+    {
+        return ManageHistory::where('manager_id', $this->id)
+            ->where('is_active', true)
+            ->where('end_date', null)->get();
+    }
+
     public function retrieveAsManager(){
         $retrieve = collect($this->toArray())
             ->only([
@@ -132,5 +140,28 @@ class User extends Authenticatable
         $retrieve['full_name'] = $this->full_name;
 
         return $retrieve;
+    }
+
+
+
+
+    /**
+     * **** ATTENTION ****
+     * if there is no image on public/profile/default.jpg then you must put a default image there,
+     * if not, some functionality may doesn't work properly
+     *
+     * return default avatar path for users which has no avatar image yet
+     *
+     * @return string path of default avatar path
+     *
+     */
+    public function avatar()
+    {
+        $file =  new \Illuminate\Filesystem\Filesystem();
+
+        if (isset($this->path) && $file->exists(base_path() . str_replace('storage', 'public/storage', $this->path)))
+            return URL::to('/') . $this->path;
+        else
+            return URL::to('/') . env('DEFAULT_AVATAR');
     }
 }

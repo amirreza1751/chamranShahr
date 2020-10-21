@@ -3,7 +3,7 @@
 </li>
 
 <li>
-    <a href="{!! url('/logout') !!}" class="btn-danger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+    <a href="{!! url('/logout') !!}" class="btn-danger" style="color: white;" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
         <i class="fa fa-sign-out"></i><span>خروج</span></a>
     <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
         {{ csrf_field() }}
