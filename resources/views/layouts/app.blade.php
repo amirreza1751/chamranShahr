@@ -212,6 +212,11 @@
         .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
             float: right !important;
         }
+        @media(max-width: 767px){
+            .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+                width: 100%;
+            }
+        }
         body, .sidebar-toggle {
             line-height: 1.42857143 !important;
             font-size: 1.15rem;
@@ -523,6 +528,128 @@
             margin-top: 0.5rem;
         }
 
+        /* Custom Widget User */
+        .widget-user-header-custom {
+            height: 300px !important;
+        }
+        .widget-user-username-custom {
+            position: absolute;
+            /*top: 260px;*/
+            bottom: 100px;
+            background-color: rgba(0,0,0, 0.6);
+            padding: 10px;
+        }
+
+        @media(max-width: 767px){
+            .widget-user-header-custom {
+                height: 300px !important;
+            }
+            .widget-user-username-custom {
+                font-size: 2rem !important;
+            }
+        }
+        /* Custom Widget User */
+
+        .image-square-100 {
+            object-fit: cover;
+            width: 100px;
+            height: 100px;
+        }
+        .image-square-150 {
+            object-fit: cover;
+            width: 150px;
+            height: 150px;
+        }
+        .image-square-200 {
+            object-fit: cover;
+            width: 200px;
+            height: 200px;
+        }
+        .image-square-250 {
+            object-fit: cover;
+            width: 250px;
+            height: 250px;
+        }
+
+        .image-square-4 {
+            object-fit: cover;
+            width: 4rem;
+            height: 4rem;
+        }
+        .image-square-10 {
+            object-fit: cover;
+            width: 10rem;
+            height: 10rem;
+        }
+        .image-square-15 {
+            object-fit: cover;
+            width: 15rem;
+            height: 15rem;
+        }
+        .user-panel > .image > img {
+            max-height: 45px;
+         }
+        body.sidebar-collapse > .wrapper > .main-sidebar > .sidebar > .user-panel > .image > img {
+            width: 35px !important;
+            height: 35px !important;
+        }
+        .attachment-block {
+            padding: 1rem;
+        }
+        .attachment-img-custom {
+            object-fit: cover;
+            width: 7.5rem !important;
+            height: 7.5rem !important;
+            border-radius: 0.5rem;
+        }
+        .attachment-img-column {
+            object-fit: cover;
+            height: 100% !important;
+            /*width: 7.5rem;*/
+        }
+
+        /*  Box Cover  */
+        .box-cover {
+            border-bottom-right-radius: 0.5rem !important;
+            border-bottom-left-radius: 0.5rem !important;
+            margin-top: 2rem;
+        }
+        .box-cover-img {
+            object-fit: cover;
+            width:100%;
+            height: 30rem;
+        }
+        .box-description {
+            background: whitesmoke;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            padding: 1.5rem 2rem;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            display: block;
+            overflow: auto;
+        }
+        .box-description-title {
+            font-size: 3rem;
+            margin: 0 50px;
+            text-align: center;
+        }
+        .box-description-text {
+            text-align: justify;
+            border-right: 1px solid darkgray;
+            padding-right: 2rem;
+        }
+        @media(max-width: 1200px){
+            .box-description > .col-lg-3, .col-lg-9 {
+                width: 100%;
+            }
+            .box-description-text {
+                border-right: none;
+                border-top: 1px solid darkgray;
+                padding-top: 1rem;
+                margin-top: 1rem;
+            }
+        }
+        /*  Box Cover  */
     </style>
 
     {{-- Add Cards to Bootstrap 3 Styles --}}
@@ -561,22 +688,6 @@
             flex: 1 1 auto;
             padding: 1.25rem;
         }
-
-        .card-title {
-            margin-bottom: 0.75rem;
-            font-family: IRANMarker;
-        }
-
-        .card-subtitle {
-            margin-top: -0.375rem;
-            margin-bottom: 0;
-        }
-
-        .card-text:last-child {
-            margin-bottom: 0;
-            font-family: IRAN;
-        }
-
         .card-link:hover {
             text-decoration: none;
         }
@@ -875,14 +986,13 @@
         }
 
         .custom-file-input ~ .custom-file-label[data-browse]::after {
-            content: attr(data-browse);
+            content: attr(data-browse) !important;
         }
 
         .custom-file-label {
             position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
+            top: -10px;
+            right: 5px;
             z-index: 1;
             height: calc(1.5em + 0.75rem + 2px);
             padding: 0.375rem 0.75rem;
@@ -891,7 +1001,8 @@
             color: #495057;
             background-color: #fff;
             border: 1px solid #ced4da;
-            border-radius: 0.25rem;
+            /*border-radius: 0.25rem;*/
+            width: 95%;
         }
 
         .custom-file-label::after {
@@ -1088,7 +1199,7 @@
 
             <!-- Logo -->
             <a href="#" class="logo">
-                <b>چمران‌شهر</b>
+                <b class="vazir-font-fd">چمران‌شهر</b>
             </a>
 
             <!-- Header Navbar -->
@@ -1106,7 +1217,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <!-- The user image in the navbar-->
                                 <img src="{{ Auth::user()->avatar() }}"
-                                     class="user-image" alt="User Image"/>
+                                     class="user-image image-square-4" alt="User Image"/>
                                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
                                 <span class="hidden-xs">{!! Auth::user()->first_name . ' ' . Auth::user()->last_name!!}</span>
                             </a>
@@ -1114,7 +1225,7 @@
                                 <!-- The user image in the menu -->
                                 <li class="user-header">
                                     <img src="{{ Auth::user()->avatar() }}"
-                                         class="img-circle" alt="User Image"/>
+                                         class="img-circle image-square-10" alt="User Image"/>
                                     <p>
                                         {!! Auth::user()->name !!}
                                         <small>Member since {!! Auth::user()->created_at->format('M. Y') !!}</small>

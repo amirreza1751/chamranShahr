@@ -159,8 +159,8 @@ class User extends Authenticatable
     {
         $file =  new \Illuminate\Filesystem\Filesystem();
 
-        if (isset($this->path) && $file->exists(base_path() . str_replace('storage', 'public/storage', $this->path)))
-            return URL::to('/') . $this->path;
+        if (isset($this->avatar_path) && $file->exists(base_path() . str_replace('storage', 'public/storage', $this->avatar_path)))
+            return URL::to('/') . $this->avatar_path;
         else
             return URL::to('/') . env('DEFAULT_AVATAR');
     }

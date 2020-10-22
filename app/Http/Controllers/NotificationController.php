@@ -11,6 +11,7 @@ use App\Models\Notification;
 use App\Models\Student;
 use App\Models\StudyArea;
 use App\Models\StudyField;
+use App\Models\StudyLevel;
 use App\Models\StudyStatus;
 use App\Models\Term;
 use App\Notifications\EducationalNotification;
@@ -211,10 +212,12 @@ class NotificationController extends AppBaseController
             'News' => News::class,
         ];
         $faculties = Faculty::all()->pluck('unique_code', 'title');
+        $study_levels = StudyLevel::all()->pluck('unique_code', 'title');
         $entrance_terms = Term::orderBy('begin_date', 'desc')->pluck('unique_code', 'title');
         $study_statuses = StudyStatus::all()->pluck('unique_code', 'title');
         return view('notifications.notify_students')
             ->with('faculties', $faculties)
+            ->with('study_levels', $study_levels)
             ->with('entrance_terms', $entrance_terms)
             ->with('study_statuses', $study_statuses)
             ->with('notifiers', $notifiers);
@@ -231,10 +234,12 @@ class NotificationController extends AppBaseController
             'News' => News::class,
         ];
         $faculties = Faculty::all()->pluck('unique_code', 'title');
+        $study_levels = StudyLevel::all()->pluck('unique_code', 'title');
         $entrance_terms = Term::orderBy('begin_date', 'desc')->pluck('unique_code', 'title');
         $study_statuses = StudyStatus::all()->pluck('unique_code', 'title');
         return view('notifications.notify_students')
             ->with('faculties', $faculties)
+            ->with('study_levels', $study_levels)
             ->with('entrance_terms', $entrance_terms)
             ->with('study_statuses', $study_statuses)
             ->with('notifiers', $notifiers)
@@ -256,6 +261,7 @@ class NotificationController extends AppBaseController
             'study_status_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyStatus::class))) . '[0-9]/',
             'faculty_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", Faculty::class))) . '[0-9]/',
             'study_field_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyField::class))) . '[0-9]/',
+            'study_level_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyLevel::class))) . '[0-9]/',
             'study_area_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyArea::class))) . '[0-9]/',
             'entrance_term_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", Term::class))) . '[0-9]/',
         ]);
@@ -299,6 +305,10 @@ class NotificationController extends AppBaseController
 
         if (isset($input['study_area_unique_code'])) {
             $students = $students->where('study_area_unique_code', $input['study_area_unique_code']);
+        }
+
+        if (isset($input['study_level_unique_code'])) {
+            $students = $students->where('study_level_unique_code', $input['study_level_unique_code']);
         }
 
         if (isset($input['entrance_term_unique_code'])) {
@@ -361,7 +371,10 @@ class NotificationController extends AppBaseController
     public function ajaxStudyArea(Request $request)
     {
         $study_field = StudyField::where('unique_code', $request->study_field_unique_code)->first();
-        return $study_field->study_areas->pluck('title', 'unique_code');
+//        if(!is_null($request->study_level_unique_code))
+//            return $study_field->study_areas->where('study_level_unique_code', $request->study_level_unique_code)->pluck('title', 'unique_code');
+//        else
+            return $study_field->study_areas->pluck('title', 'unique_code');
     }
 
     public function send($students, $notifier_type, $notifier_id, $deadline, $title, $brief_description)

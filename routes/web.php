@@ -50,6 +50,7 @@ Auth::routes();
 Route::group(['middleware' => 'auth:web'], function(){
 
     Route::get('profile', 'ProfileController@profile')->name('profile');
+    Route::patch('profile', 'ProfileController@updateProfile')->name('profile.update');
 
     Route::get('showProfile/', [
         'as' => 'users.showProfile', 'uses' => 'UserController@showProfile'

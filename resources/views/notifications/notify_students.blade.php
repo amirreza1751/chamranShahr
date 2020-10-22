@@ -105,7 +105,7 @@
                     <div class="form-group col-sm-4">
                             {!! Form::label('use_notifier_title', 'در صورت فعال بودن این گزینه، از عنوان منبع برای نوتیفیکیشن استفاده می‌شود', ['style' => 'color: lightgray; font-size: 1rem' ]) !!}
                             <div class="form-control checkbox" style="margin: 0;">
-                                <label><input name="use_notifier_title" id="use_notifier_title" type="checkbox" value="false">استفاده از عنوان منبع</label>
+                                <label><input name="use_notifier_title" id="use_notifier_title" type="checkbox" value="false"><span style="padding-right: 20px;">استفاده از عنوان منبع</span></label>
                             </div>
                     </div>
                     <script>
@@ -130,7 +130,7 @@
                     <div class="form-group col-sm-4">
                             {!! Form::label('use_notifier_description', 'در صورت فعال بودن این گزینه، از بخشی از توضیحات منبع برای نوتیفیکیشن استفاده می‌شود', ['style' => 'color: lightgray; font-size: 0.85rem' ]) !!}
                             <div class="form-control checkbox" style="margin: 0;">
-                                <label><input name="use_notifier_description" id="use_notifier_description" type="checkbox" value="false">استفاده از توضیحات منبع</label>
+                                <label><input name="use_notifier_description" id="use_notifier_description" type="checkbox" value="false"><span style="padding-right: 20px;">استفاده از توضیحات منبع</span></label>
                             </div>
                     </div>
                     <script>
@@ -195,6 +195,17 @@
                         </select>
                     </div>
 
+                    <!-- Study Level Unique Code Field -->
+                    <div class="form-group col-sm-6">
+                        {!! Form::label('study_level_unique_code', 'مقطع:') !!}
+                        <select class="form-control" name="study_level_unique_code" id="study_level_unique_code">
+                            <option selected value> -- همه -- </option>
+                            @foreach($study_levels as $key => $value)
+                                <option value="{{ $value }}">{{ $key }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <script>
                         jQuery(document).ready(function(){
                             $('select[name="study_field_unique_code"]').on('change', function(){
@@ -210,6 +221,7 @@
                                     method: 'get',
                                     data: {
                                         study_field_unique_code: jQuery('#study_field_unique_code').val(),
+                                        // study_level_unique_code: jQuery('#study_level_unique_code').val(),
                                     },
                                     success: function(data){
                                         $.each(data, function(key, value){

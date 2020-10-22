@@ -93,6 +93,11 @@ class StudyLevel extends Model
         'unique_code' => 'required'
     ];
 
+    public function study_areas()
+    {
+        return $this->hasMany(StudyArea::class, 'study_level_unique_code', 'unique_code');
+    }
+
     public function retrieve(){
         $retrieve = collect($this->toArray())
             ->only([
