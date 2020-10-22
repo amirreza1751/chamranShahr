@@ -3,7 +3,7 @@
 @section('content')
     <section class="content-header">
         <h1 class="pull-right">دپارتمان‌ها</h1>
-        @if(Auth::user()->hasRole('developer|admin|department_manager'))
+        @if(Auth::user()->hasRole('developer|admin|content_manager|department_manager'))
             <h1 class="pull-left">
                <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('departments.create') !!}">Add New</a>
             </h1>

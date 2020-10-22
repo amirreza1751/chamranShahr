@@ -52,6 +52,9 @@ Route::group(['middleware' => 'auth:web'], function(){
     Route::get('profile', 'ProfileController@profile')->name('profile');
     Route::patch('profile', 'ProfileController@updateProfile')->name('profile.update');
 
+    Route::get('/externalServices/ajaxOwner', 'ExternalServiceController@ajaxOwner');
+    Route::resource('externalServices', 'ExternalServiceController'); // ++
+
     Route::get('showProfile/', [
         'as' => 'users.showProfile', 'uses' => 'UserController@showProfile'
     ]);
@@ -133,9 +136,6 @@ Route::group(['middleware' => 'auth:web'], function(){
         Route::resource('studyStatuses', 'StudyStatusController'); // ++
 
         Route::resource('externalServiceTypes', 'ExternalServiceTypeController'); // ++
-
-        Route::get('/externalServices/ajaxOwner', 'ExternalServiceController@ajaxOwner');
-        Route::resource('externalServices', 'ExternalServiceController'); // ++
 
     });
 

@@ -138,6 +138,11 @@ class Department extends Model
         }
     }
 
+    public function externalServices()
+    {
+        return $this->morphMany(ExternalService::class, 'owner');
+    }
+
     public function retrieveManager()
     {
         $manage_history = $this->morphMany(ManageHistory::class, 'managed')

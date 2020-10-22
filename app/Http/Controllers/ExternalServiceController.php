@@ -13,6 +13,7 @@ use App\Repositories\ExternalServiceRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\Auth;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -42,7 +43,28 @@ class ExternalServiceController extends AppBaseController
     public function index(Request $request)
     {
         $this->externalServiceRepository->pushCriteria(new RequestCriteria($request));
-        $externalServices = $this->externalServiceRepository->all();
+
+
+        if (Auth::user()->hasRole('developer')) {
+            $externalServices = $this->externalServiceRepository->all();
+        } elseif (Auth::user()->hasRole('admin')) {
+            $externalServices = $this->externalServiceRepository->all();
+        } elseif (Auth::user()->hasRole('content_manager')) {
+            $externalServices = $this->externalServiceRepository->all();
+        } else {
+            $externalServices = collect();
+            $manage_histories = Auth::user()->under_managment();
+            foreach ($manage_histories as $manage_history) {
+                if (isset($manage_history->managed)) {
+                    $department = Department::where('id', $manage_history->managed->id)->first();
+                    if (isset($department)){
+                        foreach ($department->externalServices as $externalService){
+                            $externalServices->push($externalService);
+                        }
+                    }
+                }
+            }
+        }
 
         return view('external_services.index')
             ->with('externalServices', $externalServices);
@@ -74,7 +96,7 @@ class ExternalServiceController extends AppBaseController
 
         $externalService = $this->externalServiceRepository->create($input);
 
-        Flash::success('External Service saved successfully.');
+        Flash::success('سرویس خارجی با موفقیت ذخیره شد');
 
         return redirect(route('externalServices.index'));
     }
@@ -91,7 +113,7 @@ class ExternalServiceController extends AppBaseController
         $externalService = $this->externalServiceRepository->findWithoutFail($id);
 
         if (empty($externalService)) {
-            Flash::error('External Service not found');
+            Flash::error('سرویس خراجی پیدا نشد');
 
             return redirect(route('externalServices.index'));
         }
@@ -111,7 +133,7 @@ class ExternalServiceController extends AppBaseController
         $external_service = $this->externalServiceRepository->findWithoutFail($id);
 
         if (empty($external_service)) {
-            Flash::error('External Service not found');
+            Flash::error('سرویس خارجی پیدا نشد');
 
             return redirect(route('externalServices.index'));
         }
@@ -135,14 +157,14 @@ class ExternalServiceController extends AppBaseController
         $externalService = $this->externalServiceRepository->findWithoutFail($id);
 
         if (empty($externalService)) {
-            Flash::error('External Service not found');
+            Flash::error('سروسی خارجی پیدا نشد');
 
             return redirect(route('externalServices.index'));
         }
 
         $externalService = $this->externalServiceRepository->update($request->all(), $id);
 
-        Flash::success('External Service updated successfully.');
+        Flash::success('سرویس خارجی باموفقیت به روز رسانی شد ');
 
         return redirect(route('externalServices.index'));
     }
@@ -159,24 +181,44 @@ class ExternalServiceController extends AppBaseController
         $externalService = $this->externalServiceRepository->findWithoutFail($id);
 
         if (empty($externalService)) {
-            Flash::error('External Service not found');
+            Flash::error('سرویس خارجی پیدا نشد');
 
             return redirect(route('externalServices.index'));
         }
 
         $this->externalServiceRepository->delete($id);
 
-        Flash::success('External Service deleted successfully.');
+        Flash::success('سرویس خارجی باموفقیت حذف شد');
 
         return redirect(route('externalServices.index'));
     }
 
     public function ajaxOwner(Request $request)
     {
+
         $external_service = ExternalService::find($request->id);
         $model_name =  $request['model_name'];
         $model = new $model_name();
-        $models = $model::all();
+        $models = collect();
+
+        if (Auth::user()->hasRole('developer')) {
+            $models = $model::all();
+        } elseif (Auth::user()->hasRole('admin')) {
+            $models = $model::all();
+        } elseif (Auth::user()->hasRole('content_manager')) {
+            $models = $model::all();
+        } elseif(Auth::user()->hasRole('manager')) {
+            $manage_histories = Auth::user()->under_managment();
+            foreach ($manage_histories as $manage_history) {
+                if (isset($manage_history->managed)) {
+                    $model = $model_name::where('id', $manage_history->managed->id)->first();
+                    if (isset($model)){
+                        $models->push($model);
+                    }
+                }
+            }
+        }
+
         foreach ($models as $model){
             if (isset($external_service)){
                 if ($external_service->owner_type == $model_name && $external_service->owner_id == $model->id){
