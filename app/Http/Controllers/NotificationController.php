@@ -66,7 +66,6 @@ class NotificationController extends AppBaseController
                     }
                 }
             }
-
         }
 
         return view('notifications.index')
@@ -277,7 +276,8 @@ class NotificationController extends AppBaseController
 
         if(isset($input['use_notifier_description']) && $input['use_notifier_description']){
             if(isset($notifier->description)){
-                $brief_description = substr($notifier->description, 0, 48) . '...';
+//                $brief_description = substr($notifier->description, 0, 48) . '...';
+                $brief_description = mb_substr($notifier->description, 0, 142, "utf-8") . '...';
             }
         } else {
             if(isset($input['brief_description'])){

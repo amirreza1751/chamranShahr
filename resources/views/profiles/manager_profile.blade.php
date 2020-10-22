@@ -100,20 +100,23 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="notifications">
-                            <div class="attachment-block clearfix">
-                                <img class="attachment-img" src="../dist/img/photo1.png" alt="Attachment Image">
+                            @foreach($notifications as $notification)
+                                <div class="attachment-block clearfix">
+                                    <img class="attachment-img" src="{{ $notification->notifier->thumbnail }}" alt="Attachment Image">
 
-                                <div class="attachment-pushed">
-                                    <h4 class="attachment-heading"><a href="">Lorem ipsum text generator</a></h4>
+                                    <div class="attachment-pushed">
+                                        <h4 class="attachment-heading"><a href="">{{ $notification->title }}</a></h4>
 
-                                    <div class="attachment-text">
-                                        Description about the attachment can be placed here.
-                                        Lorem Ipsum is simply dummy text of the printing and typesetting industry... <a href="#">more</a>
+                                        <div class="attachment-text">
+                                            {{ $notification->brief_description }}
+                                            <a href="#">more</a>
+                                        </div>
+                                        <!-- /.attachment-text -->
                                     </div>
-                                    <!-- /.attachment-text -->
+                                    <!-- /.attachment-pushed -->
                                 </div>
-                                <!-- /.attachment-pushed -->
-                            </div>
+                            @endforeach
+
 {{--                            <!-- Post -->--}}
 {{--                            <div class="post">--}}
 {{--                                <div class="user-block">--}}

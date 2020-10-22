@@ -519,6 +519,10 @@
         }
         /*  Profile Image Box RTL  */
 
+        .attachment-text {
+            margin-top: 0.5rem;
+        }
+
     </style>
 
     {{-- Add Cards to Bootstrap 3 Styles --}}

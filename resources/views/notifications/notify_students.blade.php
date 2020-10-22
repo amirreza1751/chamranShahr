@@ -3,7 +3,7 @@
 @section('content')
     <section class="content-header">
         <h1>
-            Notify Students
+            ایجاد نوتیفیکیشن
         </h1>
     </section>
     <div class="content">
@@ -28,9 +28,9 @@
 
                 <!-- Notifier Type Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('notifier_type', 'Notifier Type:') !!}
+                        {!! Form::label('notifier_type', 'دسته‌ی منبع:') !!}
                         <select class="form-control m-bot15" name="notifier_type" id="notifier_type">
-                            <option disabled selected value> -- select an option -- </option>
+                            <option disabled selected value> -- انتخاب کنید -- </option>
                             @if(isset($notifier)) // edit view
                                 @foreach($notifiers as $key => $value)
                                     @if($value == get_class($notifier))
@@ -53,7 +53,7 @@
                         jQuery(document).ready(function(){
                             $('select[name="notifier_type"]').on('change', function(){
                                 jQuery('#notifier_id').empty();
-                                $('#notifier_id').append('<option disabled selected value> -- select an option -- </option>');
+                                $('#notifier_id').append('<option disabled selected value> -- انتخاب کنید -- </option>');
                                 $.ajaxSetup({
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
@@ -88,9 +88,9 @@
 
                     <!-- Notifier Id Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('notifier_id', 'Notifier:') !!}
+                        {!! Form::label('notifier_id', 'منبع:') !!}
                         <select class="form-control m-bot15" name="notifier_id" id="notifier_id">
-                            <option disabled selected value> -- select an option -- </option>
+                            <option disabled selected value> -- انتخاب کنید -- </option>
                             @if(isset($notifier)) // edit view
                                 <option value="{{ $notifier->id }}" selected>{{ $notifier->title }}</option>
                             @endif
@@ -99,13 +99,13 @@
 
                     <!-- Title Field -->
                     <div class="form-group col-sm-8">
-                            {!! Form::label('title', 'Title:') !!}
+                            {!! Form::label('title', 'عنوان:') !!}
                             {!! Form::text('title', null, ['class' => 'form-control', 'id' => 'title']) !!}
                     </div>
                     <div class="form-group col-sm-4">
-                            {!! Form::label('use_notifier_title', 'if select this, title will copied from notifier title', ['style' => 'color: lightgray' ]) !!}
+                            {!! Form::label('use_notifier_title', 'در صورت فعال بودن این گزینه، از عنوان منبع برای نوتیفیکیشن استفاده می‌شود', ['style' => 'color: lightgray; font-size: 1rem' ]) !!}
                             <div class="form-control checkbox" style="margin: 0;">
-                                <label><input name="use_notifier_title" id="use_notifier_title" type="checkbox" value="false">Use Notifier Title</label>
+                                <label><input name="use_notifier_title" id="use_notifier_title" type="checkbox" value="false">استفاده از عنوان منبع</label>
                             </div>
                     </div>
                     <script>
@@ -128,9 +128,9 @@
                             {!! Form::text('brief_description', null, ['class' => 'form-control', 'id' => 'brief_description']) !!}
                     </div>
                     <div class="form-group col-sm-4">
-                            {!! Form::label('use_notifier_description', 'if select this, title will use notifier description', ['style' => 'color: lightgray' ]) !!}
+                            {!! Form::label('use_notifier_description', 'در صورت فعال بودن این گزینه، از بخشی از توضیحات منبع برای نوتیفیکیشن استفاده می‌شود', ['style' => 'color: lightgray; font-size: 0.85rem' ]) !!}
                             <div class="form-control checkbox" style="margin: 0;">
-                                <label><input name="use_notifier_description" id="use_notifier_description" type="checkbox" value="false">Use Notifier Description</label>
+                                <label><input name="use_notifier_description" id="use_notifier_description" type="checkbox" value="false">استفاده از توضیحات منبع</label>
                             </div>
                     </div>
                     <script>
@@ -149,9 +149,9 @@
 
                     <!-- Faculty Unique Code Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('faculty_unique_code', 'Faculty:') !!}
+                        {!! Form::label('faculty_unique_code', 'دانشکده:') !!}
                         <select class="form-control m-bot15" name="faculty_unique_code" id="faculty_unique_code">
-                            <option selected value> -- all -- </option>
+                            <option selected value> -- همه -- </option>
                             @foreach($faculties as $key => $value)
                                 <option value="{{ $value }}">{{ $key }}</option>
                             @endforeach
@@ -162,7 +162,7 @@
                         jQuery(document).ready(function(){
                             $('select[name="faculty_unique_code"]').on('change', function(){
                                 jQuery('#study_field_unique_code').empty();
-                                $('#study_field_unique_code').append('<option selected value> -- all -- </option>');
+                                $('#study_field_unique_code').append('<option selected value> -- همه -- </option>');
                                 $.ajaxSetup({
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
@@ -189,9 +189,9 @@
 
                     <!-- Study Field Unique Code Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('study_field_unique_code', 'Study Field:') !!}
+                        {!! Form::label('study_field_unique_code', 'رشته:') !!}
                         <select class="form-control" name="study_field_unique_code" id="study_field_unique_code">
-                            <option selected value> -- all -- </option>
+                            <option selected value> -- همه -- </option>
                         </select>
                     </div>
 
@@ -199,7 +199,7 @@
                         jQuery(document).ready(function(){
                             $('select[name="study_field_unique_code"]').on('change', function(){
                                 jQuery('#study_area_unique_code').empty();
-                                $('#study_area_unique_code').append('<option selected value> -- all -- </option>');
+                                $('#study_area_unique_code').append('<option selected value> -- همه -- </option>');
                                 $.ajaxSetup({
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
@@ -226,17 +226,17 @@
 
                     <!-- Study Area Unique Code Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('study_area_unique_code', 'Study Area:') !!}
+                        {!! Form::label('study_area_unique_code', 'گرایش:') !!}
                         <select class="form-control" name="study_area_unique_code" id="study_area_unique_code">
-                            <option selected value> -- all -- </option>
+                            <option selected value> -- همه -- </option>
                         </select>
                     </div>
 
                     <!-- Entrance Term Unique Code Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('entrance_term_unique_code', 'Entrance Term:') !!}
+                        {!! Form::label('entrance_term_unique_code', 'ورودی:') !!}
                         <select class="form-control" name="entrance_term_unique_code" id="entrance_term_unique_code">
-                            <option selected value> -- all -- </option>
+                            <option selected value> -- همه -- </option>
                             @foreach($entrance_terms as $key => $value)
                                 <option value="{{ $value }}">{{ $key }}</option>
                             @endforeach
@@ -245,9 +245,9 @@
 
                     <!-- Status Status Unique Code Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('study_status_unique_code', 'Study Status:') !!}
+                        {!! Form::label('study_status_unique_code', 'وضعیت تحصیلی:') !!}
                         <select class="form-control m-bot15" name="study_status_unique_code" id="study_status_unique_code">
-                            <option selected value> -- all -- </option>
+                            <option selected value> -- همه -- </option>
                             @foreach($study_statuses as $key => $value)
                                 <option value="{{ $value }}">{{ $key }}</option>
                             @endforeach
@@ -256,14 +256,14 @@
 
                     <!-- Deadline Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('deadline', 'Deadline:') !!}
+                        {!! Form::label('deadline', 'تاریخ انقضا:') !!}
                         {!! Form::date('deadline', null, ['class' => 'form-control','id'=>'deadline']) !!}
                     </div>
 
                 <!-- Submit Field -->
                     <div class="form-group col-sm-12">
-                        {!! Form::submit('Send', ['class' => 'btn btn-primary']) !!}
-                        <a href="{!! route('notifications.index') !!}" class="btn btn-default">Cancel</a>
+                        {!! Form::submit('ایجاد', ['class' => 'btn btn-primary']) !!}
+                        <a href="{!! route('notifications.index') !!}" class="btn btn-default">لغو</a>
                     </div>
 
                 {!! Form::close() !!}

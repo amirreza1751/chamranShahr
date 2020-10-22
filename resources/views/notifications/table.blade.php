@@ -2,8 +2,8 @@
     <table class="table" id="notifications-table">
         <thead>
             <tr>
-                <th>Title</th>
-        <th>Brief Description</th>
+                <th>عنوان</th>
+        <th>متن</th>
         <th>Type</th>
         <th>Notifiable</th>
         <th>Notifier</th>
