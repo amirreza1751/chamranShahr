@@ -19,7 +19,7 @@
 <!-- Url Field -->
 <div class="form-group">
     {!! Form::label('url', 'آدرس:') !!}
-    <p><a href="{!! $externalService->url !!}">پیوند</a></p>
+    <p><a href="{!! $externalService->url !!}" target="_blank">پیوند</a></p>
 </div>
 
 <!-- Type Id Field -->

@@ -3,7 +3,7 @@
 @section('content')
     <section class="content-header">
         <h1>
-            News
+            خبر
         </h1>
    </section>
    <div class="content">
@@ -11,7 +11,7 @@
        <div class="box box-primary">
            <div class="box-body">
                <div class="row">
-                   {!! Form::model($news, ['route' => ['news.update', $news->id], 'method' => 'patch']) !!}
+                   {!! Form::model($news, ['route' => ['news.update', $news->id], 'method' => 'patch', 'enctype' => 'multipart/form-data']) !!}
 
                         @include('news.fields')
 

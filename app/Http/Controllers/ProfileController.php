@@ -40,7 +40,7 @@ class ProfileController extends Controller
             }
 
             return view('profiles.manager_profile')
-                ->with('notifications', $notifications);
+                ->with('notifications', $notifications->sortByDesc('updated_at'));
         }
     }
 

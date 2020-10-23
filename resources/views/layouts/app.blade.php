@@ -589,7 +589,13 @@
         .user-panel > .image > img {
             max-height: 45px;
          }
+        body > .wrapper > .main-sidebar > .sidebar > .user-panel > .image > img {
+            object-fit: cover;
+            width: 45px !important;
+            height: 45px !important;
+        }
         body.sidebar-collapse > .wrapper > .main-sidebar > .sidebar > .user-panel > .image > img {
+            object-fit: cover;
             width: 35px !important;
             height: 35px !important;
         }

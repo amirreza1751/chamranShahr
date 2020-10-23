@@ -3,7 +3,7 @@
 @section('content')
     <section class="content-header">
         <h1>
-            Notice
+            اطلاعیه
         </h1>
    </section>
    <div class="content">
@@ -11,7 +11,7 @@
        <div class="box box-primary">
            <div class="box-body">
                <div class="row">
-                   {!! Form::model($notice, ['route' => ['notices.update', $notice->id], 'method' => 'patch']) !!}
+                   {!! Form::model($notice, ['route' => ['notices.update', $notice->id], 'method' => 'patch', 'enctype' => 'multipart/form-data']) !!}
 
                         @include('notices.fields')
 

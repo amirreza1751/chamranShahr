@@ -49,12 +49,6 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth:web'], function(){
 
-    Route::get('profile', 'ProfileController@profile')->name('profile');
-    Route::patch('profile', 'ProfileController@updateProfile')->name('profile.update');
-
-    Route::get('/externalServices/ajaxOwner', 'ExternalServiceController@ajaxOwner');
-    Route::resource('externalServices', 'ExternalServiceController'); // ++
-
     Route::get('showProfile/', [
         'as' => 'users.showProfile', 'uses' => 'UserController@showProfile'
     ]);
@@ -65,35 +59,63 @@ Route::group(['middleware' => 'auth:web'], function(){
         'as' => 'users.editProfile', 'uses' => 'UserController@editProfile'
     ]);
 
-    Route::patch('departments/{department}/editProfile/', [
-        'as' => 'departments.updateProfile', 'uses' => 'DepartmentController@updateProfile'
-    ]);
-    Route::get('departments/{department}/editProfile/', [
-        'as' => 'departments.editProfile', 'uses' => 'DepartmentController@editProfile'
-    ]);
-    Route::resource('departments', 'DepartmentController'); // ++
-
-    Route::get('/notices/ajaxOwner', 'NoticeController@ajaxOwner');
-    Route::resource('notices', 'NoticeController');
-
-    Route::get('notifications/notifyStudents/', [
-        'as' => 'notifications.showNotifyStudents', 'uses' => 'NotificationController@showNotifyStudents'
-    ]);
-    Route::get('notifications/notifyStudents/{type}/{id}', [
-        'as' => 'notifications.showNotifyStudentsFromNotifier', 'uses' => 'NotificationController@showNotifyStudentsFromNotifier'
-    ]);
-    Route::post('notifications/notifyStudents', [
-        'as' => 'notifications.notifyStudents', 'uses' => 'NotificationController@notifyStudents'
-    ]);
-    Route::get('/notifications/ajaxStudyField', 'NotificationController@ajaxStudyField');
-    Route::get('/notifications/ajaxStudyArea', 'NotificationController@ajaxStudyArea');
-    Route::get('/notifications/ajaxNotifier', 'NotificationController@ajaxNotifier');
-    Route::resource('notifications', 'NotificationController');
-
     //    Route::get('/home', 'HomeController@index');
     Route::get('/home', [
         'as' => 'home', 'uses' => 'HomeController@index'
     ]);
+
+    Route::group(['middleware' => ['role:admin|developer|content_manager|manager']], function(){
+
+        Route::patch('departments/{department}/editProfile/', [
+            'as' => 'departments.updateProfile', 'uses' => 'DepartmentController@updateProfile'
+        ]);
+        Route::get('departments/{department}/editProfile/', [
+            'as' => 'departments.editProfile', 'uses' => 'DepartmentController@editProfile'
+        ]);
+        Route::resource('departments', 'DepartmentController'); // ++
+
+        Route::get('/notices/ajaxOwner', 'NoticeController@ajaxOwner');
+        Route::resource('notices', 'NoticeController');
+
+        Route::get('profile', 'ProfileController@profile')->name('profile');
+        Route::patch('profile', 'ProfileController@updateProfile')->name('profile.update');
+
+        Route::get('/externalServices/ajaxOwner', 'ExternalServiceController@ajaxOwner');
+        Route::resource('externalServices', 'ExternalServiceController'); // ++
+
+        Route::get('/notifications/ajaxStudyField', 'NotificationController@ajaxStudyField');
+        Route::get('/notifications/ajaxStudyArea', 'NotificationController@ajaxStudyArea');
+        Route::get('/notifications/ajaxNotifier', 'NotificationController@ajaxNotifier');
+        Route::get('notifications/notifyStudents/{type}/{id}', [
+            'as' => 'notifications.showNotifyStudentsFromNotifier', 'uses' => 'NotificationController@showNotifyStudentsFromNotifier'
+        ]);
+        Route::get('notifications/notifyStudents/', [
+            'as' => 'notifications.showNotifyStudents', 'uses' => 'NotificationController@showNotifyStudents'
+        ]);
+        Route::post('notifications/notifyStudents', [
+            'as' => 'notifications.notifyStudents', 'uses' => 'NotificationController@notifyStudents'
+        ]);
+        Route::resource('notifications', 'NotificationController');
+
+        Route::resource('locations', 'LocationController');
+
+        Route::resource('media', 'MediaController');
+
+        Route::get('/news/ajaxOwner', 'NewsController@ajaxOwner');
+        Route::resource('news', 'NewsController');
+
+        Route::get('ads/show_advertisable/{id}', 'AdController@show_advertisable')->name('show_advertisable');
+        Route::get('ads/verify/{id}', 'AdController@verify_ad')->name('verify_ad');
+        Route::resource('ads', 'AdController');
+
+        Route::resource('books', 'BookController');
+
+        Route::resource('students', 'StudentController');
+
+        Route::get('/manageHistories/ajaxManaged', 'ManageHistoryController@ajaxManaged');
+        Route::resource('manageHistories', 'ManageHistoryController');
+
+    });
 
     Route::group(['middleware' => ['role:admin|developer']], function(){
 
@@ -136,27 +158,6 @@ Route::group(['middleware' => 'auth:web'], function(){
         Route::resource('studyStatuses', 'StudyStatusController'); // ++
 
         Route::resource('externalServiceTypes', 'ExternalServiceTypeController'); // ++
-
-    });
-
-    Route::group(['middleware' => ['role:admin|developer|content_manager']], function(){
-
-        Route::resource('locations', 'LocationController');
-
-        Route::resource('media', 'MediaController');
-
-        Route::resource('news', 'NewsController');
-
-        Route::get('ads/show_advertisable/{id}', 'AdController@show_advertisable')->name('show_advertisable');
-        Route::get('ads/verify/{id}', 'AdController@verify_ad')->name('verify_ad');
-        Route::resource('ads', 'AdController');
-
-        Route::resource('books', 'BookController');
-
-        Route::resource('students', 'StudentController');
-
-        Route::get('/manageHistories/ajaxManaged', 'ManageHistoryController@ajaxManaged');
-        Route::resource('manageHistories', 'ManageHistoryController');
 
     });
 

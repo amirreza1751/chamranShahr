@@ -1,3 +1,7 @@
+<li class="{{ Request::is('home') ? 'active' : '' }}">
+    <a href="{!! route('home') !!}"><i class="fa fa-dashboard"></i><span>داشبورد</span></a>
+</li>
+
 <li class="{{ Request::is('profile*') ? 'active' : '' }}">
     <a href="{!! route('profile') !!}"><i class="fa fa-user-circle"></i><span>صفحه‌ی شخصی</span></a>
 </li>
@@ -6,7 +10,7 @@
     <a href="{!! route('notifications.index') !!}"><i class="fa fa-bell"></i><span>مدیریت نوتیفیکیشن‌ها</span></a>
 </li>
 
-<li class="{{ Request::is('departments/profile*') ? 'active' : '' }}">
+<li class="{{ Request::is('departments*') ? 'active' : '' }}">
     <a href="{!! route('departments.index') !!}"><i class="fa fa-building"></i><span>مدیریت دپارتمان</span></a>
 </li>
 
