@@ -429,8 +429,14 @@ class AdAPIController extends AppBaseController
 
         $this->adRepository->pushCriteria(new RequestCriteria($request));
         $this->adRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $my_book_ads = $this->adRepository->with(['advertisable', 'medias', 'category'])->where('creator_id', Auth('api')->user()->id)->paginate(10);
-        return $this->sendResponse($my_book_ads->toArray(), 'Ads retrieved successfully');
+//        $my_book_ads = $this->adRepository->with(['advertisable', 'medias', 'category'])->where('creator_id', Auth('api')->user()->id)->paginate(10);
+        $my_book_ads = $this->adRepository->where('creator_id', Auth('api')->user()->id)->get();
+        $ads = Ad::staticRetrieves($my_book_ads);
+
+        $pageSize = 10;
+
+        $paginated = CollectionHelper::paginate($ads, sizeof($ads), $pageSize);
+        return $this->sendResponse($paginated->toArray(), 'Ads retrieved successfully');
     }
 
     public function remove_book_ad($id){
