@@ -39,14 +39,14 @@
                             <h3 class="box-title" style="padding-top: 1rem">{{ $department->title }}</h3>
 
                             <div class="pull-left">
-                                <a href="{{ route('departments.showProfile', $department->id) }}" class="btn btn-default">نمایش</a>
+                                <a href="{{ route('departments.profile', $department->id) }}" class="btn btn-default">نمایش</a>
                             </div>
                             <!-- /.box-tools -->
                         </div>
                         <!-- /.box-header -->
-                        <div class="box-body">
-                            غیر فعال
-                        </div>
+{{--                        <div class="box-body">--}}
+{{--                            غیر فعال--}}
+{{--                        </div>--}}
                         <!-- /.box-body -->
                     </div>
                 @endforeach

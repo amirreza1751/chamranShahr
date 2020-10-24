@@ -14,20 +14,20 @@
                     <p>چمران‌شهر</p>
                 @else
                     <p>{{ Auth::user()->full_name}}</p>
-                @endif
-                <!-- Status -->
+            @endif
+            <!-- Status -->
                 <a href="#"><i class="fa fa-circle text-success"></i> آنلاین</a>
             </div>
         </div>
 
         <!-- search form (Optional) -->
-        <form action="#" method="get" class="sidebar-form">
+        <form method="get" class="sidebar-form">
             <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="جست‌وجو..."/>
-          <span class="input-group-btn">
-            <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i>
-            </button>
-          </span>
+                <input disabled="disabled" type="text" name="q" class="form-control" placeholder="جست‌وجو..."/>
+                <span class="input-group-btn">
+                    <button disabled="disabled" {{-- type='submit' --}} name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i>
+                    </button>
+                </span>
             </div>
         </form>
         <!-- Sidebar Menu -->

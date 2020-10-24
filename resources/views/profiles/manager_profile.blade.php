@@ -55,13 +55,24 @@
                 <!-- About Me Box -->
                 <div class="box box-default">
                     <div class="box-header with-border">
-                        <h3 class="box-title">درباره‌ی من</h3>
+                        <h3 class="box-title">دپارتمان‌ها</h3>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
-                        <p class="text-muted">
-                            غیر فعال
-                        </p>
+                        @if (sizeof($departments) == 0)
+                            <div class="box box-info">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">هیچ دپارتمانی برای نمایش وجود ندارد</h3>
+                                </div>
+                            </div>
+                        @else
+                            @foreach($departments as $index => $department)
+                                <a href="{{ route('departments.profile', $department->id) }}" class="btn btn-primary btn-block"><b>{{ $department->title }}</b></a>
+                            @endforeach
+                        @endif
+{{--                        <p class="text-muted">--}}
+{{--                            غیر فعال--}}
+{{--                        </p>--}}
                     </div>
                     <!-- /.box-body -->
                 </div>

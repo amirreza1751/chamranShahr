@@ -188,7 +188,7 @@ class DepartmentController extends AppBaseController
      *******************************************************************************************************************
      */
 
-    public function showProfile($id)
+    public function profile($id)
     {
 //        $this->authorize('showProfile', User::class);
 

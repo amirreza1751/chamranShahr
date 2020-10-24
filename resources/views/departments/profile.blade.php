@@ -12,7 +12,7 @@
                         <h4 class="card-title">@if(isset($department->title)) {{ $department->title }} @endif</h4>
                         <p class="card-text"><strong>نوع: @if(!is_null($department->manage_level)) {{ $department->manage_level->management_title }} @endif</strong></p>
                         <p class="card-text">مدیر: @if(!is_null($department->manager())) {{ $department->manager()->full_name }} @endif</p>
-                        @can('updateProfile', $department)<a href="{{ route('departments.editProfile', [$department->id]) }}" class="btn btn-primary">ویرایش</a>@endcan
+{{--                        @can('updateProfile', $department)<a href="{{ route('departments.editProfile', [$department->id]) }}" class="btn btn-primary">ویرایش</a>@endcan--}}
                     </div>
                 </div>
 

@@ -540,6 +540,84 @@
             padding: 10px;
         }
 
+        /* RTL Callout */
+
+
+        .callout-rtl {
+            border-radius: 3px;
+            margin: 0 0 20px 0;
+            padding: 15px 15px 15px 30px;
+            border-right: 5px solid #eee
+        }
+
+        .callout-rtl a {
+            color: #fff;
+            text-decoration: underline
+        }
+
+        .callout-rtl a:hover {
+            color: #eee
+        }
+
+        .callout-rtl h4 {
+            margin-top: 0;
+            font-weight: 600
+        }
+        .callout-rtl p { font-weight: 500 }
+
+        .callout-rtl p:last-child {
+            margin-bottom: 0
+        }
+
+        .callout-rtl code, .callout-rtl .highlight {
+            background-color: #fff
+        }
+
+        .callout-rtl.callout-danger {
+            border-color: #c23321
+        }
+
+        .callout-rtl.callout-warning {
+            border-color: #c87f0a
+        }
+
+        .callout-rtl.callout-info {
+            border-color: #0097bc;
+        }
+        .callout-rtl > h4 , .callout-rtl > p { color: black; }
+
+        .callout-rtl.callout-success {
+            border-color: #00733e
+        }
+
+        .callout-rtl.callout-danger {
+            background-color: #dd4b39 !important
+        }
+
+        .callout-rtl.callout-warning {
+            background-color: #f39c12 !important
+        }
+
+        .callout-rtl.callout-info {
+            background-color: #00c0ef !important
+        }
+
+        .callout-rtl.callout-success {
+            background-color: #00a65a !important
+        }
+        .callout-rtl.callout-danger, .callout-rtl.callout-warning, .callout-rtl.callout-info, .callout-rtl.callout-success {
+            color: #fff !important
+        }
+        /* RTL Callout */
+
+        /* RTL Callout */
+        .small-box .icon {
+            top: 0;
+            left: 10px;
+            right: auto;
+        }
+        /* RTL Callout */
+
         @media(max-width: 767px){
             .widget-user-header-custom {
                 height: 300px !important;
@@ -1205,7 +1283,7 @@
 
             <!-- Logo -->
             <a href="#" class="logo">
-                <b class="vazir-font-fd">چمران‌شهر</b>
+                <b class="vazir-font-fd">چــــــــمران‌شهر</b>
             </a>
 
             <!-- Header Navbar -->
@@ -1234,18 +1312,18 @@
                                          class="img-circle image-square-10" alt="User Image"/>
                                     <p>
                                         {!! Auth::user()->name !!}
-                                        <small>Member since {!! Auth::user()->created_at->format('M. Y') !!}</small>
+                                        <small>تاریخ عضویت {{ Morilog\Jalali\Jalalian::fromDateTime(Auth::user()->created_at)->format('%A, %d %B') }}</small>
                                     </p>
                                 </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
-                                    <div class="pull-left">
-                                        <a href="{{ route('users.showProfile') }}" class="btn btn-default btn-flat">صفحه‌ی شخصی</a>
-                                    </div>
                                     <div class="pull-right">
+                                        <a href="{{ route('profile') }}" class="btn btn-primary btn-flat">صفحه‌ی شخصی</a>
+                                    </div>
+                                    <div class="pull-left">
                                         <a href="{!! url('/logout') !!}" class="btn btn-default btn-flat"
                                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            Sign out
+                                            خروج
                                         </a>
                                         <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
                                             {{ csrf_field() }}

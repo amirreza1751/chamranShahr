@@ -11,7 +11,7 @@
 </li>
 
 <li class="{{ Request::is('departments*') ? 'active' : '' }}">
-    <a href="{!! route('departments.index') !!}"><i class="fa fa-building"></i><span>مدیریت دپارتمان</span></a>
+    <a href="{!! route('departments.index') !!}"><i class="fa fa-building"></i><span>مدیریت دپارتمان‌ها</span></a>
 </li>
 
 <li class="{{ Request::is('news*') ? 'active' : '' }}">

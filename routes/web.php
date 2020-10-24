@@ -49,36 +49,29 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth:web'], function(){
 
-    Route::get('showProfile/', [
-        'as' => 'users.showProfile', 'uses' => 'UserController@showProfile'
-    ]);
-    Route::patch('updateProfile/{user}', [
-        'as' => 'users.updateProfile', 'uses' => 'UserController@updateProfile'
-    ]);
-    Route::get('editProfile', [
-        'as' => 'users.editProfile', 'uses' => 'UserController@editProfile'
-    ]);
-
     //    Route::get('/home', 'HomeController@index');
     Route::get('/home', [
         'as' => 'home', 'uses' => 'HomeController@index'
     ]);
+
+    Route::get('profile', 'ProfileController@profile')->name('profile');
+    Route::patch('profile', 'ProfileController@updateProfile')->name('profile.update');
 
     Route::group(['middleware' => ['role:admin|developer|content_manager|manager']], function(){
 
         Route::patch('departments/{department}/editProfile/', [
             'as' => 'departments.updateProfile', 'uses' => 'DepartmentController@updateProfile'
         ]);
-        Route::get('departments/{department}/editProfile/', [
-            'as' => 'departments.editProfile', 'uses' => 'DepartmentController@editProfile'
+//        Route::get('departments/{department}/editProfile/', [
+//            'as' => 'departments.editProfile', 'uses' => 'DepartmentController@editProfile'
+//        ]);
+        Route::get('departments/{department}/profile/', [
+            'as' => 'departments.profile', 'uses' => 'DepartmentController@profile'
         ]);
         Route::resource('departments', 'DepartmentController'); // ++
 
         Route::get('/notices/ajaxOwner', 'NoticeController@ajaxOwner');
         Route::resource('notices', 'NoticeController');
-
-        Route::get('profile', 'ProfileController@profile')->name('profile');
-        Route::patch('profile', 'ProfileController@updateProfile')->name('profile.update');
 
         Route::get('/externalServices/ajaxOwner', 'ExternalServiceController@ajaxOwner');
         Route::resource('externalServices', 'ExternalServiceController'); // ++
@@ -166,11 +159,6 @@ Route::group(['middleware' => 'auth:web'], function(){
 });
 
 
-
-Route::get('departments/{department}/showProfile/', [
-    'as' => 'departments.showProfile', 'uses' => 'DepartmentController@showProfile'
-]);
-
 Route::get('notices/{notice}/public_show/', [
     'as' => 'notices.publicShow', 'uses' => 'NoticeController@publicShow'
 ]);
@@ -248,6 +236,17 @@ Route::get('xmltest', function (){
 //    $js_code = '<script>' . $js_code . '</script>';
 //    echo $js_code;
 //}
+
+
+//Route::get('showProfile/', [
+//    'as' => 'users.showProfile', 'uses' => 'UserController@showProfile'
+//]);
+//Route::patch('updateProfile/{user}', [
+//    'as' => 'users.updateProfile', 'uses' => 'UserController@updateProfile'
+//]);
+//Route::get('editProfile', [
+//    'as' => 'users.editProfile', 'uses' => 'UserController@editProfile'
+//]);
 
 //function xmlToArray($xml, $options = array()) {
 //    $defaults = array(

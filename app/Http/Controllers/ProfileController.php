@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Department;
 use App\Repositories\NotificationRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
@@ -39,8 +40,20 @@ class ProfileController extends Controller
                 }
             }
 
+            $departments = collect();
+            $manage_histories = Auth::user()->under_managment();
+            foreach ($manage_histories as $manage_history) {
+                if (isset($manage_history->managed)) {
+                    $department = Department::where('id', $manage_history->managed->id)->first();
+                    if (isset($department)){
+                        $departments->push($department);
+                    }
+                }
+            }
+
             return view('profiles.manager_profile')
-                ->with('notifications', $notifications->sortByDesc('updated_at'));
+                ->with('notifications', $notifications->sortByDesc('updated_at'))
+                ->with('departments', $departments);
         }
     }
 
