@@ -474,6 +474,36 @@ class AdAPIController extends AppBaseController
         return $this->sendResponse($ad->toArray(), 'Ad updated successfully');
     }
 
+    /**
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="/ads/my_book_ads/count",
+     *      summary="Retrieve number of user ads",
+     *      tags={"Ad"},
+     *      description="retrieve number of the authenticated user ads",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="count",
+     *                  type="integer",
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
     public function my_ads_count(){
         if (Auth('api')->check())
         return $this->adRepository->where('creator_id', Auth('api')->user()->id)->count();
