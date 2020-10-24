@@ -87,6 +87,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     Route::get('ads/update_book_ad/{id}', 'AdAPIController@update_book_ad'); /** Updating user's book advertisements (Custom Method) */
     Route::get('ads/remove_book_ad/{id}', 'AdAPIController@remove_book_ad'); /** Displaying user's book advertisements (Custom Method) */
     Route::resource('ads', 'AdAPIController');
+    Route::get('ads/my_book_ads/count', 'AdAPIController@my_ads_count');
 
     /** Book Trade */
 

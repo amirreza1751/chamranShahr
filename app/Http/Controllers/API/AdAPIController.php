@@ -474,6 +474,10 @@ class AdAPIController extends AppBaseController
         return $this->sendResponse($ad->toArray(), 'Ad updated successfully');
     }
 
+    public function my_ads_count(){
+        if (Auth('api')->check())
+        return $this->adRepository->where('creator_id', Auth('api')->user()->id)->count();
+    }
 
 
 }
