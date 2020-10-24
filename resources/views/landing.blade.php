@@ -43,7 +43,7 @@
             </div>
             <div class="col-lg-8 align-self-baseline">
                 <p class="text-magenta-75 font-weight-light mb-5 font-weight-bolder">اولین سامانه‌ی خدمات دانشجویی در کشور <br><small>دانشگاه شهید چمران اهواز</small></p>
-                <a class="btn btn-primary btn-xl js-scroll-trigger" href="https://campus.scu.ac.ir/web">ورود</a>
+                <a class="btn btn-primary btn-xl js-scroll-trigger" href="https://campus.scu.ac.ir">ورود</a>
             </div>
         </div>
     </div>

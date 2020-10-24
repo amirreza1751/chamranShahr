@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\General\GeneralFunction;
 use App\Http\Requests\CreateNoticeRequest;
 use App\Http\Requests\UpdateNoticeRequest;
 use App\Models\Department;
@@ -12,6 +13,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Flash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -39,15 +41,11 @@ class NoticeController extends AppBaseController
         $this->authorize('anyView', Notice::class);
 
         $this->noticeRepository->pushCriteria(new RequestCriteria($request));
-        $notices = $this->noticeRepository->all();
 
-        if (Auth::user()->hasRole('developer')) {
+        if (Auth::user()->hasRole('developer|admin|notification_manager')) {
             $notices = $this->noticeRepository->all();
-        } elseif (Auth::user()->hasRole('admin')) {
-            $notices = $this->noticeRepository->all();
-        } elseif (Auth::user()->hasRole('notification_manager')) {
-            $notices = $this->noticeRepository->all();
-        } else {
+        }
+        else {
             $notices = collect();
             $all = $this->noticeRepository->all();
             $manage_histories = Auth::user()->under_managment();
@@ -64,7 +62,7 @@ class NoticeController extends AppBaseController
         }
 
         return view('notices.index')
-            ->with('notices', $notices);
+            ->with('notices', $notices->sortByDesc('updated_at'));
     }
 
     /**
@@ -77,16 +75,7 @@ class NoticeController extends AppBaseController
         $this->authorize('create', Notice::class);
 
         $creators = collect();
-        if(Auth::user()->hasRole('developer')){
-            $creators = User::all()->pluck('full_name_scu_id', 'id');
-        }
-        elseif (Auth::user()->hasRole('admin')){
-            $creators = User::all()->pluck('full_name_scu_id', 'id');
-        }
-        elseif (Auth::user()->hasRole('content_manager')){
-            $creators = User::all()->pluck('full_name_scu_id', 'id');
-        }
-        elseif (Auth::user()->hasRole('notification_manager')){
+        if(Auth::user()->hasRole('developer|admin|content_manager|notification_manager')){
             $creators = User::all()->pluck('full_name_scu_id', 'id');
         }
         else {
@@ -112,23 +101,41 @@ class NoticeController extends AppBaseController
 
         $creator = User::find($request['creator_id']);
         if (empty($creator)) {
-            Flash::error('Creator not found');
+            Flash::error('سازنده وجود ندارد');
 
             return redirect(route('notices.create'));
         }
 
         $owner = $input['owner_type']::find($input['owner_id']);
         if (empty($owner)) {
-            Flash::error('Owner not found');
+            Flash::error('مالک وجود ندارد');
 
             return redirect(route('notices.create'));
         }
 
         $this->authorize('store', [ $owner, $creator ]);
 
+        if($request->hasFile('path')){
+            $path = $request->file('path')->store('/public/notices_images/'. app($input['owner_type'])->getTable() .'/'.$input['owner_id']);
+
+            $gf = new GeneralFunction();
+
+            $destinationPath = public_path('storage/notices_images/'. app($input['owner_type'])->getTable() .'/'.$input['owner_id']);
+            $file = Storage::get($path);
+            $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
+            $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
+
+            $gf->createThumbnail($destinationPath, $file, $file_name, $file_extension);
+
+            $path = str_replace('public', 'storage', $path);
+            $input['path'] = '/' . $path;
+        } else {
+            unset($input['path']);
+        }
+
         $notice = $this->noticeRepository->create($input);
 
-        Flash::success('Notice saved successfully.');
+        Flash::success('اطلاعیه با موفقیت ایجاد شد');
 
         if($input['make_notification']){
             return redirect(route('notifications.showNotifyStudentsFromNotifier', [ get_class($notice), $notice->id ]));
@@ -151,7 +158,7 @@ class NoticeController extends AppBaseController
         $this->authorize('view', $notice);
 
         if (empty($notice)) {
-            Flash::error('Notice not found');
+            Flash::error('اطلاعیه وجود ندارد');
 
             return redirect(route('notices.index'));
         }
@@ -173,12 +180,20 @@ class NoticeController extends AppBaseController
         $this->authorize('update', $notice);
 
         if (empty($notice)) {
-            Flash::error('Notice not found');
+            Flash::error('اطلاعیه وجود ندارد');
 
             return redirect(route('notices.index'));
         }
 
-        $creators = User::all()->pluck('full_name_scu_id', 'id');
+        $creators = collect();
+        if(Auth::user()->hasRole('developer|admin|content_manager|notification_manager')){
+            $creators = User::all()->pluck('full_name_scu_id', 'id');
+        }
+        else {
+            $creators = [
+                Auth::user()->id => Auth::user()->getFullNameScuIdAttribute(),
+            ];
+        }
         return view('notices.edit')->with('notice', $notice)
             ->with('creators', $creators)
             ->with('owner_types', $this->owner_types);
@@ -199,29 +214,72 @@ class NoticeController extends AppBaseController
         $this->authorize('update', $notice);
 
         if (empty($notice)) {
-            Flash::error('Notice not found');
+            Flash::error('اطلاعیه وجود ندارد');
 
             return redirect(route('notices.index'));
         }
 
         $creator = User::find($request['creator_id']);
         if (empty($creator)) {
-            Flash::error('Creator not found');
+            Flash::error('سازنده وجود ندارد');
 
             return redirect(route('notices.edit'));
         }
 
         $owner = $request['owner_type']::find($request['owner_id']);
         if (empty($owner)) {
-            Flash::error('Owner not found');
+            Flash::error('مالک وجود ندارد');
 
             return redirect(route('notices.edit'));
         }
 
-        $notice = $this->noticeRepository->update($request->all(), $id);
+        $input = $request->all();
 
-        Flash::success('Notice updated successfully.');
+        if($request->hasFile('path')){
+            $path = $request->file('path')->store('/public/notices_images/'. app($input['owner_type'])->getTable() .'/'.$input['owner_id']);
 
+            /**
+             * create thumbnail of the original image
+             * this image will store with a postfix '-thumbnail' beside the original image
+             */
+            $gf = new GeneralFunction();
+
+            $destinationPath = public_path('storage/notices_images/'. app($input['owner_type'])->getTable() .'/'.$input['owner_id']);
+            $file = Storage::get($path);
+            $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
+            $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
+
+            $gf->createThumbnail($destinationPath, $file, $file_name, $file_extension);
+
+            $path = str_replace('public', 'storage', $path);
+            $input['path'] = '/' . $path;
+
+            /**
+             * delete old image,
+             * to prevent Accumulation of dead files
+             */
+            $file_name = 'storage\\notices_images\\'. app($input['owner_type'])->getTable() .'\\'.$input['owner_id'].'\\'.last(explode('/', $notice->path));
+            if (is_file($file_name)){
+                unlink($file_name); //delete old avatar
+
+                $thumbnail_name = pathinfo(last(explode('/', $notice->path)), PATHINFO_FILENAME); // file name
+                $thumbnail_extension = pathinfo(last(explode('/', $notice->path)), PATHINFO_EXTENSION); // file extension
+                $thumbnail = 'storage\\notices_images\\'. app($input['owner_type'])->getTable() .'\\'.$input['owner_id'].'\\'. $thumbnail_name . '-thumbnail.' . $thumbnail_extension;
+                if(is_file($thumbnail)){
+                    unlink($thumbnail);
+                }
+
+                $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+                $out->writeln('حذف: ' . $file_name);
+            } else {
+                $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+                $out->writeln('تصویر پیدا نشد.');
+            }
+        }
+
+        $notice = $this->noticeRepository->update($input, $id);
+
+        Flash::success('اطلاعیه با موفقیت به روز رسانی شد');
 
         if($request['make_notification']){
             return redirect(route('notifications.showNotifyStudentsFromNotifier', [ get_class($notice), $notice->id ]));
@@ -244,14 +302,36 @@ class NoticeController extends AppBaseController
         $this->authorize('delete', $notice);
 
         if (empty($notice)) {
-            Flash::error('Notice not found');
+            Flash::error('اطلاعیه وجود ندارد');
 
             return redirect(route('notices.index'));
         }
 
+        /**
+         * delete old image,
+         * to prevent Accumulation of dead files
+         */
+//        $file_name = 'storage\\notices_images\\'. app($notice->owner_type)->getTable() .'\\'.$notice->owner_id.'\\'.last(explode('/', $notice->path));
+//        if (is_file($file_name)){
+//            unlink($file_name); //delete old avatar
+//
+//            $thumbnail_name = pathinfo(last(explode('/', $notice->path)), PATHINFO_FILENAME); // file name
+//            $thumbnail_extension = pathinfo(last(explode('/', $notice->path)), PATHINFO_EXTENSION); // file extension
+//            $thumbnail = 'storage\\notices_images\\'. app($notice->owner_type)->getTable() .'\\'.$notice->owner_id.'\\'. $thumbnail_name . '-thumbnail.' . $thumbnail_extension;
+//            if(is_file($thumbnail)){
+//                unlink($thumbnail);
+//            }
+//
+//            $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+//            $out->writeln('حذف: ' . $file_name);
+//        } else {
+//            $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+//            $out->writeln('تصویر پیدا نشد.');
+//        }
+
         $this->noticeRepository->delete($id);
 
-        Flash::success('Notice deleted successfully.');
+        Flash::success('اطلاعیه با موفقیت حذف شد');
 
         return redirect(route('notices.index'));
     }

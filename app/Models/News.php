@@ -124,14 +124,45 @@ class News extends Model
         return "{$this->owner->title} : {$this->title}";
     }
 
+    /**
+     * **** ATTENTION ****
+     * if there is no image on public/storage/news_images/news_default_image.jpg then you must put a default image there with same name,
+     * if not, some functionality may doesn't work properly
+     *
+     * return default image path for news which has no image yet
+     *
+     * @return string path of default image
+     *
+     */
     public function getAbsolutePathAttribute()
     {
-        return URL::to('/') . $this->path;
+        $file =  new \Illuminate\Filesystem\Filesystem();
+
+        if (isset($this->path) && $file->exists(base_path() . str_replace('storage', 'public/storage', $this->path)))
+            return URL::to('/') . $this->path;
+        else
+            return URL::to('/') . env('DEFAULT_NEWS');
     }
 
+    /**
+     * **** ATTENTION ****
+     * if there is no image on public/storage/news_images/news_default_image-thumbnail.jpg then you must put a default thumbnail image there with same name,
+     * if not, some functionality may doesn't work properly
+     *
+     * return default thumbnail image path for news which has no thumbnail image yet
+     *
+     * @return string path of default thumbnail image
+     *
+     */
     public function getThumbnailAttribute()
     {
-        return URL::to('/') . pathinfo($this->path, PATHINFO_DIRNAME) . '/' . pathinfo(basename($this->path), PATHINFO_FILENAME) . '-thumbnail.' . pathinfo(basename($this->path), PATHINFO_EXTENSION);
+        $file =  new \Illuminate\Filesystem\Filesystem();
+
+        if (isset($this->path) && $file->exists(base_path() . str_replace('storage', 'public/storage',
+                    pathinfo($this->path, PATHINFO_DIRNAME) . '/' . pathinfo(basename($this->path), PATHINFO_FILENAME) . '-thumbnail.' . pathinfo(basename($this->path), PATHINFO_EXTENSION))))
+            return URL::to('/') . pathinfo($this->path, PATHINFO_DIRNAME) . '/' . pathinfo(basename($this->path), PATHINFO_FILENAME) . '-thumbnail.' . pathinfo(basename($this->path), PATHINFO_EXTENSION);
+        else
+            return URL::to('/') . env('DEFAULT_NEWS_THUMBNAIL');
     }
 
     public function creator()

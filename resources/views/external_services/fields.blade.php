@@ -4,34 +4,34 @@
 
 <!-- Title Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('title', 'Title:') !!}
+    {!! Form::label('title', 'عنوان:') !!}
     {!! Form::text('title', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- English Title Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('english_title', 'English Title:') !!}
+    {!! Form::label('english_title', 'عنوان انگلیسی:') !!}
     {!! Form::text('english_title', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Url Field -->
 <div class="form-group col-sm-12">
-    {!! Form::label('url', 'Url:') !!}
+    {!! Form::label('url', 'آدرس:') !!}
     {!! Form::text('url', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Type Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('type_id', 'Type:') !!}
+    {!! Form::label('type_id', 'نوع:') !!}
     {!! Form::select('type_id', $external_service_types, null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Content Type Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('content_type', 'Content Type:') !!}
+    {!! Form::label('content_type', 'نوع محتوا:') !!}
     {{--    {!! Form::select('content_type', $content_types, null, ['class' => 'form-control']) !!}--}}
     <select class="form-control m-bot15" name="content_type" id="content_type">
-        <option disabled selected value> -- select an option -- </option>
+        <option disabled selected value> -- یک گزینه انتخاب کنید -- </option>
         @if(isset($external_service)) // edit view
             @foreach($content_types as $key => $value)
                 @if($value == $external_service->content_type)
@@ -50,9 +50,9 @@
 
 <!-- Owner Type Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('owner_type', 'Owner Type:') !!}
+    {!! Form::label('owner_type', 'نوع مالک:') !!}
     <select class="form-control m-bot15" name="owner_type" id="owner_type">
-        <option disabled selected value> -- select an option -- </option>
+        <option disabled selected value> -- یک گزینه انتخاب کنید -- </option>
         @if(isset($external_service)) // edit view
             @foreach($owner_types as $key => $value)
                 @if($value == $external_service->owner_type)
@@ -104,7 +104,7 @@
 
 <!-- Owner Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('owner_id', 'Owner:') !!}
+    {!! Form::label('owner_id', 'مالک:') !!}
     <select class="form-control" name="owner_id" id="owner_id"></select>
 </div>
 
@@ -140,6 +140,6 @@
 
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
-    {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
-    <a href="{!! route('externalServices.index') !!}" class="btn btn-default">Cancel</a>
+    {!! Form::submit('ذخیره', ['class' => 'btn btn-primary']) !!}
+    <a href="{!! route('externalServices.index') !!}" class="btn btn-default">لغو</a>
 </div>

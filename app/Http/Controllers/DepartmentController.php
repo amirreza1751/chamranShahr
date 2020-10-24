@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
+use App\Models\Department;
 use App\Models\ManageLevel;
 use App\Repositories\DepartmentRepository;
 use App\Http\Controllers\AppBaseController;
@@ -36,7 +37,25 @@ class DepartmentController extends AppBaseController
     public function index(Request $request)
     {
         $this->departmentRepository->pushCriteria(new RequestCriteria($request));
-        $departments = $this->departmentRepository->all();
+
+        if (Auth::user()->hasRole('developer')) {
+            $departments = $this->departmentRepository->all();
+        } elseif (Auth::user()->hasRole('admin')) {
+            $departments = $this->departmentRepository->all();
+        } elseif (Auth::user()->hasRole('department_manager')) {
+            $departments = $this->departmentRepository->all();
+        } else {
+            $departments = collect();
+            $manage_histories = Auth::user()->under_managment();
+            foreach ($manage_histories as $manage_history) {
+                if (isset($manage_history->managed)) {
+                    $department = Department::where('id', $manage_history->managed->id)->first();
+                    if (isset($department)){
+                        $departments->push($department);
+                    }
+                }
+            }
+        }
 
         return view('departments.index')
             ->with('departments', $departments);
@@ -169,7 +188,7 @@ class DepartmentController extends AppBaseController
      *******************************************************************************************************************
      */
 
-    public function showProfile($id)
+    public function profile($id)
     {
 //        $this->authorize('showProfile', User::class);
 
@@ -183,7 +202,7 @@ class DepartmentController extends AppBaseController
 
         $department->path = URL::to('/') . '/' . $department->path;
 
-        return view('departments.show_profile')
+        return view('departments.profile')
             ->with('department', $department);
     }
 

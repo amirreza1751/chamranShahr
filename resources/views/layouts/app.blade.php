@@ -212,6 +212,11 @@
         .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
             float: right !important;
         }
+        @media(max-width: 767px){
+            .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+                width: 100%;
+            }
+        }
         body, .sidebar-toggle {
             line-height: 1.42857143 !important;
             font-size: 1.15rem;
@@ -236,7 +241,7 @@
         .content-header > h1 > a {
             margin-bottom: 1.7rem !important;
         }
-        li.active > a {
+        ul.sidebar-menu > li.active > a {
              padding-left: 2rem;
              padding-right: 2rem;
              color: yellow !important;
@@ -254,11 +259,11 @@
             right: 0 !important;
             width: 25rem;
         }
-        .content-wrapper {
-            margin-right: 25rem !important;
-            margin-left: 0px !important;
-            /*left: 0 !important;*/
-        }
+        /*.content-wrapper {*/
+        /*    margin-right: 25rem !important;*/
+        /*    margin-left: 0px !important;*/
+        /*    !*left: 0 !important;*!*/
+        /*}*/
         /*.main-header .navbar-nav {*/
         /*    !*right: auto !important;*!*/
         /*    margin-left: 0 !important;*/
@@ -276,6 +281,16 @@
             }
             .main-header .navbar {
                 margin-right: 0 !important;
+            }
+        }
+        @media (max-width: 767px){
+            .content-wrapper, .main-footer {
+                margin-right: 0;
+            }
+        }
+        @media (min-width: 768px) {
+            .sidebar-mini.sidebar-collapse .main-header .navbar {
+                margin-right: 50px;
             }
         }
         .main-header .navbar {
@@ -343,6 +358,13 @@
                 /*margin-right: 250px;*/
                 transition: margin-right 0.3s ease-in-out;
                 /*margin-right: 25rem;*/
+            }
+            .sidebar-mini.sidebar-collapse .content-wrapper, .sidebar-mini.sidebar-collapse .right-side, .sidebar-mini.sidebar-collapse .main-footer {
+                margin-left: 0 !important;
+                z-index: 840;
+            }
+            .sidebar-mini.sidebar-collapse .main-header .logo {
+                width: 50px !important;
             }
         }
 
@@ -485,6 +507,233 @@
             }
         }
 
+        /* Tab Nav bar RTL style*/
+        ul.nav.nav-tabs.pull-right {
+            padding-inline-start: 0px;
+        }
+        .content-header > .breadcrumb {
+            direction: ltr !important;
+            left: 10px;
+            right: 0;
+        }
+        /* Tab Nav bar RTL style*/
+
+        /*  Profile Image Box RTL  */
+        .list-group {
+            padding-right: 0;
+        }
+        /*  Profile Image Box RTL  */
+
+        .attachment-text {
+            margin-top: 0.5rem;
+        }
+
+        /* Custom Widget User */
+        .widget-user-header-custom {
+            height: 300px !important;
+        }
+        .widget-user-username-custom {
+            position: absolute;
+            /*top: 260px;*/
+            bottom: 100px;
+            background-color: rgba(0,0,0, 0.6);
+            padding: 10px;
+        }
+
+        /* RTL Callout */
+
+
+        .callout-rtl {
+            border-radius: 3px;
+            margin: 0 0 20px 0;
+            padding: 15px 15px 15px 30px;
+            border-right: 5px solid #eee
+        }
+
+        .callout-rtl a {
+            color: #fff;
+            text-decoration: underline
+        }
+
+        .callout-rtl a:hover {
+            color: #eee
+        }
+
+        .callout-rtl h4 {
+            margin-top: 0;
+            font-weight: 600
+        }
+        .callout-rtl p { font-weight: 500 }
+
+        .callout-rtl p:last-child {
+            margin-bottom: 0
+        }
+
+        .callout-rtl code, .callout-rtl .highlight {
+            background-color: #fff
+        }
+
+        .callout-rtl.callout-danger {
+            border-color: #c23321
+        }
+
+        .callout-rtl.callout-warning {
+            border-color: #c87f0a
+        }
+
+        .callout-rtl.callout-info {
+            border-color: #0097bc;
+        }
+        .callout-rtl > h4 , .callout-rtl > p { color: black; }
+
+        .callout-rtl.callout-success {
+            border-color: #00733e
+        }
+
+        .callout-rtl.callout-danger {
+            background-color: #dd4b39 !important
+        }
+
+        .callout-rtl.callout-warning {
+            background-color: #f39c12 !important
+        }
+
+        .callout-rtl.callout-info {
+            background-color: #00c0ef !important
+        }
+
+        .callout-rtl.callout-success {
+            background-color: #00a65a !important
+        }
+        .callout-rtl.callout-danger, .callout-rtl.callout-warning, .callout-rtl.callout-info, .callout-rtl.callout-success {
+            color: #fff !important
+        }
+        /* RTL Callout */
+
+        /* RTL Callout */
+        .small-box .icon {
+            top: 0;
+            left: 10px;
+            right: auto;
+        }
+        /* RTL Callout */
+
+        @media(max-width: 767px){
+            .widget-user-header-custom {
+                height: 300px !important;
+            }
+            .widget-user-username-custom {
+                font-size: 2rem !important;
+            }
+        }
+        /* Custom Widget User */
+
+        .image-square-100 {
+            object-fit: cover;
+            width: 100px;
+            height: 100px;
+        }
+        .image-square-150 {
+            object-fit: cover;
+            width: 150px;
+            height: 150px;
+        }
+        .image-square-200 {
+            object-fit: cover;
+            width: 200px;
+            height: 200px;
+        }
+        .image-square-250 {
+            object-fit: cover;
+            width: 250px;
+            height: 250px;
+        }
+
+        .image-square-4 {
+            object-fit: cover;
+            width: 4rem;
+            height: 4rem;
+        }
+        .image-square-10 {
+            object-fit: cover;
+            width: 10rem;
+            height: 10rem;
+        }
+        .image-square-15 {
+            object-fit: cover;
+            width: 15rem;
+            height: 15rem;
+        }
+        .user-panel > .image > img {
+            max-height: 45px;
+         }
+        body > .wrapper > .main-sidebar > .sidebar > .user-panel > .image > img {
+            object-fit: cover;
+            width: 45px !important;
+            height: 45px !important;
+        }
+        body.sidebar-collapse > .wrapper > .main-sidebar > .sidebar > .user-panel > .image > img {
+            object-fit: cover;
+            width: 35px !important;
+            height: 35px !important;
+        }
+        .attachment-block {
+            padding: 1rem;
+        }
+        .attachment-img-custom {
+            object-fit: cover;
+            width: 7.5rem !important;
+            height: 7.5rem !important;
+            border-radius: 0.5rem;
+        }
+        .attachment-img-column {
+            object-fit: cover;
+            height: 100% !important;
+            /*width: 7.5rem;*/
+        }
+
+        /*  Box Cover  */
+        .box-cover {
+            border-bottom-right-radius: 0.5rem !important;
+            border-bottom-left-radius: 0.5rem !important;
+            margin-top: 2rem;
+        }
+        .box-cover-img {
+            object-fit: cover;
+            width:100%;
+            height: 30rem;
+        }
+        .box-description {
+            background: whitesmoke;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            padding: 1.5rem 2rem;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            display: block;
+            overflow: auto;
+        }
+        .box-description-title {
+            font-size: 3rem;
+            margin: 0 50px;
+            text-align: center;
+        }
+        .box-description-text {
+            text-align: justify;
+            border-right: 1px solid darkgray;
+            padding-right: 2rem;
+        }
+        @media(max-width: 1200px){
+            .box-description > .col-lg-3, .col-lg-9 {
+                width: 100%;
+            }
+            .box-description-text {
+                border-right: none;
+                border-top: 1px solid darkgray;
+                padding-top: 1rem;
+                margin-top: 1rem;
+            }
+        }
+        /*  Box Cover  */
     </style>
 
     {{-- Add Cards to Bootstrap 3 Styles --}}
@@ -523,22 +772,6 @@
             flex: 1 1 auto;
             padding: 1.25rem;
         }
-
-        .card-title {
-            margin-bottom: 0.75rem;
-            font-family: IRANMarker;
-        }
-
-        .card-subtitle {
-            margin-top: -0.375rem;
-            margin-bottom: 0;
-        }
-
-        .card-text:last-child {
-            margin-bottom: 0;
-            font-family: IRAN;
-        }
-
         .card-link:hover {
             text-decoration: none;
         }
@@ -754,7 +987,8 @@
         }
     </style>
     {{--    add custom file to bootstrap 3.3.7  --}}
-    <style>.input-group > .custom-file {
+    <style>
+        .input-group > .custom-file {
             position: relative;
             -ms-flex: 1 1 auto;
             flex: 1 1 auto;
@@ -836,14 +1070,13 @@
         }
 
         .custom-file-input ~ .custom-file-label[data-browse]::after {
-            content: attr(data-browse);
+            content: attr(data-browse) !important;
         }
 
         .custom-file-label {
             position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
+            top: -10px;
+            right: 5px;
             z-index: 1;
             height: calc(1.5em + 0.75rem + 2px);
             padding: 0.375rem 0.75rem;
@@ -852,7 +1085,8 @@
             color: #495057;
             background-color: #fff;
             border: 1px solid #ced4da;
-            border-radius: 0.25rem;
+            /*border-radius: 0.25rem;*/
+            width: 95%;
         }
 
         .custom-file-label::after {
@@ -1022,11 +1256,7 @@
         }
 
     </style>
-
-
-@yield('css')
-
-
+    @yield('css')
 
 <!-- jQuery 3.1.1 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -1053,7 +1283,7 @@
 
             <!-- Logo -->
             <a href="#" class="logo">
-                <b>چمران‌شهر</b>
+                <b class="vazir-font-fd">چــــــــمران‌شهر</b>
             </a>
 
             <!-- Header Navbar -->
@@ -1070,30 +1300,30 @@
                             <!-- Menu Toggle Button -->
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <!-- The user image in the navbar-->
-                                <img src="http://infyom.com/images/logo/blue_logo_150x150.jpg"
-                                     class="user-image" alt="User Image"/>
+                                <img src="{{ Auth::user()->avatar() }}"
+                                     class="user-image image-square-4" alt="User Image"/>
                                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
                                 <span class="hidden-xs">{!! Auth::user()->first_name . ' ' . Auth::user()->last_name!!}</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- The user image in the menu -->
                                 <li class="user-header">
-                                    <img src="http://infyom.com/images/logo/blue_logo_150x150.jpg"
-                                         class="img-circle" alt="User Image"/>
+                                    <img src="{{ Auth::user()->avatar() }}"
+                                         class="img-circle image-square-10" alt="User Image"/>
                                     <p>
                                         {!! Auth::user()->name !!}
-                                        <small>Member since {!! Auth::user()->created_at->format('M. Y') !!}</small>
+                                        <small>تاریخ عضویت {{ Morilog\Jalali\Jalalian::fromDateTime(Auth::user()->created_at)->format('%A, %d %B') }}</small>
                                     </p>
                                 </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
-                                    <div class="pull-left">
-                                        <a href="{{ route('users.showProfile') }}" class="btn btn-default btn-flat">صفحه‌ی شخصی</a>
-                                    </div>
                                     <div class="pull-right">
+                                        <a href="{{ route('profile') }}" class="btn btn-primary btn-flat">صفحه‌ی شخصی</a>
+                                    </div>
+                                    <div class="pull-left">
                                         <a href="{!! url('/logout') !!}" class="btn btn-default btn-flat"
                                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            Sign out
+                                            خروج
                                         </a>
                                         <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
                                             {{ csrf_field() }}
@@ -1116,7 +1346,7 @@
 
         <!-- Main Footer -->
         <footer class="main-footer" style="max-height: 100px;text-align: center">
-            <strong>Copyright © 2016 <a href="#">Company</a>.</strong> All rights reserved.
+            تیم توسعه‌ی <strong><a>چمران‌شهر</a></strong>
         </footer>
 
     </div>
@@ -1166,5 +1396,6 @@
         </div>
     </div>
     @endif
+
 </body>
 </html>

@@ -94,6 +94,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     /** Department Apis which doesnt needs Authenticated user */
     Route::get('departments/{id}', 'DepartmentAPIController@show');
     Route::get('departments/{id}/notices', 'DepartmentAPIController@notices');
+    Route::get('departments/{id}/noticeCount', 'DepartmentAPIController@noticeCount');
 
 
     Route::group(['middleware' => ['role:admin|developer']], function(){

@@ -9,47 +9,60 @@
 
 <!-- Title Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('title', 'Title:') !!}
+    {!! Form::label('title', 'عنوان:') !!}
     {!! Form::text('title', null, ['class' => 'form-control']) !!}
 </div>
 
-<!-- Link Field -->
+<!-- Creator Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('link', 'Link:') !!}
-    {!! Form::text('link', null, ['class' => 'form-control']) !!}
+    {!! Form::label('creator_id', 'سازنده:') !!}
+    {!! Form::select('creator_id', $creators, null, ['class' => 'form-control']) !!}
 </div>
 
+<!-- Link Field -->
+<div class="form-group col-sm-12">
+    {!! Form::label('link', 'پیوند:') !!}
+    {!! Form::textarea('link', null, ['class' => 'form-control', 'rows' => 4, 'dir' => 'ltr']) !!}
+</div>
+
+{{--<!-- Path Field -->--}}
+{{--<div class="form-group col-sm-12 col-lg-12">--}}
+{{--    {!! Form::label('path', 'Path:') !!}--}}
+{{--    {!! Form::textarea('path', null, ['class' => 'form-control']) !!}--}}
+{{--</div>--}}
+
+
 <!-- Path Field -->
-<div class="form-group col-sm-12 col-lg-12">
-    {!! Form::label('path', 'Path:') !!}
-    {!! Form::textarea('path', null, ['class' => 'form-control']) !!}
+<div class="form-group">
+    <div class="form-group col-sm-12 col-lg-12">
+        {!! Form::label('path', 'تصویر:') !!}
+    </div>
+    <div class="col-md-10">
+        <input type="file" name="path" class="form-control custom-file-input"
+               id="customFile">
+        <label style="margin-right: 10px" class="form-control custom-file-label"
+               for="customFile"></label>
+    </div>
 </div>
 
 <!-- Description Field -->
 <div class="form-group col-sm-12 col-lg-12">
-    {!! Form::label('description', 'Description:') !!}
+    {!! Form::label('description', 'توضیحات:') !!}
     {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Author Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('author', 'Author:') !!}
+    {!! Form::label('author', 'نویسنده (منبع):') !!}
     {!! Form::text('author', null, ['class' => 'form-control']) !!}
-</div>
-
-<!-- Creator Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('creator_id', 'Creator:') !!}
-    {{--    {!! Form::text('creator_id', null, ['class' => 'form-control']) !!}--}}
-    {!! Form::select('creator_id', $creators, null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Owner Type Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('owner_type', 'Owner Type:') !!}
+    {!! Form::label('owner_type', 'نوع مالک:') !!}
     {{--    {!! Form::text('creator_id', null, ['class' => 'form-control']) !!}--}}
     <select class="form-control m-bot15" name="owner_type" id="owner_type">
-        <option disabled selected value> -- select an option -- </option>
+        <option disabled selected value> -- یک گزینه انتخاب کنید -- </option>
         @if(isset($notice)) // edit view
             @foreach($owner_types as $key => $value)
                 @if($value == $notice->owner_type)
@@ -68,7 +81,7 @@
 
 <script>
     jQuery(document).ready(function(){
-        $('select[name="owner_type"]').on('click', function(){
+        $('select[name="owner_type"]').on('change', function(){
             jQuery('#owner_id').empty();
             $.ajaxSetup({
                 headers: {
@@ -101,7 +114,7 @@
 
 <!-- Owner Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('owner_id', 'Owner:') !!}
+    {!! Form::label('owner_id', 'مالک:') !!}
     {{--    {!! Form::text('creator_id', null, ['class' => 'form-control']) !!}--}}
     <select class="form-control" name="owner_id" id="owner_id"></select>
 </div>
@@ -139,16 +152,16 @@
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
 {{--    {!! Form::submit('Save', ['class' => 'btn btn-primary', 'onclick' => "ConfirmDialog('Are you sure')"]) !!}--}}
-    {!! Form::submit('Save', ['class' => 'btn btn-primary', 'id' => 'submit']) !!}
+    {!! Form::submit('ذخیره', ['class' => 'btn btn-primary', 'id' => 'submit']) !!}
 
-    <a href="{!! route('notices.index') !!}" class="btn btn-default">Cancel</a>
+    <a href="{!! route('notices.index') !!}" class="btn btn-default">لغو</a>
 </div>
 
 <script>
     $("#submit").click(function(){
-        if(confirm("do you want make a notification too?")){
+        if(confirm("میخواهید از این اطلاعیه نوتیفیکیشن ساخته شود؟")){
             if($("#has_notification").val()){
-                if(confirm("this notice has notifications before, create anathor one?!")){
+                if(confirm("از این اطلاعیه قبلا نوتیفیکیشن ساخته شده است. مایلید ادامه دهید؟")){
                     $("#make_notification").val(true);
                 }
             } else {

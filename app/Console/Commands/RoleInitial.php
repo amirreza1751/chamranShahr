@@ -98,6 +98,12 @@ class RoleInitial extends Command
             ]);
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
 
+            $role = Role::create([
+                'name' => 'manager',
+                'guard_name' => 'web',
+            ]);
+            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
+
 
 
         } else {

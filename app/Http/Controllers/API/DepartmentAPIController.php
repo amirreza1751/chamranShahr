@@ -353,4 +353,61 @@ class DepartmentAPIController extends AppBaseController
 
         return $this->sendResponse($notices, 'Notices retrieved successfully');
     }
+
+    /**
+     * @param int $id
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="/departments/{id}/noticeCount",
+     *      summary="Retrieve number of Department Notices",
+     *      tags={"Department"},
+     *      description="retrieve number of the specified department notices",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of Department",
+     *          type="integer",
+     *          required=true,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="count",
+     *                  type="integer",
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function noticeCount($id)
+    {
+        /** @var Department $department */
+        $department = $this->departmentRepository->findWithoutFail($id);
+
+        if (empty($department)) {
+            return $this->sendError('دپارتمان وجود ندارد');
+        }
+        /** **** Customization **** */
+
+        $this->authorize('view', $department);
+
+//        $notices = $department->notices()->orderBy('created_at', 'desc')->take(5)->get();
+//
+//        $notices = Notice::staticRetrieves($notices);
+
+        return $this->sendResponse(sizeof($department->notices), 'Notice Count retrieved successfully');
+    }
 }

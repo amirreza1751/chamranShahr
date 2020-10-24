@@ -3,7 +3,7 @@
 @section('content')
     <section class="content-header">
         <h1>
-            Notice
+            اطلاعیه
         </h1>
     </section>
     <div class="content">
@@ -13,7 +13,7 @@
 
             <div class="box-body">
                 <div class="row">
-                    {!! Form::open(['route' => 'notices.store']) !!}
+                    {!! Form::open(['route' => 'notices.store', 'enctype' => 'multipart/form-data']) !!}
 
                         @include('notices.fields')
 
