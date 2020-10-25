@@ -5,6 +5,7 @@ namespace App\Models;
 use App\User;
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\URL;
 
 /**
  * @SWG\Definition(
@@ -141,6 +142,26 @@ class Department extends Model
     public function externalServices()
     {
         return $this->morphMany(ExternalService::class, 'owner');
+    }
+
+    /**
+     * **** ATTENTION ****
+     * if there is no image on public/storage/departments/departments_default_image.jpg then you must put a default image there,
+     * if not, some functionality may doesn't work properly
+     *
+     * return default image path for departments which has no image yet
+     *
+     * @return string path of default image path
+     *
+     */
+    public function getAbsolutePathAttribute()
+    {
+        $file =  new \Illuminate\Filesystem\Filesystem();
+
+        if (isset($this->path) && $file->exists(base_path() . str_replace('storage', 'public/storage', $this->path)))
+            return URL::to('/') . $this->path;
+        else
+            return URL::to('/') . env('DEFAULT_DEPARTMENT_IMAGE');
     }
 
     public function retrieveManager()

@@ -14,7 +14,7 @@
             @include('flash::message')
             <div class="col-sm-12">
                 <div class="card box-cover">
-                    <img class="card-img-top box-cover-img" src="{{ $department->path }}" alt="Card image">
+                    <img class="card-img-top box-cover-img" src="{{ $department->absolute_path }}" alt="Card image">
                     <div class="card-body text-center">
                         <h4 class="card-title">@if(isset($department->title)) {{ $department->title }} @endif</h4>
                         <p class="card-text"><strong>نوع: @if(!is_null($department->manage_level)) {{ $department->manage_level->management_title }} @endif</strong></p>
