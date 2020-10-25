@@ -5,6 +5,11 @@
         <h1>
             اطلاعیه
         </h1>
+        <ol class="breadcrumb">
+            <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>
+            <li><a href="{{ route('notices.index') }}"><i class="fa fa-sticky-note"></i>مدیریت اطلاعیه‌ها</a></li>
+            <li class="active">مشاهده اطلاعیه</li>
+        </ol>
     </section>
     <div class="content">
         <div class="box box-primary">

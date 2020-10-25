@@ -5,6 +5,11 @@
         <h1>
             سرویس خارجی
         </h1>
+        <ol class="breadcrumb">
+            <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>
+            <li><a href="{{ route('externalServices.index') }}"><i class="fa fa-rss-square"></i>مدیریت سرویس‌های خارجی</a></li>
+            <li class="active">ویرایش سرویس خارجی</li>
+        </ol>
    </section>
    <div class="content">
        @include('adminlte-templates::common.errors')

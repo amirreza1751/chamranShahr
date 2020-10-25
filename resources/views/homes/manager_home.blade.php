@@ -42,10 +42,10 @@
                         <p>دپارتمان‌ها</p>
                     </div>
                     <div class="icon">
-                        <i class="fa fa-building"></i>
+                        <i class="fa fa-building" style="font-size: 8.5rem; z-index: -1"></i>
                     </div>
                     <a href="{{ route('departments.index') }}" class="small-box-footer">
-                        More info <i class="fa fa-arrow-circle-right"></i>
+                        <i class="fa fa-arrow-circle-right"></i> بیشتر
                     </a>
                 </div>
             </div>
@@ -60,10 +60,10 @@
                         <p>سرویس‌های خارجی</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
+                        <i class="fa fa-rss" style="font-size: 8.5rem"></i>
                     </div>
                     <a href="{{ route('externalServices.index') }}" class="small-box-footer">
-                        More info <i class="fa fa-arrow-circle-right"></i>
+                        <i class="fa fa-arrow-circle-right"></i> بیشتر
                     </a>
                 </div>
             </div>
@@ -72,15 +72,15 @@
                 <!-- small box -->
                 <div class="small-box bg-yellow">
                     <div class="inner">
-                        <h3>44</h3>
+                        <h3>{{ $newsCount }}</h3>
 
-                        <p>User Registrations</p>
+                        <p>اخبار</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-person-add"></i>
+                        <i class="fa fa-newspaper-o" style="font-size: 8.5rem"></i>
                     </div>
-                    <a href="#" class="small-box-footer">
-                        More info <i class="fa fa-arrow-circle-right"></i>
+                    <a href="{{ route('news.index') }}" class="small-box-footer">
+                        <i class="fa fa-arrow-circle-right"></i> بیشتر
                     </a>
                 </div>
             </div>
@@ -89,15 +89,15 @@
                 <!-- small box -->
                 <div class="small-box bg-red">
                     <div class="inner">
-                        <h3>65</h3>
+                        <h3>{{ $noticesCount }}</h3>
 
-                        <p>Unique Visitors</p>
+                        <p>اطلاعیه‌ها</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-pie-graph"></i>
+                        <i class="fa fa-sticky-note" style="font-size: 8.5rem"></i>
                     </div>
-                    <a href="#" class="small-box-footer">
-                        More info <i class="fa fa-arrow-circle-right"></i>
+                    <a href="{{ route('notices.index') }}" class="small-box-footer">
+                        <i class="fa fa-arrow-circle-right"></i> بیشتر
                     </a>
                 </div>
             </div>

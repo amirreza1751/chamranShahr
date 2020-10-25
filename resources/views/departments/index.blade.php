@@ -2,12 +2,16 @@
 
 @section('content')
     <section class="content-header">
-        <h1 class="pull-right">دپارتمان‌ها</h1>
+        <h1>دپارتمان‌ها</h1>
         @if(Auth::user()->hasRole('developer|admin|content_manager|department_manager'))
-            <h1 class="pull-left">
-               <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('departments.create') !!}">Add New</a>
+            <h1 class="pull-right">
+               <a class="btn btn-xs btn-primary pull-right" style="margin-right: 1rem" href="{!! route('departments.create') !!}">ایجاد دپارتمان</a>
             </h1>
         @endif
+        <ol class="breadcrumb">
+            <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>
+            <li class="active">مدیریت دپارتمان‌ها</li>
+        </ol>
     </section>
     <div class="content">
         <div class="clearfix"></div>

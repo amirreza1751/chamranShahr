@@ -514,7 +514,17 @@
         .content-header > .breadcrumb {
             direction: ltr !important;
             left: 10px;
-            right: 0;
+            right: 35rem;
+        }
+        .content-header > .breadcrumb.top-0 {
+            top: 0;
+        }
+        @media (max-width: 991px){
+            .content-header > .breadcrumb {
+                margin-bottom: 2rem;
+                top: 3rem;
+                right: 0;
+            }
         }
         /* Tab Nav bar RTL style*/
 

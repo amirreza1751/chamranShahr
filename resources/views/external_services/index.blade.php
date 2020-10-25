@@ -4,10 +4,14 @@
     <section class="content-header">
         <h1 class="pull-right">سرویس‌های خارجی</h1>
         @if(Auth::user()->hasRole('developer|admin|content_manager|department_manager|manager'))
-            <h1 class="pull-left">
-               <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('externalServices.create') !!}">ایجاد سرویس</a>
+            <h1 class="pull-right">
+               <a class="btn btn-primary btn-xs pull-right" style="margin-right: 10px" href="{!! route('externalServices.create') !!}">ایجاد سرویس</a>
             </h1>
         @endif
+        <ol class="breadcrumb">
+            <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>
+            <li class="active">مدیریت سرویس‌های خارجی</li>
+        </ol>
     </section>
     <div class="content">
         <div class="clearfix"></div>
@@ -39,6 +43,7 @@
 
                             {!! Form::open(['route' => ['externalServices.destroy', $externalService->id], 'method' => 'delete', 'class' => 'pull-left']) !!}
                             <div class="">
+                                <a href="{{ route('externalServices.show', $externalService->id) }}" class="btn btn-primary btn-sm">به روز رسانی</a>
                                 <a href="{{ route('externalServices.show', $externalService->id) }}" class="btn btn-success btn-sm">نمایش</a>
                                 <a href="{{ route('externalServices.edit', $externalService->id) }}" class="btn btn-warning btn-sm">ویرایش</a>
 {{--                                <button href="{{ route('externalServices.destroy', $externalService->id) }}" class="btn btn-danger">حذف</button>--}}

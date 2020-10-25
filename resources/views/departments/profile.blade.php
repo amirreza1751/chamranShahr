@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+    <section class="content-header">
+        <ol class="breadcrumb top-0">
+            <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>
+            <li><a href="{{ route('departments.index') }}"><i class="fa fa-building"></i>مدیریت دپارتمان‌ها</a></li>
+            <li class="active">دپارتمان {{ $department->title }}</li>
+        </ol>
+    </section>
     <div class="container-fluid" style="padding: 0">
         <div class="content" style="padding: 0">
             @include('adminlte-templates::common.errors')
