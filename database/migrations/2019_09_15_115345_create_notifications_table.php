@@ -15,16 +15,15 @@ class CreateNotificationsTable extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('title')->nullable();
-            $table->string('brief_description')->nullable();
-            $table->string('type')->nullable();
-            $table->morphs('notifiable');
-            $table->morphs('notifier');
-            $table->timestamp('deadline')->nullable();
+            $table->unsignedInteger('sample_id');
+            $table->morphs('notifiable'); // entity which receive this notification
             $table->text('data')->nullable();
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('sample_id')->references('id')->on('notification_samples')
+                ->onDelete('cascade');
         });
     }
 

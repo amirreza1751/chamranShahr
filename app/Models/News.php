@@ -111,7 +111,7 @@ class News extends Model
 
     public function notifications()
     {
-        return $this->morphMany(Notification::class, 'notifier');
+        return $this->morphMany(NotificationSample::class, 'notifier');
     }
 
     public function owner()

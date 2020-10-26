@@ -295,3 +295,6 @@ Route::group(['middleware' => 'cors'], function() {
 //store a push subscriber.
     Route::post('/push', 'PushController@store');
 });
+
+
+Route::resource('notification_samples', 'NotificationSampleAPIController');

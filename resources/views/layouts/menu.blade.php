@@ -127,3 +127,7 @@
         {{ csrf_field() }}
     </form>
 </li>
+<li class="{{ Request::is('notificationSamples*') ? 'active' : '' }}">
+    <a href="{{ route('notificationSamples.index') }}"><i class="fa fa-edit"></i><span>Notification Samples</span></a>
+</li>
+

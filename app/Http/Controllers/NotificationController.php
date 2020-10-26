@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\General\Constants;
 use App\Http\Requests\CreateNotificationRequest;
 use App\Http\Requests\UpdateNotificationRequest;
 use App\Models\Faculty;
@@ -15,6 +16,7 @@ use App\Models\StudyLevel;
 use App\Models\StudyStatus;
 use App\Models\Term;
 use App\Notifications\EducationalNotification;
+use App\Notifications\GeneralNotification;
 use App\Notifications\NoticeNotification;
 use App\Repositories\NotificationRepository;
 use App\Http\Controllers\AppBaseController;
@@ -220,7 +222,8 @@ class NotificationController extends AppBaseController
             ->with('study_levels', $study_levels)
             ->with('entrance_terms', $entrance_terms)
             ->with('study_statuses', $study_statuses)
-            ->with('notifiers', $notifiers);
+            ->with('notifiers', $notifiers)
+            ->with('notification_types', Constants::notification_types);
     }
 
     public function showNotifyStudentsFromNotifier($notifier_type, $notifier_id)
@@ -264,6 +267,7 @@ class NotificationController extends AppBaseController
             'study_level_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyLevel::class))) . '[0-9]/',
             'study_area_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyArea::class))) . '[0-9]/',
             'entrance_term_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", Term::class))) . '[0-9]/',
+            'type' => ['nullable','regex:(' . '^'.Constants::EDUCATIONAL_NOTIFICATION.'$' . '|' . '^'.Constants::STUDIOUS_NOTIFICATION.'$' . '|' . '^'.Constants::COLLEGIATE_NOTIFICATION.'$' . '|' . '^'.Constants::CULTURAL_NOTIFICATION.'$' . ')'],
         ]);
 
         $this->authorize('notifyStudents', [$input['notifier_type'], $input['notifier_id']]);
@@ -325,7 +329,7 @@ class NotificationController extends AppBaseController
             return redirect(route('notifications.index'));
         }
 
-        $this->send($students, $input['notifier_type'], $input['notifier_id'], $input['deadline'], $title, $brief_description);
+        $this->send($students, $input['notifier_type'], $input['notifier_id'], $input['deadline'], $title, $brief_description, $input['type']);
 
         Flash::success('Notification sent successfully.');
 
@@ -377,8 +381,8 @@ class NotificationController extends AppBaseController
             return $study_field->study_areas->pluck('title', 'unique_code');
     }
 
-    public function send($students, $notifier_type, $notifier_id, $deadline, $title, $brief_description)
+    public function send($students, $notifier_type, $notifier_id, $deadline, $title, $brief_description, $type)
     {
-        \Illuminate\Support\Facades\Notification::send($students, new EducationalNotification($notifier_type, $notifier_id, $deadline, $title, $brief_description));
+        \Illuminate\Support\Facades\Notification::send($students, new GeneralNotification($notifier_type, $notifier_id, $deadline, $title, $brief_description, $type));
     }
 }

@@ -332,3 +332,6 @@ Route::get('temp', function (){
 
 //make a push notification.
 Route::middleware('auth:web')->get('/push/{message?}','PushController@push')->name('push');
+
+
+Route::resource('notificationSamples', 'NotificationSampleController');

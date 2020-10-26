@@ -272,6 +272,17 @@
                         {!! Form::date('deadline', null, ['class' => 'form-control','id'=>'deadline']) !!}
                     </div>
 
+                    <!-- Notification Type Field -->
+                    <div class="form-group col-sm-6">
+                        {!! Form::label('type', 'نوع نوتیفیکیشن:') !!}
+                        <select class="form-control" name="type" id="type">
+                            <option disabled selected value> -- انتخاب کنید -- </option>
+                            @foreach($notification_types as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                 <!-- Submit Field -->
                     <div class="form-group col-sm-12">
                         {!! Form::submit('ایجاد', ['class' => 'btn btn-primary']) !!}

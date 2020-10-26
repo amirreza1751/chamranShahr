@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\User;
-use Eloquent as Model;
+use Illuminate\Database\Eloquent\Model as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Support\Facades\Auth;
@@ -102,18 +102,12 @@ class Notification extends Model
     const UPDATED_AT = 'updated_at';
 
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'read_at'];
 
 
     public $fillable = [
-        'title',
-        'brief_description',
-        'type',
         'notifiable_type',
         'notifiable_id',
-        'notifier_type',
-        'notifier_id',
-        'deadline',
         'data',
         'read_at'
     ];
@@ -125,14 +119,8 @@ class Notification extends Model
      */
     protected $casts = [
         'id' => 'string',
-        'title' => 'string',
-        'brief_description' => 'string',
-        'type' => 'string',
         'notifiable_type' => 'string',
         'notifiable_id' => 'integer',
-        'notifier_type' => 'string',
-        'notifier_id' => 'integer',
-        'deadline' => 'datetime',
         'data' => 'string',
         'read_at' => 'datetime'
     ];
@@ -145,39 +133,44 @@ class Notification extends Model
     public static $rules = [
         'notifiable_type' => 'required',
         'notifiable_id' => 'required',
-        'notifier_type' => 'required',
-        'notifier_id' => 'required'
     ];
-
-    public function notifier()
-    {
-        return $this->morphTo();
-    }
 
     public function notifiable()
     {
         return $this->morphTo();
     }
 
+    public function notificationSample()
+    {
+        return $this->belongsTo(NotificationSample::class, 'sample_id');
+    }
+
+    public function getTitleAttribute() { return $this->notificationSample->title; }
+    public function getBriefDescriptionAttribute() { return $this->notificationSample->brief_description; }
+    public function getTypeAttribute() { return $this->notificationSample->type; }
+    public function getNotifierTypeAttribute() { return $this->notificationSample->notifier_type; }
+    public function getNotifierIdAttribute() { return $this->notificationSample->notifier_id; }
+    public function getDeadlineAttribute() { return $this->notificationSample->deadline; }
+
     public function retrieve(){
         $retrieve = collect($this->toArray())
             ->only([
                 'id',
-                'title',
-                'brief_description',
-                'type',
-                'notifier_type',
-                'notifier_id',
-                'deadline',
                 'read_at',
                 'created_at',
                 'updated_at',
                 'deleted_at',
             ])
             ->all();
-        if(isset($this->notifier)){
-            $retrieve['thumbnail'] = $this->notifier->thumbnail;
-            $retrieve['path'] = $this->notifier->absolute_path;
+        $retrieve['title'] = $this->title;
+        $retrieve['brief_description'] = $this->brief_description;
+        $retrieve['type'] = $this->type;
+        $retrieve['notifier_type'] = $this->notifier_type;
+        $retrieve['notifier_id'] = $this->notifier_id;
+        $retrieve['deadline'] = $this->deadline;
+        if(isset($this->notificationSample->notifier)){
+            $retrieve['thumbnail'] = $this->notificationSample->notifier->thumbnail;
+            $retrieve['path'] = $this->notificationSample->notifier->absolute_path;
         }
         return $retrieve;
     }
