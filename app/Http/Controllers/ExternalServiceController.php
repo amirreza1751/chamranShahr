@@ -587,9 +587,12 @@ class ExternalServiceController extends AppBaseController
                                             $destinationPath = public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
                                             $img = Image::make($file);
                                             // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
-                                            $img->resize(100, 100, function ($constraint) {
-                                                $constraint->aspectRatio();
-                                            })->save($destinationPath.'/' . $file_name . '-thumbnail.' . $file_extension);
+//                                            $img->resize(100, 100, function ($constraint) {
+//                                                $constraint->aspectRatio();
+//                                            })->save($destinationPath.'/' . $file_name . '-thumbnail.' . $file_extension);
+                                            Storage::disk('local')->put('/public/news_images/'.$file_name . '-thumbnail.' . $file_extension, $img->resize(100, 100, function ($constraint) {
+//                                                $constraint->aspectRatio();
+//                                            }));
 
                                             /**
                                              * ************************* VERY IMPORTANT
