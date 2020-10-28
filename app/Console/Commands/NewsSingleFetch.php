@@ -193,7 +193,7 @@ class NewsSingleFetch extends Command
                                         curl_close($ch);
                                         fclose($fp);
                                         //put image to relative folder to its owner such department
-                                        $path = Storage::putFile('public/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($media_file));
+                                        $path = Storage::putFile('public/storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($media_file));
                                         $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
                                         $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
                                         // retrieve the stored media
@@ -340,7 +340,7 @@ class NewsSingleFetch extends Command
                                         curl_close($ch);
                                         fclose($fp);
                                         //put media to relative folder to its owner such department
-                                        $path = Storage::putFile('public/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
+                                        $path = Storage::putFile('public/storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
                                         $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
                                         $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
                                         // retrieve the stored media
