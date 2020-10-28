@@ -409,7 +409,7 @@ class ExternalServiceController extends AppBaseController
                                         /** < get media size > */
                                         if ($clen < 2097152) { // if image size < 2MiB
 
-                                            $media_file = 'tmp/news_tmp' . str_random(4) . '.tmp';
+                                            $media_file = base_path().'/tmp/news_tmp' . str_random(4) . '.tmp';
                                             $ch = curl_init($news['path']);
                                             $fp = fopen($media_file, 'wb') or die('Permission error');
                                             curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -562,7 +562,7 @@ class ExternalServiceController extends AppBaseController
                                         /** < get media size > */
                                         if ($clen < 2097152) { // if media size < 2MiB
 
-                                            $name = 'tmp/news_tmp' . str_random(4) . '.tmp';
+                                            $name = base_path().'/tmp/news_tmp' . str_random(4) . '.tmp';
                                             $ch = curl_init($news['path']);
                                             $fp = fopen($name, 'wb') or die('Permission error');
                                             curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -635,7 +635,7 @@ class ExternalServiceController extends AppBaseController
                      * delete all medias stored in in tmp directory due to put it to exact directory,
                      * because all needed medias should stored to their exact directory before, and the others probably are dummy files
                      */
-                    $files = glob('tmp/news_tmp*'); //get all file names
+                    $files = glob(base_path().'/tmp/news_tmp*'); //get all file names
                     if (sizeof($files) > 0) {
                         $cc->print_warning('clean tmp directory:');
                         foreach ($files as $file) {
