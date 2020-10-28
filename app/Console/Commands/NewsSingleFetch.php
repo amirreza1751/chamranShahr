@@ -58,7 +58,7 @@ class NewsSingleFetch extends Command
         $external_service = ExternalService::find($id);
         $cc = new ConsoleColor();
         if(isset($external_service)){
-            ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
+//            ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
             try {
                 /**
                  * this user is the default user of the university created by UserInitial command at first

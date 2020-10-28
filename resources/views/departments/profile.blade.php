@@ -10,8 +10,12 @@
     </section>
     <div class="container-fluid" style="padding: 0">
         <div class="content" style="padding: 0">
+
+            <div class="clearfix"></div>
             @include('adminlte-templates::common.errors')
             @include('flash::message')
+            <div class="clearfix"></div>
+
             <div class="col-sm-12">
                 <div class="card box-cover">
                     <img class="card-img-top box-cover-img" src="{{ $department->absolute_path }}" alt="Card image">

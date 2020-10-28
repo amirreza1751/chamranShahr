@@ -26,9 +26,9 @@ class UpdateDepartmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'string',
-            'english_title' => 'string',
-            'description' => 'string',
+            'title' => 'nullable|string',
+            'english_title' => 'nullable|string',
+            'description' => 'nullable|string',
             'path' => 'image|mimes:jpg,jpeg|max:2048',
         ];
     }

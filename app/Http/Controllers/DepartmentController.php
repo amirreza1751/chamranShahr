@@ -200,8 +200,6 @@ class DepartmentController extends AppBaseController
             return redirect()->back();
         }
 
-        $department->path = URL::to('/') . '/' . $department->path;
-
         return view('departments.profile')
             ->with('department', $department);
     }
@@ -233,7 +231,9 @@ class DepartmentController extends AppBaseController
     public function updateProfile($id, UpdateDepartmentRequest $request)
     {
         $department = $this->departmentRepository->findWithoutFail($id);
-        $input = $request->all();
+        $input = collect(request()->only(['title', 'english_title', 'description', 'path']))->filter(function($value) {
+            return null !== $value;
+        })->toArray();
 
         if (empty($department)) {
             Flash::error('مدیریت مورد نظر وجود ندارد');
@@ -253,7 +253,7 @@ class DepartmentController extends AppBaseController
 
         Flash::success('صفحه‌ی مدیریت با موفقیت به روز شد');
 
-        return redirect(route('departments.showProfile', [ $department->id ]));
+        return redirect(route('departments.profile', [ $department->id ]));
     }
 
 }
