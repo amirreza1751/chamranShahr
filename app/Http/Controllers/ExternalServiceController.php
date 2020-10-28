@@ -264,13 +264,29 @@ class ExternalServiceController extends AppBaseController
 </body>
 </html>';
 
+
         try {
             $single_fetch_exitcode = Artisan::call('news:single_fetch', ['id' => $id]);
         } catch (\Exception $e) {
-            Flash::error('به روزرسانی محتوای سرویس خارجی موفقیت آمیز نبود. لطفا مجددا تلاش کنید');
-
-            return redirect(route('externalServices.index'));
+//                $cc->print_error("\n\n\noops!");
+//                $cc->print_warning("fetch procedure crash due to some problem with this error:");
+//                $cc->print_error($e->getMessage());
+//                $cc->print_help("the exception thrown at line " . $e->getLine() . " of\t" . str_after($e->getFile(), base_path()) . "\tfile, pls check that and try again");
+//                $cc->print_warning("do you want to see exception trace back?(y or n)");
+//                $c = fread(STDIN, 1);
+//                if ($c == 'y') {
+////                    var_dump($e->getTraceAsString());
+//                }
+            return $e->getMessage();
         }
+
+//        try {
+//
+//        } catch (\Exception $e) {
+//            Flash::error('به روزرسانی محتوای سرویس خارجی موفقیت آمیز نبود. لطفا مجددا تلاش کنید');
+//
+//            return redirect(route('externalServices.index'));
+//        }
 
         Flash::success('محتوای سرویس خارجی باموفقیت به روز رسانی شد');
 
