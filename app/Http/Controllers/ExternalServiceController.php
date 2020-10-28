@@ -655,7 +655,7 @@ class ExternalServiceController extends AppBaseController
                 }
 
             } catch (\Exception $e) {
-                return $e->getMessage();
+                return $e->getMessage(). ' | '. $e->getLine() . ' | ' . $e->getTrace();
 //                $cc->print_error("\n\n\noops!");
 //                $cc->print_warning("fetch procedure crash due to some problem with this error:");
 //                $cc->print_error($e->getMessage());
