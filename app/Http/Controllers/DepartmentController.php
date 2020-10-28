@@ -246,7 +246,7 @@ class DepartmentController extends AppBaseController
         if($request->hasFile('path')){
             $path = $request->file('path')->store('/public/departments/cover');
             $path = str_replace('public', 'storage', $path);
-            $input['path'] = $path;
+            $input['path'] = '/'.$path;
         }
 
         $department = $this->departmentRepository->update($input, $department->id);
