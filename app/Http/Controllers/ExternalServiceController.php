@@ -591,8 +591,8 @@ class ExternalServiceController extends AppBaseController
 //                                                $constraint->aspectRatio();
 //                                            })->save($destinationPath.'/' . $file_name . '-thumbnail.' . $file_extension);
                                             Storage::disk('local')->put('/public/news_images/'.$file_name . '-thumbnail.' . $file_extension, $img->resize(100, 100, function ($constraint) {
-//                                                $constraint->aspectRatio();
-//                                            }));
+                                                $constraint->aspectRatio();
+                                            }));
 
                                             /**
                                              * ************************* VERY IMPORTANT
