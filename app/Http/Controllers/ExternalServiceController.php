@@ -14,6 +14,7 @@ use App\Models\Notice;
 use App\Repositories\ExternalServiceRepository;
 use App\Http\Controllers\AppBaseController;
 use App\Repositories\NewsRepository;
+use App\Repositories\NoticeRepository;
 use App\User;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ use Flash;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Exception\NotFoundException;
 use Intervention\Image\Facades\Image;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -34,6 +36,8 @@ class ExternalServiceController extends AppBaseController
     private $externalServiceRepository;
     /** @var  NewsRepository */
     private $newsRepository;
+    /** @var  NoticeRepository */
+    private $noticeRepository;
     private $content_types = [
         'Notice' => Notice::class,
         'News' => News::class,
@@ -42,10 +46,11 @@ class ExternalServiceController extends AppBaseController
         'Department' => Department::class,
     ];
 
-    public function __construct(ExternalServiceRepository $externalServiceRepo, NewsRepository $newsRepo)
+    public function __construct(ExternalServiceRepository $externalServiceRepo, NewsRepository $newsRepo, NoticeRepository $noticeRepo)
     {
         $this->externalServiceRepository = $externalServiceRepo;
         $this->newsRepository = $newsRepo;
+        $this->noticeRepository = $noticeRepo;
     }
 
     /**
@@ -280,9 +285,8 @@ class ExternalServiceController extends AppBaseController
 
         $external_service = ExternalService::find($id);
         $cc = new ConsoleColor();
-        $console = new ConsoleOutput();
         if(isset($external_service)){
-//            ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
+            ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
             try {
                 /**
                  * this user is the default user of the university created by UserInitial command at first
@@ -295,11 +299,11 @@ class ExternalServiceController extends AppBaseController
                     ->where('username', 'scu')->first();
 
                 if(!isset($scu_user)){
-                    $cc->print_warning("default user that should created before not found for some reason.");
-                    $cc->print_error("this may cause some error during fetch procedure...");
-                    $cc->print_help("problem maybe be somewhere in user:initial command logic (according to my creators thoughts)");
-                    $cc->print_help("if you don't execute this command, so do it first and try again.");
-                    $cc->print_warning("do you want to continue anyway?(y or n)");
+//                    $cc->print_warning("default user that should created before, not found for some reason.");
+//                    $cc->print_error("this may cause some error during fetch procedure...");
+//                    $cc->print_help("problem maybe be somewhere in user:initial command logic (according to my creators thoughts)");
+//                    $cc->print_help("if you don't execute this command, so do it first and try again.");
+//                    $cc->print_warning("do you want to continue anyway?(y or n)");
                     $c = fread(STDIN, 1);
                 } else {
                     $c = 'y';
@@ -318,184 +322,468 @@ class ExternalServiceController extends AppBaseController
 
                     $xml = simplexml_load_string($xml);
 
-                    /**
-                     * scu portal have special structure and we don't need all information its provide;
-                     * so we use certain part of information which retrieved in "item" key
-                     * that's an array of news
-                     */
-                    if(isset($xml->item)) {
-                        $datas = $xml->item;
+                    if ($external_service->content_type == News::class){
+                        /**
+                         * scu portal have special structure and we don't need all information its provide;
+                         * so we use certain part of information which retrieved in "item" key
+                         * that's an array of news
+                         */
+                        if(isset($xml->item)) {
+                            $datas = $xml->item;
 
-                        /** retrieve owner of the notice; for example: department */
-                        $model_name =  $external_service->owner_type;
-                        $model = new $model_name();
-                        $owner = $model::findOrFail($external_service->owner_id);
+                            /** retrieve owner of the news; for example: department */
+                            $model_name =  $external_service->owner_type;
+                            $model = new $model_name();
+                            $owner = $model::findOrFail($external_service->owner_id);
 
 //                        dump('medias store on server for specific news:');
-                        foreach ($datas as $data) {
-                            $default_image = false;
-                            $default_image_message = '';
+                            foreach ($datas as $data) {
+                                $default_image = false;
+                                $default_image_message = '';
 
 
-                            //                      < scraping news link >
-                            $crawler = GoutteFacade::request('GET', 'http://scu.ac.ir/-/' . urlencode(str_replace('http://scu.ac.ir/-/', '', strval($data->link))));
-                            $node = $crawler->filter('div.news-page-image > img')->first();
-                            $media_url = 'http://scu.ac.ir' . $node->attr('src');
-                            //                      < scraping news link >
+                                //                      < scraping news link >
+                                $crawler = GoutteFacade::request('GET', 'http://scu.ac.ir/-/' . urlencode(str_replace('http://scu.ac.ir/-/', '', strval($data->link))));
+                                $node = $crawler->filter('div.news-page-image > img')->first();
+                                $media_url = 'http://scu.ac.ir' . $node->attr('src');
+                                //                      < scraping news link >
 
-                            $news = [
-                                'title' => strval($data->title),
-                                'link' => strval($data->link),
-                                'description' => strval($data->description),
-                                'path' => $media_url,
-                                'owner_type' => $external_service->owner_type,
-                                'owner_id' => $external_service->owner_id,
-                            ];
+                                $news = [
+                                    'title' => strval($data->title),
+                                    'link' => strval($data->link),
+                                    'description' => strval($data->description),
+                                    'path' => $media_url,
+                                    'owner_type' => $external_service->owner_type,
+                                    'owner_id' => $external_service->owner_id,
+                                ];
 
-                            /**
-                             * check that this news's owner has manager or not
-                             * if not, use default user of the university created first of this procedure
-                             */
-                            if(isset($owner)){
-                                $manager = $owner->manager();
-                                if (isset($manager)){
-                                    $news['creator_id'] = $owner->manager()->id;
+                                foreach ($news as $key => $value){
+                                    $news[$key] = strip_tags($value);
+                                }
+
+                                /**
+                                 * validate title field
+                                 */
+                                $validator = Validator::make($news, [
+                                    'title' => 'nullable|string|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($news['title']);
+                                }
+
+                                /**
+                                 * validate link field
+                                 */
+                                $validator = Validator::make($news, [
+                                    'link' => 'nullable|url|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($news['link']);
+                                }
+
+                                /**
+                                 * validate description field
+                                 */
+                                $validator = Validator::make($news, [
+                                    'path' => 'nullable|url|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($news['path']);
+                                }
+
+                                /**
+                                 * validate description field
+                                 */
+                                $validator = Validator::make($news, [
+                                    'description' => 'nullable|string',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($news['description']);
+                                }
+
+                                /**
+                                 * check that this news's owner has manager or not
+                                 * if not, use default user of the university created first of this procedure
+                                 */
+                                if(isset($owner)){
+                                    $manager = $owner->manager();
+                                    if (isset($manager)){
+                                        $news['creator_id'] = $owner->manager()->id;
+                                    } else {
+                                        $news['creator_id'] = $scu_user->id;
+                                    }
                                 } else {
                                     $news['creator_id'] = $scu_user->id;
                                 }
-                            } else {
-                                $news['creator_id'] = $scu_user->id;
-                            }
 
-//                            $news['description'] = str_replace("<br>", '\n', $news['description']);
-                            $news['description'] = str_replace("&nbsp;", '', $news['description']);
-                            $news['description'] = trim(strip_tags($news['description']));
-                            /**
-                             * identifier of each retrieved news is its "link" (id attribute in xml),
-                             * so check out that in news table to find out that is a new one or not
-                             */
-                            $check = News::where('link', $news['link'])->first();
-                            if (!isset($check)) { // if this news is a new one
-                                $console->writeln('******* new *******');
-                                if ($news['path'] != "") {// image exist
-                                    /**
-                                     * < get media size >
-                                     * brief look at request header to check some details
-                                     * such as file size, extension and etc.
-                                     */
-                                    stream_context_set_default(array('http' => array('method' => 'HEAD')));
-                                    $head = array_change_key_case(get_headers($news['path'], 1));
-                                    $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
+                                $news['description'] = str_replace("&nbsp;", '', $news['description']);
+                                $news['description'] = trim(strip_tags($news['description']));
+                                /**
+                                 * identifier of each retrieved news is its "link" (id attribute in xml),
+                                 * so check out that in news table to find out that is a new one or not
+                                 */
+                                $check = News::where('link', $news['link'])->first();
+                                if (!isset($check)) { // if this news is a new one
+                                    if ($news['path'] != "") {// image exist
+                                        /**
+                                         * < get media size >
+                                         * brief look at request header to check some details
+                                         * such as file size, extension and etc.
+                                         */
+                                        stream_context_set_default(array('http' => array('method' => 'HEAD')));
+                                        $head = array_change_key_case(get_headers($news['path'], 1));
+                                        $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
 
-                                    if (!$clen) { // cannot retrieve file size, return "-1"
-                                        $clen = -1;
-                                    }
-                                    /** < get media size > */
-
-                                    $pathinfo = pathinfo($news['path']);
-                                    /**
-                                     * < get media extension >
-                                     * extract substring after last '.' and remove possible parameters
-                                     * example:
-                                     * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
-                                     * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
-                                     *                                              we need this^
-                                     */
-                                    if (isset($pathinfo['extension'])){
-                                        $extension = explode( "?", $pathinfo['extension'])[0];
-                                    }
-
-                                    if(isset($extension) && str_contains(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
+                                        if (!$clen) { // cannot retrieve file size, return "-1"
+                                            $clen = -1;
+                                        }
                                         /** < get media size > */
-                                        if ($clen < 2097152) { // if image size < 2MiB
 
-                                            $media_file = base_path().'/tmp/news_tmp' . str_random(4) . '.tmp';
-                                            $ch = curl_init($news['path']);
-                                            $fp = fopen($media_file, 'wb') or die('Permission error');
-                                            curl_setopt($ch, CURLOPT_FILE, $fp);
-                                            curl_setopt($ch, CURLOPT_HEADER, 0);
-                                            curl_exec($ch);
-                                            curl_close($ch);
-                                            fclose($fp);
-                                            //put image to relative folder to its owner such department
-                                            $path = Storage::putFile('public/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($media_file));
-                                            $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
-                                            $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
-                                            // retrieve the stored media
-                                            $file = Storage::get($path);
-                                            // create laravel symbolic link for this media
-                                            $path = '/' . str_replace('public', 'storage', $path);
-                                            $news['path'] = $path;
+                                        $pathinfo = pathinfo($news['path']);
+                                        /**
+                                         * < get media extension >
+                                         * extract substring after last '.' and remove possible parameters
+                                         * example:
+                                         * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
+                                         * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
+                                         *                                              we need this^
+                                         */
+                                        if (isset($pathinfo['extension'])){
+                                            $extension = explode( "?", $pathinfo['extension'])[0];
+                                        }
 
-                                            $destinationPath = public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
-                                            $img = Image::make($file);
-                                            // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
-//                                            $img->resize(100, 100, function ($constraint) {
-//                                                $constraint->aspectRatio();
-//                                            })->save('/public/news_images/'. app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension );
-                                            Storage::disk('local')->put('/public/news_images/'. app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension, $img->resize(100, 100, function ($constraint) {
-                                                $constraint->aspectRatio();
-                                            }));
+                                        if(isset($extension) && str_contains(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
+                                            /** < get media size > */
+                                            if ($clen < 2097152) { // if image size < 2MiB
+
+                                                $media_file = base_path().'/tmp/news_tmp' . str_random(4) . '.tmp';
+                                                $ch = curl_init($news['path']);
+                                                $fp = fopen($media_file, 'wb') or die('Permission error');
+                                                curl_setopt($ch, CURLOPT_FILE, $fp);
+                                                curl_setopt($ch, CURLOPT_HEADER, 0);
+                                                curl_exec($ch);
+                                                curl_close($ch);
+                                                fclose($fp);
+
+                                                /**
+                                                 * validate image file
+                                                 */
+                                                $validator = Validator::make(['img' => new File($media_file)], [
+                                                    'img' => 'image|mimes:jpg,jpeg,png|max:2048',
+                                                ]);
+                                                if (!$validator->fails()) {
+
+                                                    //put image to relative folder to its owner such department
+                                                    $path = Storage::putFile('public/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($media_file));
+                                                    $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
+                                                    $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
+                                                    // retrieve the stored media
+                                                    $file = Storage::get($path);
+                                                    // create laravel symbolic link for this media
+                                                    $path = '/' . str_replace('public', 'storage', $path);
+                                                    $news['path'] = $path;
+
+                                                    $destinationPath = public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
+                                                    $img = Image::make($file);
+                                                    // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
+                                                    $img->resize(100, 100, function ($constraint) {
+                                                        $constraint->aspectRatio();
+                                                    })->save(public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension));
+                                                } else { // image is invalid
+                                                    unset($news['path']);
+                                                    $default_image = true;
+                                                    $default_image_message = 'image file was invalid';
+                                                }
 
 
-                                            /**
-                                             * ************************* VERY IMPORTANT
-                                             * if for some reason can't get media of this news
-                                             * use default image that MUST exist with this specific directory and name:
-                                             * /storage/app/public/news_images/news_default_image.jpg
-                                             * creating this default image is an INITIAL functionality :)
-                                             */
-                                        } else { // image size is > 2MiB
+                                                /**
+                                                 * ************************* VERY IMPORTANT
+                                                 * if for some reason can't get media of this news
+                                                 * use default image that MUST exist with this specific directory and name:
+                                                 * /storage/app/public/news_images/news_default_image.jpg
+                                                 * creating this default image is an INITIAL functionality :)
+                                                 */
+                                            } else { // image size is > 2MiB
 //                                            $news['path'] = $default_image_dir;
+                                                unset($news['path']);
+                                                $default_image = true;
+                                                $default_image_message = 'image file was too big';
+                                            }
+                                        } else { // media's extension is not acceptable for this functionality
                                             unset($news['path']);
                                             $default_image = true;
-                                            $default_image_message = 'image file was too big';
+                                            $default_image_message = 'media extension was not acceptable : ' . $extension;
                                         }
-                                    } else { // media's extension is not acceptable for this functionality
-//                                        $news['path'] = $default_image_dir;
+                                    } else { // news have no media
                                         unset($news['path']);
                                         $default_image = true;
-                                        $default_image_message = 'media extension was not acceptable : ' . $extension;
+                                        $default_image_message = 'media file not found';
                                     }
-                                } else { // news have no media
-//                                    $news['path'] = $default_image_dir;
-                                    unset($news['path']);
-                                    $default_image = true;
-                                    $default_image_message = 'media file not found';
-                                }
-                                $cc->print_success('media url:', "\t");
-                                if(isset($news['path'])){
+//                                    $cc->print_success('media url:', "\t");
+                                    if(isset($news['path'])){
 //                                    dump($news['path']);
+                                    }
+                                    if ($default_image) {
+//                                        $cc->print_warning("\t-> default image; " . $default_image_message);
+                                    }
+                                    $this->newsRepository->create($news);
                                 }
-                                if ($default_image) {
-                                    $cc->print_warning("\t-> default image; " . $default_image_message);
-                                }
-                                $this->newsRepository->create($news);
-                            }
-                            else {
-                                $console->writeln('------- old -------');
                             }
                         }
+                        /**
+                         * scu portal have special structure and we don't need all information its provide;
+                         * so we use certain part of information which retrieved in "entry" key also
+                         * that's an array of news
+                         */
+                        elseif(isset($xml->entry)){
+                            $datas = $xml->entry;
+
+                            /** retrieve owner of the news; for example: department */
+                            $model_name =  $external_service->owner_type;
+                            $model = new $model_name();
+                            $owner = $model::findOrFail($external_service->owner_id);
+
+//                        dump('medias store on server for specific news:');
+                            foreach ($datas as $data) {
+                                $default_image = false;
+                                $default_image_message = '';
+
+                                $news = [
+                                    'title' => strval($data->title),
+                                    'link' => strval(($data->link)[0]['href']),
+                                    'path' => strval(($data->link)[1]['href']),
+                                    'description' => strval($data->summary),
+                                    'author' => strval($data->author->name),
+                                    'owner_type' => $external_service->owner_type,
+                                    'owner_id' => $external_service->owner_id,
+                                ];
+
+                                foreach ($news as $key => $value){
+                                    $news[$key] = strip_tags($value);
+                                    $news[$key] = str_replace("&nbsp;", '', $value);
+                                }
+
+                                /**
+                                 * validate title field
+                                 */
+                                $validator = Validator::make($news, [
+                                    'title' => 'nullable|string|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($news['title']);
+                                }
+
+                                /**
+                                 * validate link field
+                                 */
+                                $validator = Validator::make($news, [
+                                    'link' => 'nullable|url|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($news['link']);
+                                }
+
+                                /**
+                                 * validate description field
+                                 */
+                                $validator = Validator::make($news, [
+                                    'path' => 'nullable|url|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($news['path']);
+                                }
+
+                                /**
+                                 * validate description field
+                                 */
+                                $validator = Validator::make($news, [
+                                    'description' => 'nullable|string',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($news['description']);
+                                }
+
+                                /**
+                                 * validate author field
+                                 */
+                                $validator = Validator::make($news, [
+                                    'author' => 'nullable|string|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($news['author']);
+                                }
+
+                                /**
+                                 * check that this news's owner has manager or not
+                                 * if not, use default user of the university created first of this procedure
+                                 */
+                                if(isset($owner)){
+                                    $manager = $owner->manager();
+                                    if (isset($manager)){
+                                        $news['creator_id'] = $owner->manager()->id;
+                                    } else {
+                                        $news['creator_id'] = $scu_user->id;
+                                    }
+                                } else {
+                                    $news['creator_id'] = $scu_user->id;
+                                }
+
+                                /**
+                                 * identifier of each retrieved news is its "link" (id attribute in xml),
+                                 * so check out that in news table to find out that is a new one or not
+                                 * if exist, there is nothing to do with this data,
+                                 * because existing news created using this procedure for sure
+                                 * and we don't care about update FOR NOW :)
+                                 */
+                                $check = News::where('link', $news['link'])->first();
+                                if (!isset($check)) { // if this news is a new one
+                                    if (isset($news['path'])){
+                                        if (filter_var($news['path'], FILTER_VALIDATE_URL)) {// image exist
+
+                                            /**
+                                             * brief look at request header to check some details
+                                             * such as file size, extension and etc.
+                                             */
+                                            stream_context_set_default(array('http' => array('method' => 'HEAD')));
+                                            $head = array_change_key_case(get_headers($news['path'], 1));
+                                            $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
+
+                                            if (!$clen) { // cannot retrieve file size, return "-1"
+                                                $clen = -1;
+                                            }
+
+                                            $pathinfo = pathinfo($news['path']);
+                                            /**
+                                             * < get media extension >
+                                             * extract substring after last '.' and remove possible parameters
+                                             * example:
+                                             * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
+                                             * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
+                                             *                                              we need this^
+                                             */
+                                            if (isset($pathinfo['extension'])){
+                                                $extension = explode( "?", $pathinfo['extension'])[0];
+                                            }
+
+                                            if(isset($extension) && $this->str_contains_array(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
+                                                /** < get media size > */
+                                                if ($clen < 2097152) { // if media size < 2MiB
+
+                                                    $name = base_path().'/tmp/news_tmp' . str_random(4) . '.tmp';
+                                                    $ch = curl_init($news['path']);
+                                                    $fp = fopen($name, 'wb') or die('Permission error');
+                                                    curl_setopt($ch, CURLOPT_FILE, $fp);
+                                                    curl_setopt($ch, CURLOPT_HEADER, 0);
+                                                    curl_exec($ch);
+                                                    curl_close($ch);
+                                                    fclose($fp);
+
+                                                    /**
+                                                     * validate image file
+                                                     */
+                                                    $validator = Validator::make(['img' => new File($name)], [
+                                                        'img' => 'image|mimes:jpg,jpeg,png|max:2048',
+                                                    ]);
+                                                    if (!$validator->fails()) {
+                                                        //put media to relative folder to its owner such department
+                                                        $path = Storage::putFile('public/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
+                                                        $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
+                                                        $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
+                                                        // retrieve the stored media
+                                                        $file = Storage::get($path);
+                                                        // create laravel symbolic link for this media
+                                                        $path = '/' . str_replace('public', 'storage', $path);
+                                                        $news['path'] = $path;
+
+                                                        /**
+                                                         * create thumbnail of the original image
+                                                         * this image will store with a postfix '-thumbnail' beside the original image
+                                                         */
+                                                        $destinationPath = public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
+                                                        $img = Image::make($file);
+                                                        // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
+                                                        $img->resize(100, 100, function ($constraint) {
+                                                            $constraint->aspectRatio();
+                                                        })->save(public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension));
+                                                    } else { // image is invalid
+                                                        unset($news['path']);
+                                                        $default_image = true;
+                                                        $default_image_message = 'image file was invalid';
+                                                    }
+                                                    /**
+                                                     * ************************* VERY IMPORTANT
+                                                     * if for some reason can't get media of this news
+                                                     * use default image that MUST exist with this specific directory and name:
+                                                     * /storage/app/public/news_images/news_default_image.jpg
+                                                     * creating this default image is an INITIAL functionality :)
+                                                     */
+                                                } else { // image size is > 2MiB
+                                                    unset($news['path']);
+                                                    $default_image = true;
+                                                    $default_image_message = 'image file was too big';
+                                                }
+                                            } else { // media's extension is not acceptable for this functionality
+                                                unset($news['path']);
+                                                $default_image = true;
+                                                $default_image_message = 'media extension was not acceptable : '.$extension;
+                                            }
+                                        } else { // news have no media
+                                            unset($news['path']);
+                                            $default_image = true;
+                                            $default_image_message = 'media file not found';
+                                        }
+                                    } else { // image is invalid
+                                        $default_image = true;
+                                        $default_image_message = 'image file was invalid';
+                                    }
+//                                    $cc->print_success('media url:', "\t");
+                                    if (isset($news['path'])){
+//                                    dump($news['path']);
+                                    }
+                                    if ($default_image) {
+//                                        $cc->print_warning("\t-> default image; ". $default_image_message);
+                                    }
+                                    $this->newsRepository->create($news);
+                                }
+                            }
+                        }
+
+                        /**
+                         * < clear tmp directory >
+                         * delete all medias stored in in tmp directory due to put it to exact directory,
+                         * because all needed medias should stored to their exact directory before, and the others probably are dummy files
+                         */
+                        $files = glob(base_path().'/tmp/news_tmp*'); //get all file names
+                        if (sizeof($files) > 0) {
+//                            $cc->print_warning('clean tmp directory:');
+                            foreach ($files as $file) {
+                                if (is_file($file))
+                                    unlink($file); //delete file
+                            }
+//                        dump($files);
+                        } else {
+//                            $cc->print_warning('no new media to store');
+                        }
                     }
-                    /**
-                     * scu portal have special structure and we don't need all information its provide;
-                     * so we use certain part of information which retrieved in "entry" key also
-                     * that's an array of news
-                     */
-                    elseif(isset($xml->entry)){
+                    elseif ($external_service->content_type == Notice::class){
+                        /**
+                         * scu portal have special structure and we don't need all information its provide;
+                         * so we use certain part of information which retrieved in "entry" key
+                         * that's an array of notices
+                         */
                         $datas = $xml->entry;
 
                         /** retrieve owner of the notice; for example: department */
-                        $model_name =  $external_service->owner_type;
+                        $model_name = $external_service->owner_type;
                         $model = new $model_name();
                         $owner = $model::findOrFail($external_service->owner_id);
 
-//                        dump('medias store on server for specific news:');
+//                        dump('medias store on server for specific notice:');
                         foreach ($datas as $data) {
                             $default_image = false;
                             $default_image_message = '';
 
-                            $news = [
+                            $notice = [
                                 'title' => strval($data->title),
                                 'link' => strval(($data->link)[0]['href']),
                                 'path' => strval(($data->link)[1]['href']),
@@ -505,166 +793,228 @@ class ExternalServiceController extends AppBaseController
                                 'owner_id' => $external_service->owner_id,
                             ];
 
+                            foreach ($notice as $key => $value){
+                                $notice[$key] = strip_tags($value);
+                                $notice[$key] = str_replace("&nbsp;", '', $value);
+                            }
+
+                            /**
+                             * validate title field
+                             */
+                            $validator = Validator::make($notice, [
+                                'title' => 'nullable|string|max:191',
+                            ]);
+                            if ($validator->fails()) {
+                                unset($notice['title']);
+                            }
+
+                            /**
+                             * validate link field
+                             */
+                            $validator = Validator::make($notice, [
+                                'link' => 'nullable|url|max:191',
+                            ]);
+                            if ($validator->fails()) {
+                                unset($notice['link']);
+                            }
+
+                            /**
+                             * validate description field
+                             */
+                            $validator = Validator::make($notice, [
+                                'path' => 'nullable|url|max:191',
+                            ]);
+                            if ($validator->fails()) {
+                                unset($notice['path']);
+                            }
+
+                            /**
+                             * validate description field
+                             */
+                            $validator = Validator::make($notice, [
+                                'description' => 'nullable|string',
+                            ]);
+                            if ($validator->fails()) {
+                                unset($notice['description']);
+                            }
+
+                            /**
+                             * validate author field
+                             */
+                            $validator = Validator::make($notice, [
+                                'author' => 'nullable|string|max:191',
+                            ]);
+                            if ($validator->fails()) {
+                                unset($notice['author']);
+                            }
+
                             /**
                              * check that this notice's owner has manager or not
                              * if not, use default user of the university created first of this procedure
                              */
-                            if(isset($owner)){
+                            if (isset($owner)) {
                                 $manager = $owner->manager();
-                                if (isset($manager)){
-                                    $news['creator_id'] = $owner->manager()->id;
+                                if (isset($manager)) {
+                                    $notice['creator_id'] = $owner->manager()->id;
                                 } else {
-                                    $news['creator_id'] = $scu_user->id;
+                                    $notice['creator_id'] = $scu_user->id;
                                 }
                             } else {
-                                $news['creator_id'] = $scu_user->id;
+                                $notice['creator_id'] = $scu_user->id;
                             }
 
-//                            $news['description'] = str_replace("<br>", '\n', $news['description']);
-                            $news['description'] = str_replace("&nbsp;", '', $news['description']);
-                            $news['description'] = trim(strip_tags($news['description']));
                             /**
-                             * identifier of each retrieved news is its "link" (id attribute in xml),
+                             * identifier of each retrieved notice is its "link" (id attribute in xml),
                              * so check out that in notices table to find out that is a new one or not
                              * if exist, there is nothing to do with this data,
-                             * because existing news created using this procedure for sure
+                             * because existing notice created using this procedure for sure
                              * and we don't care about update FOR NOW :)
                              */
-                            $check = News::where('link', $news['link'])->first();
-                            if (!isset($check)) { // if this news is a new one
-                                $console->writeln('******* new *******');
-                                if (filter_var($news['path'], FILTER_VALIDATE_URL)) {// image exist
+                            $check = Notice::where('link', $notice['link'])->first();
+                            if (!isset($check)) { // if this notice is a new one
+                                if(isset($notice['path'])){
+                                    if ($notice['path'] != "") {// image exist
 
-                                    /**
-                                     * brief look at request header to check some details
-                                     * such as file size, extension and etc.
-                                     */
-                                    stream_context_set_default(array('http' => array('method' => 'HEAD')));
-                                    $head = array_change_key_case(get_headers($news['path'], 1));
-                                    $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
+                                        /**
+                                         * brief look at request header to check some details
+                                         * such as file size, extension and etc.
+                                         */
+                                        stream_context_set_default(array('http' => array('method' => 'HEAD')));
+                                        $head = array_change_key_case(get_headers($notice['path'], 1));
+                                        $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
 
-                                    if (!$clen) { // cannot retrieve file size, return "-1"
-                                        $clen = -1;
-                                    }
-
-                                    $pathinfo = pathinfo($news['path']);
-                                    /**
-                                     * < get media extension >
-                                     * extract substring after last '.' and remove possible parameters
-                                     * example:
-                                     * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
-                                     * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
-                                     *                                              we need this^
-                                     */
-                                    if (isset($pathinfo['extension'])){
-                                        $extension = explode( "?", $pathinfo['extension'])[0];
-                                    }
-
-                                    if(isset($extension) && $this->str_contains_array(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
-                                        /** < get media size > */
-                                        if ($clen < 2097152) { // if media size < 2MiB
-
-                                            $name = base_path().'/tmp/news_tmp' . str_random(4) . '.tmp';
-                                            $ch = curl_init($news['path']);
-                                            $fp = fopen($name, 'wb') or die('Permission error');
-                                            curl_setopt($ch, CURLOPT_FILE, $fp);
-                                            curl_setopt($ch, CURLOPT_HEADER, 0);
-                                            curl_exec($ch);
-                                            curl_close($ch);
-                                            fclose($fp);
-                                            //put media to relative folder to its owner such department
-                                            $path = Storage::putFile('public/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
-                                            $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
-                                            $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
-                                            // retrieve the stored media
-                                            $file = Storage::get($path);
-                                            // create laravel symbolic link for this media
-                                            $path = '/' . str_replace('public', 'storage', $path);
-                                            $news['path'] = $path;
-
-                                            /**
-                                             * create thumbnail of the original image
-                                             * this image will store with a postfix '-thumbnail' beside the original image
-                                             */
-                                            $destinationPath = public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
-                                            $img = Image::make($file);
-                                            // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
-                                            $img->resize(100, 100, function ($constraint) {
-                                                $constraint->aspectRatio();
-                                            })->save(public_path('storage/news_images/'. app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension));
-//                                            Storage::disk('local')->put('/public/news_images/'. app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension, $img->resize(100, 100, function ($constraint) {
-//                                                $constraint->aspectRatio();
-//                                            }));
-
-                                            /**
-                                             * ************************* VERY IMPORTANT
-                                             * if for some reason can't get media of this news
-                                             * use default image that MUST exist with this specific directory and name:
-                                             * /storage/app/public/news_images/news_default_image.jpg
-                                             * creating this default image is an INITIAL functionality :)
-                                             */
-                                        } else { // image size is > 2MiB
-//                                            $news['path'] = $default_image_dir;
-                                            unset($news['path']);
-                                            $default_image = true;
-                                            $default_image_message = 'image file was too big';
+                                        if (!$clen) { // cannot retrieve file size, return "-1"
+                                            $clen = -1;
                                         }
-                                    } else { // media's extension is not acceptable for this functionality
-//                                        $news['path'] = $default_image_dir;
-                                        unset($news['path']);
+
+                                        $pathinfo = pathinfo($notice['path']);
+                                        /**
+                                         * < get media extension >
+                                         * extract substring after last '.' and remove possible parameters
+                                         * example:
+                                         * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
+                                         * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
+                                         *                                              we need this^
+                                         */
+                                        if (isset($pathinfo['extension'])) {
+                                            $extension = explode("?", $pathinfo['extension'])[0];
+                                        }
+
+                                        if (isset($extension) && $this->str_contains_array(strtolower($extension), GeneralVariable::$inbound_acceptable_media)) { // acceptable extension such png and jpg
+                                            /** < get media size > */
+                                            if ($clen < 2097152) { // if media size < 2MiB
+
+                                                $name = base_path().'/tmp/notices_tmp' . str_random(4) . '.tmp';
+                                                $ch = curl_init($notice['path']);
+                                                $fp = fopen($name, 'wb') or die('Permission error');
+                                                curl_setopt($ch, CURLOPT_FILE, $fp);
+                                                curl_setopt($ch, CURLOPT_HEADER, 0);
+                                                curl_exec($ch);
+                                                curl_close($ch);
+                                                fclose($fp);
+
+                                                /**
+                                                 * validate image file
+                                                 */
+                                                $validator = Validator::make(['img' => new File($name)], [
+                                                    'img' => 'image|mimes:jpg,jpeg,png|max:2048',
+                                                ]);
+                                                if (!$validator->fails()) {
+                                                    //put media to relative folder to its owner such department
+                                                    $path = Storage::putFile('public/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
+                                                    $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
+                                                    $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
+                                                    // retrieve the stored media
+                                                    $file = Storage::get($path);
+                                                    // create laravel symbolic link for this media
+                                                    $path = '/' . str_replace('public', 'storage', $path);
+                                                    $notice['path'] = $path;
+
+                                                    /**
+                                                     * create thumbnail of the original image
+                                                     * this image will store with a postfix '-thumbnail' beside the original image
+                                                     */
+                                                    $destinationPath = public_path('storage/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
+                                                    $img = Image::make($file);
+                                                    // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
+                                                    $img->resize(100, 100, function ($constraint) {
+                                                        $constraint->aspectRatio();
+                                                    })->save('storage/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension);
+                                                } else { // image is invalid
+                                                    unset($notice['path']);
+                                                    $default_image = true;
+                                                    $default_image_message = 'image file was invalid';
+                                                }
+
+                                                /**
+                                                 * ************************* SO IMPORTANT
+                                                 * if for some reason can't get media of this notice
+                                                 * use default image that MUST exist with this specific directory and name:
+                                                 * /storage/app/public/notices_images/notice_default_image.jpg
+                                                 * creating this default image is an INITIAL functionality :)
+                                                 */
+                                            } else { // media size is > 2MiB
+                                                unset($notice['path']);
+                                                $default_image = true;
+                                                $default_image_message = 'image file was too big';
+                                            }
+                                        } else { // media's extension is not acceptable for this functionality
+                                            unset($notice['path']);
+                                            $default_image = true;
+                                            $default_image_message = 'media extension was not acceptable : ' . $extension;
+                                        }
+                                    } else { // notice have no media
+                                        unset($notice['path']);
                                         $default_image = true;
-                                        $default_image_message = 'media extension was not acceptable : '.$extension;
+                                        $default_image_message = 'media file not found';
                                     }
-                                } else { // notice have no media
-//                                    $news['path'] = $default_image_dir;
-                                    unset($news['path']);
+                                } else { // image is invalid=
                                     $default_image = true;
-                                    $default_image_message = 'media file not found';
+                                    $default_image_message = 'image file was invalid';
                                 }
-                                $cc->print_success('media url:', "\t");
-                                if (isset($news['path'])){
-//                                    dump($news['path']);
+//                                $cc->print_success('media url:', "\t");
+                                if (isset($notice['path'])){
+//                                    dump($notice['path']);
                                 }
                                 if ($default_image) {
-                                    $cc->print_warning("\t-> default image; ". $default_image_message);
+//                                    $cc->print_warning("\t-> default image; " . $default_image_message);
                                 }
-                                $this->newsRepository->create($news);
-                            } else {
-                                $console->writeln('------- old -------');
+                                $this->noticeRepository->create($notice);
                             }
                         }
-                    }
 
-                    /**
-                     * < clear tmp directory >
-                     * delete all medias stored in in tmp directory due to put it to exact directory,
-                     * because all needed medias should stored to their exact directory before, and the others probably are dummy files
-                     */
-                    $files = glob(base_path().'/tmp/news_tmp*'); //get all file names
-                    if (sizeof($files) > 0) {
-                        $cc->print_warning('clean tmp directory:');
-                        foreach ($files as $file) {
-                            if (is_file($file))
-                                unlink($file); //delete file
-                        }
+
+
+                        /**
+                         * < clear tmp directory >
+                         * delete all medias stored in in tmp directory due to put it to exact directory,
+                         * because all needed medias should stored to their exact directory before, and the others probably are dummy files
+                         */
+                        $files = glob(base_path().'/tmp/notices_tmp*'); //get all file names
+                        if (sizeof($files) > 0) {
+//                            $cc->print_warning('clean tmp directory:');
+                            foreach ($files as $file) {
+                                if (is_file($file))
+                                    unlink($file); //delete file
+                            }
 //                        dump($files);
-                    } else {
-                        $cc->print_warning('no new media to store');
+                        } else {
+//                            $cc->print_warning('no new media to store');
+                        }
                     }
 
-                    $cc->print_success("----------------------------------------------------------------------------------------\tretrieve " . $external_service->title . " done successfully.\n");
-
-                    $cc->print_success("========================================================================================\tnotice:single_fetch command done successfully.\n");
+//                    $cc->print_success("----------------------------------------------------------------------------------------\tretrieve " . $external_service->title . " done successfully.\n");
                 } else { // scu user not found
-                    $cc->print_error("\n\n\nfetch procedure canceled; check and try again.");
+//                    $cc->print_error("\n\n\nfetch procedure canceled; check and try again.");
+                    Flash::error('متاسفانه یک مشکل فنی در فرایند بروزرسانی به وجود آمده است. لطفا جهت کسب اطلاع بیشتر با مدیریت سامانه ارتباط برقرار کنید.');
                 }
 
             } catch (\Exception $e) {
-//                return $e->getMessage(). ' | '. $e->getLine() . ' | ' . implode($e->getTrace());
-                dump($e->getMessage());
-                dump($e->getLine());
-                dump($e->getTrace());
-                return;
+                Flash::error('متاسفانه یک مشکل فنی در فرایند بروزرسانی به وجود آمده است. لطفا جهت کسب اطلاع بیشتر با مدیریت سامانه ارتباط برقرار کنید.');
+//                dump($e->getMessage());
+//                dump($e->getLine());
+//                dump($e->getTrace());
+//                return;
 //                $cc->print_error("\n\n\noops!");
 //                $cc->print_warning("fetch procedure crash due to some problem with this error:");
 //                $cc->print_error($e->getMessage());
@@ -681,7 +1031,11 @@ class ExternalServiceController extends AppBaseController
 
         Flash::success('محتوای سرویس خارجی باموفقیت به روز رسانی شد');
 
-        return redirect(route('news.index'));
+        if ($external_service->content_type == News::class)
+            return redirect(route('news.index'));
+        else
+            return redirect(route('notices.index'));
+
 
     }
 
