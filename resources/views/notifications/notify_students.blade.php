@@ -124,8 +124,8 @@
 
                     <!-- Brief Description Field -->
                     <div class="form-group col-sm-8">
-                            {!! Form::label('brief_description', 'Brief Description:') !!}
-                            {!! Form::text('brief_description', null, ['class' => 'form-control', 'id' => 'brief_description']) !!}
+                            {!! Form::label('brief_description', 'توضیحات:') !!}
+                            {!! Form::textarea('brief_description', null, ['class' => 'form-control', 'id' => 'brief_description', 'maxlength' => 145, 'rows' => 3]) !!}
                     </div>
                     <div class="form-group col-sm-4">
                             {!! Form::label('use_notifier_description', 'در صورت فعال بودن این گزینه، از بخشی از توضیحات منبع برای نوتیفیکیشن استفاده می‌شود', ['style' => 'color: lightgray; font-size: 0.85rem' ]) !!}

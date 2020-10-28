@@ -6,36 +6,34 @@ use App\General\ConsoleColor;
 use App\General\GeneralVariable;
 use App\Models\ExternalService;
 use App\Models\News;
-use App\Models\Notice;
 use App\Repositories\NewsRepository;
 use App\User;
 use Illuminate\Console\Command;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
+use Intervention\Image\Exception\NotFoundException;
 use Intervention\Image\Facades\Image;
 use Weidner\Goutte\GoutteFacade;
-use Illuminate\Container\Container;
 
-class NewsFetch extends Command
+class NewsSingleFetch extends Command
 {
+    /** @var  NewsRepository */
+    private $newsRepository;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'news:fetch';
+    protected $signature = 'news:single_fetch
+                        {id : The URL of external service}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'retrieve news information from SCU News rss';
-
-
-    /** @var  NewsRepository */
-    private $newsRepository;
+    protected $description = 'retrieve news information from specific external service';
 
     /**
      * Create a new command instance.
@@ -56,42 +54,36 @@ class NewsFetch extends Command
      */
     public function handle()
     {
-
-        ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
+        $id = $this->argument('id');
+        $external_service = ExternalService::find($id);
         $cc = new ConsoleColor();
-        $default_image_dir = Storage::url('news_images/news_default_image.jpg');
+        if(isset($external_service)){
+            ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
+            try {
+                /**
+                 * this user is the default user of the university created by UserInitial command at first
+                 * consist of special information,
+                 * and it use for specific functionality,
+                 * such as fill creator_id field of news which retrieved from Scu portal using it's id
+                 */
+                $scu_user = User::where('scu_id', 'scu')
+                    ->where('national_id', 'scu')
+                    ->where('username', 'scu')->first();
 
-        try {
-            /**
-             * get all external services which are news type
-             */
-            $external_services = ExternalService::where('content_type', News::class)->get();
+                if(!isset($scu_user)){
+                    $cc->print_warning("default user that should created before not found for some reason.");
+                    $cc->print_error("this may cause some error during fetch procedure...");
+                    $cc->print_help("problem maybe be somewhere in user:initial command logic (according to my creators thoughts)");
+                    $cc->print_help("if you don't execute this command, so do it first and try again.");
+                    $cc->print_warning("do you want to continue anyway?(y or n)");
+                    $c = fread(STDIN, 1);
+                } else {
+                    $c = 'y';
+                }
 
-            /**
-             * this user is the default user of the university created by UserInitial command at first
-             * consist of special information,
-             * and it use for specific functionality,
-             * such as fill creator_id field of news which retrieved from Scu portal using it's id
-             */
-            $scu_user = User::where('scu_id', 'scu')
-                ->where('national_id', 'scu')
-                ->where('username', 'scu')->first();
-
-            if (!isset($scu_user)) {
-                $cc->print_warning("default user that should created before not found for some reason.");
-                $cc->print_error("this may cause some error during fetch procedure...");
-                $cc->print_help("problem maybe be somewhere in user:initial command logic (according to my creators thoughts)");
-                $cc->print_help("if you don't execute this command, so do it first and try again.");
-                $cc->print_warning("do you want to continue anyway?(y or n)");
-                $c = fread(STDIN, 1);
-            } else {
-                $c = 'y';
-            }
-
-            if ($c == 'y') {
-                foreach ($external_services as $external_service) {
-                    dump("read data from SCU news rss: " . $external_service->title . "...");
-                    dump("( URL: " . $external_service->url . " )");
+                if ($c == 'y'){
+//                    dump("read data from external service: " . $external_service->title . "...");
+//                    dump("( URL: " . $external_service->url . " )");
 
                     $ch = curl_init();
                     curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -107,15 +99,15 @@ class NewsFetch extends Command
                      * so we use certain part of information which retrieved in "item" key
                      * that's an array of news
                      */
-                    if (isset($xml->item)) {
+                    if(isset($xml->item)) {
                         $datas = $xml->item;
 
                         /** retrieve owner of the notice; for example: department */
-                        $model_name = $external_service->owner_type;
+                        $model_name =  $external_service->owner_type;
                         $model = new $model_name();
                         $owner = $model::findOrFail($external_service->owner_id);
 
-                        dump('medias store on server for specific news:');
+//                        dump('medias store on server for specific news:');
                         foreach ($datas as $data) {
                             $default_image = false;
                             $default_image_message = '';
@@ -140,9 +132,9 @@ class NewsFetch extends Command
                              * check that this news's owner has manager or not
                              * if not, use default user of the university created first of this procedure
                              */
-                            if (isset($owner)) {
+                            if(isset($owner)){
                                 $manager = $owner->manager();
-                                if (isset($manager)) {
+                                if (isset($manager)){
                                     $news['creator_id'] = $owner->manager()->id;
                                 } else {
                                     $news['creator_id'] = $scu_user->id;
@@ -151,9 +143,9 @@ class NewsFetch extends Command
                                 $news['creator_id'] = $scu_user->id;
                             }
 
-                            $news['description'] = str_replace("<br>", '\n', $news['description']);
-                            $news['description'] = str_replace("&nbsp;", ' ', $news['description']);
-
+//                            $news['description'] = str_replace("<br>", '\n', $news['description']);
+                            $news['description'] = str_replace("&nbsp;", '', $news['description']);
+                            $news['description'] = trim(strip_tags($news['description']));
                             /**
                              * identifier of each retrieved news is its "link" (id attribute in xml),
                              * so check out that in news table to find out that is a new one or not
@@ -184,11 +176,11 @@ class NewsFetch extends Command
                                      * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
                                      *                                              we need this^
                                      */
-                                    if (isset($pathinfo['extension'])) {
-                                        $extension = explode("?", $pathinfo['extension'])[0];
+                                    if (isset($pathinfo['extension'])){
+                                        $extension = explode( "?", $pathinfo['extension'])[0];
                                     }
 
-                                    if (isset($extension) && str_contains(strtolower($extension), GeneralVariable::$inbound_acceptable_media)) { // acceptable extension such png and jpg
+                                    if(isset($extension) && str_contains(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
                                         /** < get media size > */
                                         if ($clen < 2097152) { // if image size < 2MiB
 
@@ -215,7 +207,8 @@ class NewsFetch extends Command
                                             // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
                                             $img->resize(100, 100, function ($constraint) {
                                                 $constraint->aspectRatio();
-                                            })->save($destinationPath . '/' . $file_name . '-thumbnail.' . $file_extension);
+                                            })->save($destinationPath.'/' . $file_name . '-thumbnail.' . $file_extension);
+
 
 
                                             /**
@@ -244,8 +237,8 @@ class NewsFetch extends Command
                                     $default_image_message = 'media file not found';
                                 }
                                 $cc->print_success('media url:', "\t");
-                                if (isset($news['path'])) {
-                                    dump($news['path']);
+                                if(isset($news['path'])){
+//                                    dump($news['path']);
                                 }
                                 if ($default_image) {
                                     $cc->print_warning("\t-> default image; " . $default_image_message);
@@ -253,20 +246,21 @@ class NewsFetch extends Command
                                 $this->newsRepository->create($news);
                             }
                         }
-                    } /**
+                    }
+                    /**
                      * scu portal have special structure and we don't need all information its provide;
                      * so we use certain part of information which retrieved in "entry" key also
                      * that's an array of news
                      */
-                    elseif (isset($xml->entry)) {
+                    elseif(isset($xml->entry)){
                         $datas = $xml->entry;
 
                         /** retrieve owner of the notice; for example: department */
-                        $model_name = $external_service->owner_type;
+                        $model_name =  $external_service->owner_type;
                         $model = new $model_name();
                         $owner = $model::findOrFail($external_service->owner_id);
 
-                        dump('medias store on server for specific news:');
+//                        dump('medias store on server for specific news:');
                         foreach ($datas as $data) {
                             $default_image = false;
                             $default_image_message = '';
@@ -285,9 +279,9 @@ class NewsFetch extends Command
                              * check that this notice's owner has manager or not
                              * if not, use default user of the university created first of this procedure
                              */
-                            if (isset($owner)) {
+                            if(isset($owner)){
                                 $manager = $owner->manager();
-                                if (isset($manager)) {
+                                if (isset($manager)){
                                     $news['creator_id'] = $owner->manager()->id;
                                 } else {
                                     $news['creator_id'] = $scu_user->id;
@@ -296,9 +290,9 @@ class NewsFetch extends Command
                                 $news['creator_id'] = $scu_user->id;
                             }
 
-                            $news['description'] = str_replace("<br>", '\n', $news['description']);
-                            $news['description'] = str_replace("&nbsp;", ' ', $news['description']);
-
+//                            $news['description'] = str_replace("<br>", '\n', $news['description']);
+                            $news['description'] = str_replace("&nbsp;", '', $news['description']);
+                            $news['description'] = trim(strip_tags($news['description']));
                             /**
                              * identifier of each retrieved news is its "link" (id attribute in xml),
                              * so check out that in notices table to find out that is a new one or not
@@ -331,11 +325,11 @@ class NewsFetch extends Command
                                      * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
                                      *                                              we need this^
                                      */
-                                    if (isset($pathinfo['extension'])) {
-                                        $extension = explode("?", $pathinfo['extension'])[0];
+                                    if (isset($pathinfo['extension'])){
+                                        $extension = explode( "?", $pathinfo['extension'])[0];
                                     }
 
-                                    if (isset($extension) && $this->str_contains_array(strtolower($extension), GeneralVariable::$inbound_acceptable_media)) { // acceptable extension such png and jpg
+                                    if(isset($extension) && $this->str_contains_array(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
                                         /** < get media size > */
                                         if ($clen < 2097152) { // if media size < 2MiB
 
@@ -366,7 +360,7 @@ class NewsFetch extends Command
                                             // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
                                             $img->resize(100, 100, function ($constraint) {
                                                 $constraint->aspectRatio();
-                                            })->save($destinationPath . '/' . $file_name . '-thumbnail.' . $file_extension);
+                                            })->save($destinationPath.'/' . $file_name . '-thumbnail.' . $file_extension);
 
                                             /**
                                              * ************************* VERY IMPORTANT
@@ -385,7 +379,7 @@ class NewsFetch extends Command
 //                                        $news['path'] = $default_image_dir;
                                         unset($news['path']);
                                         $default_image = true;
-                                        $default_image_message = 'media extension was not acceptable : ' . $extension;
+                                        $default_image_message = 'media extension was not acceptable : '.$extension;
                                     }
                                 } else { // notice have no media
 //                                    $news['path'] = $default_image_dir;
@@ -395,10 +389,10 @@ class NewsFetch extends Command
                                 }
                                 $cc->print_success('media url:', "\t");
                                 if (isset($news['path'])){
-                                    dump($news['path']);
+//                                    dump($news['path']);
                                 }
                                 if ($default_image) {
-                                    $cc->print_warning("\t-> default image; " . $default_image_message);
+                                    $cc->print_warning("\t-> default image; ". $default_image_message);
                                 }
                                 $this->newsRepository->create($news);
                             }
@@ -417,43 +411,33 @@ class NewsFetch extends Command
                             if (is_file($file))
                                 unlink($file); //delete file
                         }
-                        dump($files);
+//                        dump($files);
                     } else {
                         $cc->print_warning('no new media to store');
                     }
 
                     $cc->print_success("----------------------------------------------------------------------------------------\tretrieve " . $external_service->title . " done successfully.\n");
+
+                    $cc->print_success("========================================================================================\tnotice:single_fetch command done successfully.\n");
+                } else { // scu user not found
+                    $cc->print_error("\n\n\nfetch procedure canceled; check and try again.");
                 }
 
-                $cc->print_success("========================================================================================\tnotice:initial command done successfully.\n");
-            } else { // scu user not found
-                $cc->print_error("\n\n\nfetch procedure canceled; check and try again.");
-                return -1;
+            } catch (\Exception $e) {
+//                $cc->print_error("\n\n\noops!");
+//                $cc->print_warning("fetch procedure crash due to some problem with this error:");
+//                $cc->print_error($e->getMessage());
+//                $cc->print_help("the exception thrown at line " . $e->getLine() . " of\t" . str_after($e->getFile(), base_path()) . "\tfile, pls check that and try again");
+//                $cc->print_warning("do you want to see exception trace back?(y or n)");
+//                $c = fread(STDIN, 1);
+//                if ($c == 'y') {
+////                    var_dump($e->getTraceAsString());
+//                }
             }
-
-        } catch (\Exception $e) {
-            $cc->print_error("\n\n\noops!");
-            $cc->print_warning("fetch procedure crash due to some problem with this error:");
-            $cc->print_error($e->getMessage());
-            $cc->print_help("the exception thrown at line " . $e->getLine() . " of\t" . str_after($e->getFile(), base_path()) . "\tfile, pls check that and try again");
-            $cc->print_warning("do you want to see exception trace back?(y or n)");
-            $c = fread(STDIN, 1);
-            if ($c == 'y') {
-                var_dump($e->getTraceAsString());
-            }
-            return -1;
+        } else {
+            $cc->print_error("there is no external service with this url, check the url and try again.");
+            throw new NotFoundException();
         }
-
-        /**
-         * **************************************************************************************************************
-         * **************************************************************************************************************
-         * **************************************************************************************************************
-         * **************************************************************************************************************
-         * **************************************************************************************************************
-         * **************************************************************************************************************
-         * **************************************************************************************************************
-         */
-        return 1;
     }
 
     public function str_contains_array($extension, $acceptables)

@@ -111,9 +111,12 @@ class NotificationSample extends Model
      * @var array
      */
     public static $rules = [
-        'notifier_type' => 'required',
-        'notifier_id' => 'required'
+//        'notifier_type' => 'required',
+//        'notifier_id' => 'required'
     ];
+
+    public function getAbsolutePathAttribute(){ return $this->notifier->absolute_path; }
+    public function getThumbnaiAttribute(){ return $this->notifier->thumbnail; }
 
     public function notifier()
     {
@@ -122,6 +125,18 @@ class NotificationSample extends Model
 
     public function notifications()
     {
-        return $this->hasMany(Notification::class);
+        return $this->hasMany(Notification::class, 'sample_id');
+    }
+
+    protected static function boot() {
+        parent::boot();
+
+        static::deleting(function($notification_sample) { // cascade on soft delete for notifications
+            $notification_sample->notifications()->delete();
+        });
+
+        static::restored(function($notification_sample) { // cascade on restore for notifications
+            $notification_sample->notifications()->withTrashed()->restore();
+        });
     }
 }

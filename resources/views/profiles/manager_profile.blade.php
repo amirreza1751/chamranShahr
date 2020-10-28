@@ -89,18 +89,18 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="notifications">
-                            @foreach($notifications as $notification)
+                            @foreach($notificationSamples as $notificationSample)
                                 <div class="attachment-block clearfix">
                                     <img class="attachment-img attachment-img-custom"
-                                         src="{{ $notification->notifier->thumbnail }}"
+                                         src="{{ $notificationSample->notifier->thumbnail }}"
                                          alt="Attachment Image">
 
                                     <div class="attachment-pushed">
-                                        <h4 class="attachment-heading"><a>{{ $notification->title }}</a></h4>
+                                        <h4 class="attachment-heading"><a>{{ $notificationSample->title }}</a></h4>
 
                                         <div class="attachment-text">
-                                            {{ $notification->brief_description }}
-                                            <a href="{!! route(app($notification->notifier_type)->getTable() . '.show', [$notification->notifier_id]) !!}">more</a>
+                                            {{ $notificationSample->brief_description }}
+                                            <a href="{!! route(app($notificationSample->notifier_type)->getTable() . '.show', [$notificationSample->notifier_id]) !!}">more</a>
                                         </div>
                                         <!-- /.attachment-text -->
                                     </div>

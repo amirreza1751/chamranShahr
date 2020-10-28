@@ -628,6 +628,13 @@
         }
         /* RTL Callout */
 
+        /* RTL Box Tools */
+        .box-header > .box-tools.pull-left {
+            left: 1rem;
+            right: auto;
+        }
+        /* RTL Box Tools */
+
         @media(max-width: 767px){
             .widget-user-header-custom {
                 height: 300px !important;
@@ -636,8 +643,12 @@
                 font-size: 2rem !important;
             }
         }
-        /* Custom Widget User */
 
+        .no-padding{
+            padding: 0;
+        }
+
+        /* Custom Widget User */
         .image-square-100 {
             object-fit: cover;
             width: 100px;

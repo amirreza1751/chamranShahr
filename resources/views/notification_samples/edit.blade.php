@@ -3,8 +3,13 @@
 @section('content')
     <section class="content-header">
         <h1>
-            Notification Sample
+            نوتیفیکیشن
         </h1>
+        <ol class="breadcrumb">
+            <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>
+            <li><a href="{{ route('notificationSamples.index') }}"><i class="fa fa-bell"></i>مدیریت نوتیفیکیشن‌ها</a></li>
+            <li class="active">ویرایش نوتیفیکیشن</li>
+        </ol>
    </section>
    <div class="content">
        @include('adminlte-templates::common.errors')

@@ -19,6 +19,7 @@ use App\Models\ExternalService;
 use App\Models\Gender;
 use App\Models\News;
 use App\Models\Notice;
+use App\Models\NotificationSample;
 use App\User;
 use http\Client\Request;
 use Illuminate\Container\Container;
@@ -39,6 +40,12 @@ use function foo\func;
 Route::get('/', function () {
 //    return view('welcome');
     return view('landing');
+});
+Route::get('restore', function () {
+//    return view('welcome');
+    $sample = NotificationSample::withTrashed()->find(6);
+    $sample->restore();
+    return $sample->notifications;
 });
 
 Route::get('/landingtest', function (){
@@ -74,6 +81,7 @@ Route::group(['middleware' => 'auth:web'], function(){
         Route::resource('notices', 'NoticeController');
 
         Route::get('/externalServices/ajaxOwner', 'ExternalServiceController@ajaxOwner');
+        Route::get('/externalServices/{id}/fetch', 'ExternalServiceController@fetch')->name('externalServices.fetch');
         Route::resource('externalServices', 'ExternalServiceController'); // ++
 
         Route::get('/notifications/ajaxStudyField', 'NotificationController@ajaxStudyField');

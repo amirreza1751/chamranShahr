@@ -13,6 +13,7 @@ use App\Repositories\ExternalServiceRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
@@ -227,5 +228,53 @@ class ExternalServiceController extends AppBaseController
             }
         }
         return $models;
+    }
+
+    public function fetch($id)
+    {
+        echo '<html>
+<head>
+    <style>
+        .center-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 100vh;
+            font-weight: 800;
+            direction: rtl;
+        }
+        .center-screen > p {
+            max-width: 300px;
+            padding: 20px;
+            border: white solid 1px;
+            border-radius: 0.5rem;
+            background: whitesmoke;
+        }
+        body {
+            background-color: #3c8dbc;
+        }
+    </style>
+</head>
+<body>
+<div class="center-screen">
+    <p>فرایند استخراج اطلاعات از سرویس خارجی ممکن است تا چند دقیقه زمان ببرد. لطفا تا پایان فرایند و انتقال به صفحه‌ی نتایج شکیبا باشید.</p>
+</div>
+</body>
+</html>';
+
+        try {
+            $single_fetch_exitcode = Artisan::call('news:single_fetch', ['id' => $id]);
+        } catch (\Exception $e) {
+            Flash::error('به روزرسانی محتوای سرویس خارجی موفقیت آمیز نبود. لطفا مجددا تلاش کنید');
+
+            return redirect(route('externalServices.index'));
+        }
+
+        Flash::success('محتوای سرویس خارجی باموفقیت به روز رسانی شد');
+
+        return redirect(route('news.index'));
+
     }
 }

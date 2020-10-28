@@ -2,10 +2,14 @@
 
 @section('content')
     <section class="content-header">
-        <h1 class="pull-left">Notification Samples</h1>
+        <h1 class="pull-right">نوتیفیکیشن‌ها</h1>
         <h1 class="pull-right">
-           <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{{ route('notificationSamples.create') }}">Add New</a>
+           <a class="btn btn-primary btn-xs pull-right" style="margin-right: 10px" href="{{ route('notifications.showNotifyStudents') }}">ایجاد نوتیفیکیشن</a>
         </h1>
+        <ol class="breadcrumb">
+            <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>
+            <li class="active">مدیریت نوتیفیکیشن‌ها</li>
+        </ol>
     </section>
     <div class="content">
         <div class="clearfix"></div>
@@ -19,7 +23,7 @@
             </div>
         </div>
         <div class="text-center">
-        
+
         </div>
     </div>
 @endsection

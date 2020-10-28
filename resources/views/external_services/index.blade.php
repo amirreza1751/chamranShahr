@@ -43,7 +43,7 @@
 
                             {!! Form::open(['route' => ['externalServices.destroy', $externalService->id], 'method' => 'delete', 'class' => 'pull-left']) !!}
                             <div class="">
-                                <a href="{{ route('externalServices.show', $externalService->id) }}" class="btn btn-primary btn-sm">به روز رسانی</a>
+                                <a href="{{ route('externalServices.fetch', $externalService->id) }}" class="btn btn-primary btn-sm">به روز رسانی</a>
                                 <a href="{{ route('externalServices.show', $externalService->id) }}" class="btn btn-success btn-sm">نمایش</a>
                                 <a href="{{ route('externalServices.edit', $externalService->id) }}" class="btn btn-warning btn-sm">ویرایش</a>
 {{--                                <button href="{{ route('externalServices.destroy', $externalService->id) }}" class="btn btn-danger">حذف</button>--}}

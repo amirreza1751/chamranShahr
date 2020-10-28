@@ -6,8 +6,12 @@
     <a href="{!! route('profile') !!}"><i class="fa fa-user-circle"></i><span>صفحه‌ی شخصی</span></a>
 </li>
 
-<li class="{{ Request::is('notifications*') ? 'active' : '' }}">
-    <a href="{!! route('notifications.index') !!}"><i class="fa fa-bell"></i><span>مدیریت نوتیفیکیشن‌ها</span></a>
+{{--<li class="{{ Request::is('notifications*') ? 'active' : '' }}">--}}
+{{--    <a href="{!! route('notifications.index') !!}"><i class="fa fa-bell"></i><span>مدیریت نوتیفیکیشن‌ها</span></a>--}}
+{{--</li>--}}
+
+<li class="{{ Request::is('notificationSamples*') ? 'active' : '' }}">
+    <a href="{!! route('notificationSamples.index') !!}"><i class="fa fa-bell"></i><span>مدیریت نوتیفیکیشن‌ها</span></a>
 </li>
 
 <li class="{{ Request::is('departments*') ? 'active' : '' }}">

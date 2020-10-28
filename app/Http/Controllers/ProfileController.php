@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Department;
 use App\Repositories\NotificationRepository;
+use App\Repositories\NotificationSampleRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,25 +17,41 @@ class ProfileController extends Controller
     /** @var  NotificationRepository */
     private $notificationRepository;
     private $userRepository;
+    /** @var  NotificationSampleRepository */
+    private $notificationSampleRepository;
 
-    public function __construct(NotificationRepository $notificationRepo, UserRepository $userRepo)
+    public function __construct(NotificationRepository $notificationRepo, UserRepository $userRepo, NotificationSampleRepository $notificationSampleRepo)
     {
         $this->notificationRepository = $notificationRepo;
         $this->userRepository = $userRepo;
+        $this->notificationSampleRepository = $notificationSampleRepo;
     }
 
     public function profile()
     {
         if(Auth::user()->hasRole('manager')){
 
-            $notifications = collect();
-            $all = $this->notificationRepository->all();
+//            $notifications = collect();
+//            $all = $this->notificationRepository->all();
+//            $manage_histories = Auth::user()->under_managment();
+//            foreach ($all as $notification) {
+//                foreach ($manage_histories as $manage_history) {
+//                    if (isset($notification->notifier) && isset($notification->notifier->owner)) {
+//                        if (get_class($manage_history->managed) == get_class($notification->notifier->owner) && $manage_history->managed->id == $notification->notifier->owner->id) {
+//                            $notifications->push($notification);
+//                        }
+//                    }
+//                }
+//            }
+
+            $notificationSamples = collect();
+            $all = $this->notificationSampleRepository->all();
             $manage_histories = Auth::user()->under_managment();
-            foreach ($all as $notification) {
+            foreach ($all as $notificationSample) {
                 foreach ($manage_histories as $manage_history) {
-                    if (isset($notification->notifier) && isset($notification->notifier->owner)) {
-                        if (get_class($manage_history->managed) == get_class($notification->notifier->owner) && $manage_history->managed->id == $notification->notifier->owner->id) {
-                            $notifications->push($notification);
+                    if (isset($notificationSample->notifier) && isset($notificationSample->notifier->owner)) {
+                        if (get_class($manage_history->managed) == get_class($notificationSample->notifier->owner) && $manage_history->managed->id == $notificationSample->notifier->owner->id) {
+                            $notificationSamples->push($notificationSample);
                         }
                     }
                 }
@@ -52,7 +69,7 @@ class ProfileController extends Controller
             }
 
             return view('profiles.manager_profile')
-                ->with('notifications', $notifications->sortByDesc('updated_at'))
+                ->with('notificationSamples', $notificationSamples->sortByDesc('updated_at'))
                 ->with('departments', $departments);
         }
     }
