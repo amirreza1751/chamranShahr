@@ -166,38 +166,6 @@
             font-style: normal;
         }
 
-        /*********************************************************/
-        /*                  Iran English Digits                      */
-        /*********************************************************/
-        /*@font-face {*/
-        /*    font-family: IRAN;*/
-        /*    src: url('/fonts/IRAN.ttf');*/
-        /*}*/
-        /*@font-face {*/
-        /*    font-family: IRANBlack;*/
-        /*    src: url('/fonts/IRAN_Black.ttf');*/
-        /*}*/
-        /*@font-face {*/
-        /*    font-family: IRANBold;*/
-        /*    src: url('/fonts/IRAN_Bold.ttf');*/
-        /*}*/
-        /*@font-face {*/
-        /*    font-family: IRANMarker;*/
-        /*    src: url('/fonts/IRANMarker.ttf');*/
-        /*}*/
-        /*.iran-marker {*/
-        /*    font-family: IRANMarker;*/
-        /*}*/
-        /*.iran-black {*/
-        /*    font-family: IRANBlack;*/
-        /*}*/
-        /*.iran-bold {*/
-        /*    font-family: IRANBold;*/
-        /*}*/
-        /*.iran {*/
-        /*    font-family: IRAN;*/
-        /*}*/
-
         .vazir-font-fd {
             font-family: VazirFD !important;
         }
