@@ -424,100 +424,103 @@ class ExternalServiceController extends AppBaseController
                                  */
                                 $check = News::where('link', $news['link'])->first();
                                 if (!isset($check)) { // if this news is a new one
-                                    if ($news['path'] != "") {// image exist
-                                        /**
-                                         * < get media size >
-                                         * brief look at request header to check some details
-                                         * such as file size, extension and etc.
-                                         */
-                                        stream_context_set_default(array('http' => array('method' => 'HEAD')));
-                                        $head = array_change_key_case(get_headers($news['path'], 1));
-                                        $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
+                                    if (isset($new['path'])){
+                                        if ($news['path'] != "") {// image exist
+                                            /**
+                                             * < get media size >
+                                             * brief look at request header to check some details
+                                             * such as file size, extension and etc.
+                                             */
+                                            stream_context_set_default(array('http' => array('method' => 'HEAD')));
+                                            $head = array_change_key_case(get_headers($news['path'], 1));
+                                            $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
 
-                                        if (!$clen) { // cannot retrieve file size, return "-1"
-                                            $clen = -1;
-                                        }
-                                        /** < get media size > */
-
-                                        $pathinfo = pathinfo($news['path']);
-                                        /**
-                                         * < get media extension >
-                                         * extract substring after last '.' and remove possible parameters
-                                         * example:
-                                         * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
-                                         * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
-                                         *                                              we need this^
-                                         */
-                                        if (isset($pathinfo['extension'])){
-                                            $extension = explode( "?", $pathinfo['extension'])[0];
-                                        }
-
-                                        if(isset($extension) && str_contains(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
+                                            if (!$clen) { // cannot retrieve file size, return "-1"
+                                                $clen = -1;
+                                            }
                                             /** < get media size > */
-                                            if ($clen < 2097152) { // if image size < 2MiB
 
-                                                $media_file = base_path().'/tmp/news_tmp' . str_random(4) . '.tmp';
-                                                $ch = curl_init($news['path']);
-                                                $fp = fopen($media_file, 'wb') or die('Permission error');
-                                                curl_setopt($ch, CURLOPT_FILE, $fp);
-                                                curl_setopt($ch, CURLOPT_HEADER, 0);
-                                                curl_exec($ch);
-                                                curl_close($ch);
-                                                fclose($fp);
+                                            $pathinfo = pathinfo($news['path']);
+                                            /**
+                                             * < get media extension >
+                                             * extract substring after last '.' and remove possible parameters
+                                             * example:
+                                             * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
+                                             * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
+                                             *                                              we need this^
+                                             */
+                                            if (isset($pathinfo['extension'])){
+                                                $extension = explode( "?", $pathinfo['extension'])[0];
+                                            }
 
-                                                /**
-                                                 * validate image file
-                                                 */
-                                                $validator = Validator::make(['img' => new File($media_file)], [
-                                                    'img' => 'image|mimes:jpg,jpeg,png|max:2048',
-                                                ]);
-                                                if (!$validator->fails()) {
+                                            if(isset($extension) && str_contains(strtolower($extension) , GeneralVariable::$inbound_acceptable_media)){ // acceptable extension such png and jpg
+                                                /** < get media size > */
+                                                if ($clen < 2097152) { // if image size < 2MiB
 
-                                                    //put image to relative folder to its owner such department
-                                                    $path = Storage::putFile('public/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($media_file));
-                                                    $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
-                                                    $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
-                                                    // retrieve the stored media
-                                                    $file = Storage::get($path);
-                                                    // create laravel symbolic link for this media
-                                                    $path = '/' . str_replace('public', 'storage', $path);
-                                                    $news['path'] = $path;
+                                                    $media_file = base_path().'/tmp/news_tmp' . str_random(4) . '.tmp';
+                                                    $ch = curl_init($news['path']);
+                                                    $fp = fopen($media_file, 'wb') or die('Permission error');
+                                                    curl_setopt($ch, CURLOPT_FILE, $fp);
+                                                    curl_setopt($ch, CURLOPT_HEADER, 0);
+                                                    curl_exec($ch);
+                                                    curl_close($ch);
+                                                    fclose($fp);
 
-                                                    $destinationPath = public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
-                                                    $img = Image::make($file);
-                                                    // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
-                                                    $img->resize(100, 100, function ($constraint) {
-                                                        $constraint->aspectRatio();
-                                                    })->save(public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension));
-                                                } else { // image is invalid
+                                                    /**
+                                                     * validate image file
+                                                     */
+                                                    $validator = Validator::make(['img' => new File($media_file)], [
+                                                        'img' => 'image|mimes:jpg,jpeg,png|max:2048',
+                                                    ]);
+                                                    if (!$validator->fails()) {
+                                                        //put image to relative folder to its owner such department
+                                                        $path = Storage::putFile('public/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($media_file));
+                                                        $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
+                                                        $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
+                                                        // retrieve the stored media
+                                                        $file = Storage::get($path);
+                                                        // create laravel symbolic link for this media
+                                                        $path = '/' . str_replace('public', 'storage', $path);
+                                                        $news['path'] = $path;
+
+                                                        $img = Image::make($file);
+                                                        // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
+                                                        $img->resize(100, 100, function ($constraint) {
+                                                            $constraint->aspectRatio();
+                                                        })->save(public_path('storage/news_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension));
+                                                    } else { // image is invalid
+                                                        unset($news['path']);
+                                                        $default_image = true;
+                                                        $default_image_message = 'image file was invalid';
+                                                    }
+
+
+                                                    /**
+                                                     * ************************* VERY IMPORTANT
+                                                     * if for some reason can't get media of this news
+                                                     * use default image that MUST exist with this specific directory and name:
+                                                     * /storage/app/public/news_images/news_default_image.jpg
+                                                     * creating this default image is an INITIAL functionality :)
+                                                     */
+                                                } else { // image size is > 2MiB
+//                                            $news['path'] = $default_image_dir;
                                                     unset($news['path']);
                                                     $default_image = true;
-                                                    $default_image_message = 'image file was invalid';
+                                                    $default_image_message = 'image file was too big';
                                                 }
-
-
-                                                /**
-                                                 * ************************* VERY IMPORTANT
-                                                 * if for some reason can't get media of this news
-                                                 * use default image that MUST exist with this specific directory and name:
-                                                 * /storage/app/public/news_images/news_default_image.jpg
-                                                 * creating this default image is an INITIAL functionality :)
-                                                 */
-                                            } else { // image size is > 2MiB
-//                                            $news['path'] = $default_image_dir;
+                                            } else { // media's extension is not acceptable for this functionality
                                                 unset($news['path']);
                                                 $default_image = true;
-                                                $default_image_message = 'image file was too big';
+                                                $default_image_message = 'media extension was not acceptable : ' . $extension;
                                             }
-                                        } else { // media's extension is not acceptable for this functionality
+                                        } else { // news have no media
                                             unset($news['path']);
                                             $default_image = true;
-                                            $default_image_message = 'media extension was not acceptable : ' . $extension;
+                                            $default_image_message = 'media file not found';
                                         }
-                                    } else { // news have no media
-                                        unset($news['path']);
+                                    } else { // image is invalid
                                         $default_image = true;
-                                        $default_image_message = 'media file not found';
+                                        $default_image_message = 'image file was invalid';
                                     }
 //                                    $cc->print_success('media url:', "\t");
                                     if(isset($news['path'])){

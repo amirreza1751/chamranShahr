@@ -48,11 +48,10 @@ class UserInitial extends Command
 
             $gf->truncate([
                 'users',
-            ],
-                true);
+            ],false);
 
 
-
+            $gf->databaseForeignKeyCheck(false);
             $user = User::create([
                 'first_name' => 'Shahid Chamran',
                 'last_name' => 'University of Ahvaz',
@@ -62,6 +61,7 @@ class UserInitial extends Command
                 'national_id' => 'scu',
                 'gender_unique_code' => 'gender0',
             ]);
+            $gf->databaseForeignKeyCheck(true);
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new user:\t" . $cc->getColoredString($user->first_name . ' ' . $user->last_name, $cc::CREATE) . "\n");
 
         } else {

@@ -50,7 +50,7 @@ class ExternalServiceTypeInitial extends Command
             $gf->truncate([
                 'external_service_types',
                 ],
-                true);
+                false);
 
             $external_service_type = ExternalServiceType::create([
                 'title' => 'rss',

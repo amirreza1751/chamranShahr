@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\General\ConsoleColor;
+use App\General\GeneralFunction;
 use App\Models\ManageLevel;
 use App\Repositories\ManageLevelRepository;
 use Illuminate\Console\Command;
@@ -45,10 +46,15 @@ class ManageLevelInitial extends Command
     public function handle()
     {
         $cc = new ConsoleColor();
+        $gf = new GeneralFunction();
         $cc->print_error("this procedure will truncate manage_levels table which may permanently delete some records!\nDo you want to continue? (pls type HellYeah to continue or anything to skip)");
         $answer = trim(fgets(STDIN));
         if ($answer == 'HellYeah') {
-            //ManageLevel::truncate();
+
+            $gf->truncate([
+                'manage_levels',
+            ],
+                false);
 
             if (is_null(ManageLevel::where('level', 1.0)->first())) {
                 $level = array(

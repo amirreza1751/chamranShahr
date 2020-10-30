@@ -52,7 +52,7 @@ class RoleInitial extends Command
 //                'role_has_permissions',
 //                'model_has_permissions',
 //                'model_has_roles'],
-                true);
+                false);
 
             $role = Role::create([
                 'name' => 'developer',
