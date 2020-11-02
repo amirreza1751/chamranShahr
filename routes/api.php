@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     /** User Notifications Apis which needs Authenticated user */
     Route::get('users/notifications', 'UserAPIController@notifications'); /** Retrieve notifications of authenticated user */
     Route::get('users/notificationsWithTrashed', 'UserAPIController@notificationsWithTrashed'); /** Retrieve all notifications of authenticated user, including soft deleted ones */
+    Route::get('users/trashedNotifications', 'UserAPIController@trashedNotifications'); /** Retrieve trashed notifications of authenticated user */
     Route::get('users/readNotifications', 'UserAPIController@readNotifications'); /** Retrieve read notifications of authenticated user */
     Route::get('users/unreadNotifications', 'UserAPIController@unreadNotifications'); /** Retrieve Unread notifications of authenticated user */
 

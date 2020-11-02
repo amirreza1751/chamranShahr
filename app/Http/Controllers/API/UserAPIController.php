@@ -650,11 +650,70 @@ class UserAPIController extends AppBaseController
 
         $notifications = $student->notifications;
 
-        $retrieves = Notification::staticRetrievesWithTrashed($notifications->merge($user->notifications()));
+        $retrieves = Notification::staticRetrievesWithTrashed($notifications->merge($user->notifications));
 
         if (sizeof($retrieves) == 0)
             return response()->json([
                 'message' => 'هیچ نوتیفیکیشنی پیدا نشد'
+            ], 200);
+
+        return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
+    }
+
+    /**
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="users/trashedNtifications",
+     *      summary="Get User Trashed Notifictions",
+     *      tags={"User Notification"},
+     *      description="Get list of authenticated User soft deleted Notifications",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @SWG\Items(ref="#/definitions/Notification")
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function trashedNotifications()
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+        }
+
+        /** @var Student $student */
+        $student = $this->studentRepository->findWithoutFail($user->student->id);
+
+        $notifications = $student->notifications;
+
+        $retrieves = Notification::staticRetrievesTrashed($notifications->merge($user->notifications));
+
+        if (sizeof($retrieves) == 0)
+            return response()->json([
+                'message' => 'هیچ نوتیفیکیشن حذف شده‌ای پیدا نشد'
             ], 200);
 
         return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
@@ -1125,7 +1184,7 @@ class UserAPIController extends AppBaseController
 
         $notifications = $student->notifications;
 
-        $notifications = Notification::staticRemoveUnTrashed($notifications->merge($user->notifications)); /** check for soft deleted notifications */
+        $notifications = Notification::staticRemoveUnTrashedAndExpired($notifications->merge($user->notifications)); /** check for soft deleted notifications */
 
         if (sizeof($notifications) == 0)
             return response()->json([
@@ -1146,7 +1205,7 @@ class UserAPIController extends AppBaseController
 
         if (sizeof($notFoundNotificationsId) > 0)
             return response()->json([
-                'message' => 'بعضی از نوتیفیکیشن ها در لیست خوانده شده‌ها وجود ندارند',
+                'message' => 'بعضی از نوتیفیکیشن‌ها در لیست حذف‌شده‌ها وجود ندارند',
                 'data' => $notFoundNotificationsId,
             ]);
         return response()->json([
@@ -1199,7 +1258,7 @@ class UserAPIController extends AppBaseController
 
         $notifications = $student->notifications;
 
-        $notifications = Notification::staticRemoveUnTrashed($notifications->merge($user->notifications)); /** check for soft deleted notifications */
+        $notifications = Notification::staticRemoveUnTrashedAndExpired($notifications->merge($user->notifications)); /** check for soft deleted notifications */
 
         if (sizeof($notifications) == 0)
             return response()->json([
@@ -1483,7 +1542,8 @@ class UserAPIController extends AppBaseController
         /** @var Student $student */
         $student = $this->studentRepository->findWithoutFail($user->student->id);
 
-        $notification = $student->notifications()->merge($user->notifications())->find($input['notification_id']);
+        $notifications = $student->notifications->merge($user->notifications);
+        $notification = Notification::staticRemoveUnTrashedAndExpired($notifications)->find($input['notification_id']);
         if(isset($notification) && isset($notification->deleted_at)) /** check for notifications has been deleted  */
         {
             $notification->deleted_at = null;
@@ -1494,7 +1554,7 @@ class UserAPIController extends AppBaseController
         }
 
         return response()->json([
-            'message' => 'نوتیفیکیشنی با این مشخصات پیدا نشد'
+            'message' => 'نوتیفیکیشن حذف‌شده‌ای با این مشخصات پیدا نشد'
         ], 200);
     }
 }

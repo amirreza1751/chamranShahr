@@ -182,8 +182,10 @@ class Notification extends Model
         $retrieves = array();
         foreach ($notifications as $notification){
             $item = Notification::find($notification->id);
-            if (isset($item) && $item->deadline > Carbon::now())
-                array_push($retrieves, $item->retrieve());
+            if (isset($item->notificationSample)){
+                if (isset($item) && $item->deadline > Carbon::now())
+                    array_push($retrieves, $item->retrieve());
+            }
         }
 
         return $retrieves;
@@ -194,8 +196,30 @@ class Notification extends Model
         $retrieves = array();
         foreach ($notifications as $notification){
             $item = Notification::withTrashed()->find($notification->id);
-            if (isset($item))
-                array_push($retrieves, $item->retrieve());
+            if(isset($item)){
+                if (isset($item->notificationSample)){ // if a high-level don't delete this notification
+                    if($item->deadline > Carbon::now()){
+                        array_push($retrieves, $item->retrieve());
+                    }
+                }
+            }
+        }
+
+        return $retrieves;
+    }
+
+    public static function staticRetrievesTrashed($notifications)
+    {
+        $retrieves = array();
+        foreach ($notifications as $notification){
+            $item = Notification::onlyTrashed()->find($notification->id);
+            if(isset($item)){
+                if (isset($item->notificationSample)){ // if a high-level don't delete this notification
+                    if($item->deadline > Carbon::now()){
+                        array_push($retrieves, $item->retrieve());
+                    }
+                }
+            }
         }
 
         return $retrieves;
@@ -205,8 +229,11 @@ class Notification extends Model
     {
         $result = new DatabaseNotificationCollection();
         foreach ($notifications as $notification){
-            if(empty($notification->deleted_at)){
-                $result->push($notification);
+            $item = Notification::withTrashed()->find($notification->id); // just notifications which has not deleted before
+            if (isset($item->notificationSample)){
+                if(empty($notification->deleted_at)){
+                    $result->push($notification);
+                }
             }
         }
 
@@ -218,9 +245,11 @@ class Notification extends Model
         $result = new DatabaseNotificationCollection();
         foreach ($notifications as $notification){
             $item = Notification::find($notification->id); // just notifications which has not deleted before
-            if (isset($item)){
-                if(empty($item->deleted_at) && $item->deadline > Carbon::now()){
-                    $result->push($notification);
+            if (isset($item->notificationSample)){
+                if (isset($item)){
+                    if(empty($item->deleted_at) && $item->deadline > Carbon::now()){
+                        $result->push($notification);
+                    }
                 }
             }
         }
@@ -232,8 +261,28 @@ class Notification extends Model
     {
         $result = new DatabaseNotificationCollection();
         foreach ($notifications as $notification){
-            if(isset($notification->deleted_at)){
-                $result->push($notification);
+            $item = Notification::withTrashed()->find($notification->id); // just notifications which has not deleted before
+            if (isset($item->notificationSample)){
+                if(isset($notification->deleted_at)){
+                    $result->push($notification);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    public static function staticRemoveUnTrashedAndExpired($notifications)
+    {
+        $result = new DatabaseNotificationCollection();
+        foreach ($notifications as $notification){
+            $item = Notification::withTrashed()->find($notification->id); // just notifications which has not deleted before
+            if(isset($item)){
+                if (isset($item->notificationSample)){ // if a high-level don't delete this notification
+                    if(isset($item->deleted_at) && $item->deadline > Carbon::now()){
+                        $result->push($notification);
+                    }
+                }
             }
         }
 
