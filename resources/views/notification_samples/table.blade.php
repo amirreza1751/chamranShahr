@@ -17,7 +17,7 @@
                 <td>{{ $notificationSample->brief_description }}</td>
                 <td>{{ $notification_types[$notificationSample->type] }}</td>
                 <td><a href="{!! route(app($notificationSample->notifier_type)->getTable() . '.show', ['id' => $notificationSample->notifier_id]) !!}" class=' btn-success btn-xs'>مشاهده</a></td>
-                <td>
+                <td @if($notificationSample->deadline < Carbon\Carbon::now()) data-toggle="tooltip" title="منقضی شده" class="bg-danger" @endif>
                     @if (isset($notificationSample->deadline))
                         {{ Morilog\Jalali\Jalalian::fromDateTime($notificationSample->deadline)->format('%A, %d %B %Y') }}
                     @endif
@@ -29,7 +29,7 @@
                            class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
                         <a href="{{ route('notificationSamples.edit', [$notificationSample->id]) }}"
                            class='btn btn-default btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
-                        {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
+                        {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('آیا از حذف این نوتیفیکیشن اطمینان دارید؟')"]) !!}
                     </div>
                     {!! Form::close() !!}
                 </td>

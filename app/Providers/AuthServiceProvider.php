@@ -52,8 +52,8 @@ class AuthServiceProvider extends ServiceProvider
 //        Gate::define('update_book_ad', AdPolicy::class . '@update_book_ad');
 //        Gate::resource('ads', AdPolicy::class);
 
-        Gate::define('notifyStudents', NotificationPolicy::class . '@notifyStudents');
-        Gate::define('showNotifyStudents', NotificationPolicy::class . '@showNotifyStudents');
+        Gate::define('notify', NotificationPolicy::class . '@notify');
+        Gate::define('showNotify', NotificationPolicy::class . '@showNotify');
         Gate::define('store', NoticePolicy::class . '@store');
     }
 }

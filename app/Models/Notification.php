@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Support\Facades\Auth;
 use Morilog\Jalali\Jalalian;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * @SWG\Definition(
@@ -180,7 +182,7 @@ class Notification extends Model
         $retrieves = array();
         foreach ($notifications as $notification){
             $item = Notification::find($notification->id);
-            if (isset($item))
+            if (isset($item) && $item->deadline > Carbon::now())
                 array_push($retrieves, $item->retrieve());
         }
 
@@ -205,6 +207,21 @@ class Notification extends Model
         foreach ($notifications as $notification){
             if(empty($notification->deleted_at)){
                 $result->push($notification);
+            }
+        }
+
+        return $result;
+    }
+
+    public static function staticRemoveTrashedAndExpired($notifications)
+    {
+        $result = new DatabaseNotificationCollection();
+        foreach ($notifications as $notification){
+            $item = Notification::find($notification->id); // just notifications which has not deleted before
+            if (isset($item)){
+                if(empty($item->deleted_at) && $item->deadline > Carbon::now()){
+                    $result->push($notification);
+                }
             }
         }
 

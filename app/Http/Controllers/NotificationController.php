@@ -20,6 +20,7 @@ use App\Notifications\GeneralNotification;
 use App\Notifications\NoticeNotification;
 use App\Repositories\NotificationRepository;
 use App\Http\Controllers\AppBaseController;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -27,6 +28,7 @@ use Flash;
 use Illuminate\Support\Facades\Auth;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class NotificationController extends AppBaseController
 {
@@ -205,9 +207,9 @@ class NotificationController extends AppBaseController
      *******************************************************************************************************************
      */
 
-    public function showNotifyStudents()
+    public function showNotify()
     {
-        $this->authorize('showNotifyStudents', Notification::class);
+        $this->authorize('showNotify', Notification::class);
 
         $notifiers = [
             'Notice' => Notice::class,
@@ -223,12 +225,13 @@ class NotificationController extends AppBaseController
             ->with('entrance_terms', $entrance_terms)
             ->with('study_statuses', $study_statuses)
             ->with('notifiers', $notifiers)
-            ->with('notification_types', Constants::notification_types);
+            ->with('notification_types', Constants::notification_types)
+            ->with('user_types', Constants::user_types);
     }
 
-    public function showNotifyStudentsFromNotifier($notifier_type, $notifier_id)
+    public function showNotifyFromNotifier($notifier_type, $notifier_id)
     {
-        $this->authorize('notifyStudents', [$notifier_type, $notifier_id]);
+        $this->authorize('notify', [$notifier_type, $notifier_id]);
 
         $notifier = $notifier_type::find($notifier_id);
 
@@ -246,10 +249,12 @@ class NotificationController extends AppBaseController
             ->with('entrance_terms', $entrance_terms)
             ->with('study_statuses', $study_statuses)
             ->with('notifiers', $notifiers)
-            ->with('notifier', $notifier);
+            ->with('notifier', $notifier)
+            ->with('notification_types', Constants::notification_types)
+            ->with('user_types', Constants::user_types);
     }
 
-    public function notifyStudents(Request $request)
+    public function notify(Request $request)
     {
         $input = $request->all();
         $title = null;
@@ -268,9 +273,10 @@ class NotificationController extends AppBaseController
             'study_area_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyArea::class))) . '[0-9]/',
             'entrance_term_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", Term::class))) . '[0-9]/',
             'type' => ['nullable','regex:(' . '^'.Constants::EDUCATIONAL_NOTIFICATION.'$' . '|' . '^'.Constants::STUDIOUS_NOTIFICATION.'$' . '|' . '^'.Constants::COLLEGIATE_NOTIFICATION.'$' . '|' . '^'.Constants::CULTURAL_NOTIFICATION.'$' . ')'],
+            'user_type' => ['nullable','regex:(' . '^'.Constants::ALL_USERS.'$' . '|' . '^'.Constants::STUDENTS.'$' . '|' . '^'.Constants::EMPLOYEES.'$' . '|' . '^'.Constants::PROFESSORS.'$' . ')'],
         ]);
 
-        $this->authorize('notifyStudents', [$input['notifier_type'], $input['notifier_id']]);
+        $this->authorize('notify', [$input['notifier_type'], $input['notifier_id']]);
 
         $notifier = $input['notifier_type']::find($input['notifier_id']);
 
@@ -295,6 +301,39 @@ class NotificationController extends AppBaseController
             }
         }
 
+        $input['title'] = $title;
+        $input['brief_description'] = $brief_description;
+
+        $input_deadline = Carbon::createFromFormat('Y-m-d', $input['deadline']);
+        $input['deadline'] = Carbon::create($input_deadline->year, $input_deadline->month, $input_deadline->day, 0, 0, 0)->addDays(1)->subSecond(1);
+
+        if ($input['user_type'] == Constants::ALL_USERS){
+            $this->notifyUsers($input);
+        } elseif ($input['user_type'] == Constants::STUDENTS){
+            $this->notifyStudents($input);
+        }
+
+        Flash::success('نوتیفیکیشن با موفقیت ایجاد شد');
+
+        return redirect(route('notificationSamples.index'));
+    }
+
+    public function notifyUsers($input)
+    {
+        $users = User::all();
+
+        if ($users->isEmpty()) {
+            Flash::error('کاربری با مشخصات انتخابی پیدا نشد.');
+
+            return redirect(route('notificationSamples.index'));
+        }
+
+        $this->send($users, $input['notifier_type'], $input['notifier_id'], $input['deadline'], $input['title'], $input['brief_description'], $input['type']);
+
+    }
+
+    public function notifyStudents($input)
+    {
         $students = Student::all();
 
         if (isset($input['faculty_unique_code'])) {
@@ -326,14 +365,11 @@ class NotificationController extends AppBaseController
         if ($students->isEmpty()) {
             Flash::error('دانشجویی با شخصات انتخابی پیدا نشد.');
 
-            return redirect(route('notifications.index'));
+            return redirect(route('notificationSamples.index'));
         }
 
-        $this->send($students, $input['notifier_type'], $input['notifier_id'], $input['deadline'], $title, $brief_description, $input['type']);
+        $this->send($students, $input['notifier_type'], $input['notifier_id'], $input['deadline'], $input['title'], $input['brief_description'], $input['type']);
 
-        Flash::success('Notification sent successfully.');
-
-        return redirect(route('notifications.index'));
     }
 
     public function ajaxNotifier(Request $request)

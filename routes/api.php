@@ -46,8 +46,24 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     Route::post('users/hasRole', 'RolePermissionAPIController@hasRole');
     Route::get('users/roles', 'RolePermissionAPIController@roles');
 
-    /** Notifications Apis which needs Authenticated user */
-    Route::get('notifications/{id}/notifierOwner', 'NotificationAPIController@notifierOwner');
+    /** User Notifications Apis which needs Authenticated user */
+    Route::get('users/notifications', 'UserAPIController@notifications'); /** Retrieve notifications of authenticated user */
+    Route::get('users/notificationsWithTrashed', 'UserAPIController@notificationsWithTrashed'); /** Retrieve all notifications of authenticated user, including soft deleted ones */
+    Route::get('users/readNotifications', 'UserAPIController@readNotifications'); /** Retrieve read notifications of authenticated user */
+    Route::get('users/unreadNotifications', 'UserAPIController@unreadNotifications'); /** Retrieve Unread notifications of authenticated user */
+
+    Route::put('users/notifications/markAsRead', 'UserAPIController@markAsReadNotifications'); /** Update the notifications should be mark as read by authenticated user */
+    Route::delete('users/notifications/delete', 'UserAPIController@deleteNotifications'); /** Soft Delete the notifications should be deleted by authenticated user */
+    Route::delete('users/notifications/deleteAll', 'UserAPIController@deleteAllNotifications'); /** soft delete all the notifications should be deleted by authenticated user */
+    Route::put('users/notifications/restore', 'UserAPIController@restoreNotifications'); /** restore notifications has been deleted by authenticated user */
+    Route::put('users/notifications/restoreAll', 'UserAPIController@restoreAllNotifications'); /** restore all notifications has been deleted by authenticated user */
+    Route::put('users/notifications/markAsUnread', 'UserAPIController@markAsUnreadNotifications'); /** Update the notifications should be mark as unread by authenticated user */
+
+    Route::put('users/notification/markAsRead', 'UserAPIController@markAsReadNotification'); /** Update the notification should be mark as read by authenticated user */
+    Route::put('users/notification/markAsUnread', 'UserAPIController@markAsUnreadNotification'); /** Update the notification should be mark as unread by authenticated user */
+    Route::Delete('users/notification/delete', 'UserAPIController@deleteNotification'); /** soft delete the notification should be deleted by authenticated user */
+    Route::put('users/notification/restore', 'UserAPIController@restoreNotification'); /** restore the notification has been deleted by authenticated user */
+
 
 
     /** Student Apis which needs Authenticated user */

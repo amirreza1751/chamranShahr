@@ -118,6 +118,16 @@ class StudyField extends Model
         return $students;
     }
 
+    public function users()
+    {
+        $users = collect();
+        foreach ($this->study_areas as $studyArea){
+            foreach ($studyArea->students as $student)
+                $users->push($student->user);
+        }
+        return $users;
+    }
+
     public function retrieve(){
         $retrieve = collect($this->toArray())
             ->only([

@@ -4140,6 +4140,205 @@
                 }
             }
         },
+        "/notificationSamples": {
+            "get": {
+                "tags": [
+                    "NotificationSample"
+                ],
+                "summary": "Get a listing of the NotificationSamples.",
+                "description": "Get all NotificationSamples",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/NotificationSample"
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "NotificationSample"
+                ],
+                "summary": "Store a newly created NotificationSample in storage",
+                "description": "Store NotificationSample",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "NotificationSample that should be stored",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/NotificationSample"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/NotificationSample"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/notificationSamples/{id}": {
+            "get": {
+                "tags": [
+                    "NotificationSample"
+                ],
+                "summary": "Display the specified NotificationSample",
+                "description": "Get NotificationSample",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of NotificationSample",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/NotificationSample"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "NotificationSample"
+                ],
+                "summary": "Update the specified NotificationSample in storage",
+                "description": "Update NotificationSample",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of NotificationSample",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "NotificationSample that should be updated",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/NotificationSample"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/NotificationSample"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "NotificationSample"
+                ],
+                "summary": "Remove the specified NotificationSample from storage",
+                "description": "Delete NotificationSample",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of NotificationSample",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/users/hasRole": {
             "post": {
                 "tags": [
@@ -6317,7 +6516,7 @@
         "users/notifications": {
             "get": {
                 "tags": [
-                    "User"
+                    "User Notification"
                 ],
                 "summary": "Get User Notifictions",
                 "description": "Get list of authenticated User Notifications",
@@ -6337,6 +6536,424 @@
                                     "items": {
                                         "$ref": "#/definitions/Notification"
                                     }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "users/notificationsWithTrashed": {
+            "get": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Get User Notifictions With Trashed",
+                "description": "Get list of authenticated User Notifications, including soft deleted ones",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Notification"
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "users/unreadNotifications": {
+            "get": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Get User Unread Notifictions",
+                "description": "Get list of authenticated User Unread Notifications",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Notification"
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "users/readNotifications": {
+            "get": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Get User Read Notifictions",
+                "description": "Get list of authenticated User Read Notifications",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Notification"
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notifications/markAsRead": {
+            "put": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Mark as Read Notifications",
+                "description": "Update the notifications shold be mark as read by authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notifications/markAsUnread": {
+            "put": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Mark as Unread Notifications",
+                "description": "Update the notifications shold be mark as unread by authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notifications/delete": {
+            "delete": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Soft Delete Notifications",
+                "description": "soft delete the notifications should be deleted by authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notifications/deleteAll": {
+            "delete": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Soft Delete All Notifications",
+                "description": "soft delete all the notifications should be deleted by authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notifications/restore": {
+            "put": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Restore soft deleted Notifications",
+                "description": "restore notifications has been deleted by authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notifications/restoreAll": {
+            "put": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Restore All soft deleted Notifications",
+                "description": "restore all notifications has been deleted by authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notification/markAsRead": {
+            "put": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Mark as Read Notification",
+                "description": "Update the notification shold be mark as read by authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "$notifications_id",
+                        "in": "path",
+                        "description": "id of notification",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notification/markAsUnread": {
+            "put": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Mark as Unread Notification",
+                "description": "Update the notification shold be mark as unread by authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "$notification_id",
+                        "in": "path",
+                        "description": "id of notification",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notification/delete": {
+            "delete": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Soft Delete Notification",
+                "description": "soft delete the notification should be deleted by authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "$notification_id",
+                        "in": "path",
+                        "description": "id of notification",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/notification/restore": {
+            "put": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Restore soft deleted Notification",
+                "description": "restore the notification has been deleted by authenticated User",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "$notification_id",
+                        "in": "path",
+                        "description": "id of notification",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
                                 },
                                 "message": {
                                     "type": "string"
@@ -7315,6 +7932,59 @@
                 },
                 "read_at": {
                     "description": "read_at",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "created_at": {
+                    "description": "created_at",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "description": "updated_at",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "deleted_at": {
+                    "description": "deleted_at",
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "NotificationSample": {
+            "required": [
+                ""
+            ],
+            "properties": {
+                "id": {
+                    "description": "id",
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "title": {
+                    "description": "title",
+                    "type": "string"
+                },
+                "brief_description": {
+                    "description": "brief_description",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "type",
+                    "type": "string"
+                },
+                "notifier_type": {
+                    "description": "notifier_type",
+                    "type": "string"
+                },
+                "notifier_id": {
+                    "description": "notifier_id",
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "deadline": {
+                    "description": "deadline",
                     "type": "string",
                     "format": "date-time"
                 },

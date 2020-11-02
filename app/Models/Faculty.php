@@ -112,6 +112,18 @@ class Faculty extends Model
         return $students;
     }
 
+    public function users()
+    {
+        $users = collect();
+        foreach ($this->study_fields as $studyField){
+            foreach ($studyField->study_areas as $studyArea){
+                foreach ($studyArea->students as $student)
+                    $users->push($student->user);
+            }
+        }
+        return $users;
+    }
+
     public function studentsCount()
     {
         $count = $this->students()->count();

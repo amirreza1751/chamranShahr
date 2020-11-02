@@ -4,7 +4,7 @@
     <section class="content-header">
         <h1 class="pull-right">نوتیفیکیشن‌ها</h1>
         <h1 class="pull-right">
-           <a class="btn btn-primary btn-xs pull-right" style="margin-right: 10px" href="{{ route('notifications.showNotifyStudents') }}">ایجاد نوتیفیکیشن</a>
+           <a class="btn btn-primary btn-xs pull-right" style="margin-right: 10px" href="{{ route('notifications.showNotify') }}">ایجاد نوتیفیکیشن</a>
         </h1>
         <ol class="breadcrumb">
             <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>

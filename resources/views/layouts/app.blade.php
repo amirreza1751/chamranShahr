@@ -192,6 +192,32 @@
         body, h1, h2, h3, h4, h5, h6 {
             font-family: VazirFD;
         }
+
+        ::-webkit-scrollbar
+        {
+            width: 9px;   /*for vertical scrollbars*/
+            height: 12px;  /*for horizontal scrollbars*/
+        }
+
+        ::-webkit-scrollbar-track
+        {
+            background: rgba(0, 0, 0, 0.1);
+
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.4);
+
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+            background-color: #1a6c99;
+            border: 3px solid transparent;
+            border-radius: 9px;
+            -webkit-background-clip: content-box;
+            background-clip: content-box;
+        }
+
         h1, h2, h3, h4, h5, h6 {
             font-weight: bolder;
         }
@@ -1144,6 +1170,12 @@
 
     <!-- Custom Css -->
     <style>
+        .back-icon {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            color: white;
+        }
         .text-ltr {
             direction: ltr;
         }
@@ -1260,6 +1292,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/icheck.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
 
+
     @yield('scripts')
 
 </head>
@@ -1323,6 +1356,7 @@
                         </li>
                     </ul>
                 </div>
+                <a href="{{ url()->previous() }}" class="back-icon"><i class="fa fa-chevron-left"></i></a>
             </nav>
         </header>
 

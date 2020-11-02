@@ -87,14 +87,14 @@ Route::group(['middleware' => 'auth:web'], function(){
         Route::get('/notifications/ajaxStudyField', 'NotificationController@ajaxStudyField');
         Route::get('/notifications/ajaxStudyArea', 'NotificationController@ajaxStudyArea');
         Route::get('/notifications/ajaxNotifier', 'NotificationController@ajaxNotifier');
-        Route::get('notifications/notifyStudents/{type}/{id}', [
-            'as' => 'notifications.showNotifyStudentsFromNotifier', 'uses' => 'NotificationController@showNotifyStudentsFromNotifier'
+        Route::get('notifications/notify/{type}/{id}', [
+            'as' => 'notifications.showNotifyFromNotifier', 'uses' => 'NotificationController@showNotifyFromNotifier'
         ]);
-        Route::get('notifications/notifyStudents/', [
-            'as' => 'notifications.showNotifyStudents', 'uses' => 'NotificationController@showNotifyStudents'
+        Route::get('notifications/notify/', [
+            'as' => 'notifications.showNotify', 'uses' => 'NotificationController@showNotify'
         ]);
-        Route::post('notifications/notifyStudents', [
-            'as' => 'notifications.notifyStudents', 'uses' => 'NotificationController@notifyStudents'
+        Route::post('notifications/notify', [
+            'as' => 'notifications.notify', 'uses' => 'NotificationController@notify'
         ]);
         Route::resource('notifications', 'NotificationController');
 

@@ -205,7 +205,7 @@ class NotificationPolicy
      * @param  \App\Notification  $notification
      * @return mixed
      */
-    public function showNotifyStudents(User $user)
+    public function showNotify(User $user)
     {
         if($user->hasRole('developer')){
             return true;
@@ -226,7 +226,7 @@ class NotificationPolicy
         return false;
     }
 
-    public function notifyStudents(User $user, String $notifier_type, int $notifier_id)
+    public function notify(User $user, String $notifier_type, int $notifier_id)
     {
         if($user->hasRole('developer')){
             return true;

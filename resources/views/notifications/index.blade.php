@@ -5,7 +5,7 @@
         <h1 class="pull-right">نوتیفیکیشن‌ها</h1>
         <h1 class="pull-left">
             {{--            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('notifications.create') !!}">Add New</a>--}}
-            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('notifications.showNotifyStudents', [ null , null ]) !!}">ایجاد نوتیفیکیشن</a>
+            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('notifications.showNotify', [ null , null ]) !!}">ایجاد نوتیفیکیشن</a>
         </h1>
     </section>
     <div class="content">

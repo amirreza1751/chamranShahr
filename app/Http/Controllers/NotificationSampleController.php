@@ -55,7 +55,7 @@ class NotificationSampleController extends AppBaseController
         }
 
         return view('notification_samples.index')
-            ->with('notificationSamples', $notificationSamples)
+            ->with('notificationSamples', $notificationSamples->sortByDesc('updated_at'))
             ->with('notification_types', Constants::notification_types);
     }
 
@@ -82,7 +82,7 @@ class NotificationSampleController extends AppBaseController
 
         $notificationSample = $this->notificationSampleRepository->create($input);
 
-        Flash::success('Notification Sample saved successfully.');
+        Flash::success('نوتیفیکیشن با موفقیت ایجاد شد');
 
         return redirect(route('notificationSamples.index'));
     }
@@ -99,7 +99,7 @@ class NotificationSampleController extends AppBaseController
         $notificationSample = $this->notificationSampleRepository->findWithoutFail($id);
 
         if (empty($notificationSample)) {
-            Flash::error('Notification Sample not found');
+            Flash::error('این نوتیفیکیشن وجود ندارد');
 
             return redirect(route('notificationSamples.index'));
         }
@@ -122,7 +122,7 @@ class NotificationSampleController extends AppBaseController
         $notificationSample = $this->notificationSampleRepository->findWithoutFail($id);
 
         if (empty($notificationSample)) {
-            Flash::error('Notification Sample not found');
+            Flash::error('این نوتیفیکیشن وجود ندارد');
 
             return redirect(route('notificationSamples.index'));
         }
@@ -151,7 +151,7 @@ class NotificationSampleController extends AppBaseController
         $notificationSample = $this->notificationSampleRepository->findWithoutFail($id);
 
         if (empty($notificationSample)) {
-            Flash::error('Notification Sample not found');
+            Flash::error('این نوتیفیکیشن وجود ندارد');
 
             return redirect(route('notificationSamples.index'));
         }
@@ -159,12 +159,10 @@ class NotificationSampleController extends AppBaseController
 
         if (empty($input['deadline']))
             unset($input['deadline']);
-        $console = new ConsoleOutput();
-        $console->write('%%%%%%%%%%%%% ');
-//        $console->write('%%%%%%%%%%%%% '.$request->get('deadline'));
+
         $notificationSample = $this->notificationSampleRepository->update($input, $id);
 
-        Flash::success('Notification Sample updated successfully.');
+        Flash::success('نوتیفیکیشن با موفقیت ویرایش شد');
 
         return redirect(route('notificationSamples.index'));
     }
@@ -181,14 +179,14 @@ class NotificationSampleController extends AppBaseController
         $notificationSample = $this->notificationSampleRepository->findWithoutFail($id);
 
         if (empty($notificationSample)) {
-            Flash::error('Notification Sample not found');
+            Flash::error('این نوتیفیکیشن وجود ندارد');
 
             return redirect(route('notificationSamples.index'));
         }
 
         $this->notificationSampleRepository->delete($id);
 
-        Flash::success('Notification Sample deleted successfully.');
+        Flash::success('نوتیفیکیشن با موفقیت حذف شد');
 
         return redirect(route('notificationSamples.index'));
     }

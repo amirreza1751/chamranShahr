@@ -5,6 +5,11 @@
         <h1>
             ایجاد نوتیفیکیشن
         </h1>
+        <ol class="breadcrumb">
+            <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>
+            <li><a href="{{ route('notificationSamples.index') }}"><i class="fa fa-bell"></i>مدیریت نوتیفیکیشن‌ها</a></li>
+            <li class="active">ایجاد نوتیفیکیشن</li>
+        </ol>
     </section>
     <div class="content">
         @include('adminlte-templates::common.errors')
@@ -12,7 +17,7 @@
 
             <div class="box-body">
                 <div class="row">
-                {!! Form::open(['route' => 'notifications.notifyStudents']) !!}
+                {!! Form::open(['route' => 'notifications.notify']) !!}
 
                     @if(isset($notification)) {{--reditect view--}}
                         <input id="notification_id" type="hidden" value="{{$notification->id}}">
@@ -147,125 +152,6 @@
                         });
                     </script>
 
-                    <!-- Faculty Unique Code Field -->
-                    <div class="form-group col-sm-6">
-                        {!! Form::label('faculty_unique_code', 'دانشکده:') !!}
-                        <select class="form-control m-bot15" name="faculty_unique_code" id="faculty_unique_code">
-                            <option selected value> -- همه -- </option>
-                            @foreach($faculties as $key => $value)
-                                <option value="{{ $value }}">{{ $key }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <script>
-                        jQuery(document).ready(function(){
-                            $('select[name="faculty_unique_code"]').on('change', function(){
-                                jQuery('#study_field_unique_code').empty();
-                                $('#study_field_unique_code').append('<option selected value> -- همه -- </option>');
-                                $.ajaxSetup({
-                                    headers: {
-                                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                                    }
-                                });
-                                jQuery.ajax({
-                                    url: "{{ url('/notifications/ajaxStudyField') }}",
-                                    method: 'get',
-                                    data: {
-                                        faculty_unique_code: jQuery('#faculty_unique_code').val(),
-                                    },
-                                    success: function(data){
-                                        $.each(data, function(key, value){
-                                            $('#study_field_unique_code').append('<option value="'+ key +'">' + value + '</option>');
-                                        });
-                                    },
-                                    failure: function (data) {
-                                        console.log('failure');
-                                    }
-                                });
-                            });
-                        });
-                    </script>
-
-                    <!-- Study Field Unique Code Field -->
-                    <div class="form-group col-sm-6">
-                        {!! Form::label('study_field_unique_code', 'رشته:') !!}
-                        <select class="form-control" name="study_field_unique_code" id="study_field_unique_code">
-                            <option selected value> -- همه -- </option>
-                        </select>
-                    </div>
-
-                    <!-- Study Level Unique Code Field -->
-                    <div class="form-group col-sm-6">
-                        {!! Form::label('study_level_unique_code', 'مقطع:') !!}
-                        <select class="form-control" name="study_level_unique_code" id="study_level_unique_code">
-                            <option selected value> -- همه -- </option>
-                            @foreach($study_levels as $key => $value)
-                                <option value="{{ $value }}">{{ $key }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <script>
-                        jQuery(document).ready(function(){
-                            $('select[name="study_field_unique_code"]').on('change', function(){
-                                jQuery('#study_area_unique_code').empty();
-                                $('#study_area_unique_code').append('<option selected value> -- همه -- </option>');
-                                $.ajaxSetup({
-                                    headers: {
-                                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                                    }
-                                });
-                                jQuery.ajax({
-                                    url: "{{ url('/notifications/ajaxStudyArea') }}",
-                                    method: 'get',
-                                    data: {
-                                        study_field_unique_code: jQuery('#study_field_unique_code').val(),
-                                        // study_level_unique_code: jQuery('#study_level_unique_code').val(),
-                                    },
-                                    success: function(data){
-                                        $.each(data, function(key, value){
-                                            $('#study_area_unique_code').append('<option value="'+ key +'">' + value + '</option>');
-                                        });
-                                    },
-                                    failure: function (data) {
-                                        console.log('failure');
-                                    }
-                                });
-                            });
-                        });
-                    </script>
-
-                    <!-- Study Area Unique Code Field -->
-                    <div class="form-group col-sm-6">
-                        {!! Form::label('study_area_unique_code', 'گرایش:') !!}
-                        <select class="form-control" name="study_area_unique_code" id="study_area_unique_code">
-                            <option selected value> -- همه -- </option>
-                        </select>
-                    </div>
-
-                    <!-- Entrance Term Unique Code Field -->
-                    <div class="form-group col-sm-6">
-                        {!! Form::label('entrance_term_unique_code', 'ورودی:') !!}
-                        <select class="form-control" name="entrance_term_unique_code" id="entrance_term_unique_code">
-                            <option selected value> -- همه -- </option>
-                            @foreach($entrance_terms as $key => $value)
-                                <option value="{{ $value }}">{{ $key }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Status Status Unique Code Field -->
-                    <div class="form-group col-sm-6">
-                        {!! Form::label('study_status_unique_code', 'وضعیت تحصیلی:') !!}
-                        <select class="form-control m-bot15" name="study_status_unique_code" id="study_status_unique_code">
-                            <option selected value> -- همه -- </option>
-                            @foreach($study_statuses as $key => $value)
-                                <option value="{{ $value }}">{{ $key }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
                     <!-- Deadline Field -->
                     <div class="form-group col-sm-6">
                         {!! Form::label('deadline', 'تاریخ انقضا:') !!}
@@ -283,10 +169,152 @@
                         </select>
                     </div>
 
+                    <!-- User Type Field -->
+                    <div class="form-group col-sm-12">
+                        {!! Form::label('user_types', 'نوع کاربری دریافت‌کنندگان:') !!}
+                        <select class="form-control" name="user_type" id="user_type">
+                            @foreach($user_types as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <script>
+                        jQuery(document).ready(function(){
+                            $('#user_type').on('change', function(){
+                                if($('#user_type').val() == "{{ App\General\Constants::STUDENTS }}"){
+                                    $('#student-section').show();
+                                } else {
+                                    $('#student-section').hide();
+                                }
+                            });
+                        });
+                    </script>
+
+                    <div id="student-section" style="display: none">
+                        <!-- Faculty Unique Code Field -->
+                        <div class="form-group col-sm-6">
+                            {!! Form::label('faculty_unique_code', 'دانشکده:') !!}
+                            <select class="form-control m-bot15" name="faculty_unique_code" id="faculty_unique_code">
+                                <option selected value> -- همه -- </option>
+                                @foreach($faculties as $key => $value)
+                                    <option value="{{ $value }}">{{ $key }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <script>
+                            jQuery(document).ready(function(){
+                                $('select[name="faculty_unique_code"]').on('change', function(){
+                                    jQuery('#study_field_unique_code').empty();
+                                    $('#study_field_unique_code').append('<option selected value> -- همه -- </option>');
+                                    $.ajaxSetup({
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                                        }
+                                    });
+                                    jQuery.ajax({
+                                        url: "{{ url('/notifications/ajaxStudyField') }}",
+                                        method: 'get',
+                                        data: {
+                                            faculty_unique_code: jQuery('#faculty_unique_code').val(),
+                                        },
+                                        success: function(data){
+                                            $.each(data, function(key, value){
+                                                $('#study_field_unique_code').append('<option value="'+ key +'">' + value + '</option>');
+                                            });
+                                        },
+                                        failure: function (data) {
+                                            console.log('failure');
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+
+                        <!-- Study Field Unique Code Field -->
+                        <div class="form-group col-sm-6">
+                            {!! Form::label('study_field_unique_code', 'رشته:') !!}
+                            <select class="form-control" name="study_field_unique_code" id="study_field_unique_code">
+                                <option selected value> -- همه -- </option>
+                            </select>
+                        </div>
+
+                        <!-- Study Level Unique Code Field -->
+                        <div class="form-group col-sm-6">
+                            {!! Form::label('study_level_unique_code', 'مقطع:') !!}
+                            <select class="form-control" name="study_level_unique_code" id="study_level_unique_code">
+                                <option selected value> -- همه -- </option>
+                                @foreach($study_levels as $key => $value)
+                                    <option value="{{ $value }}">{{ $key }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <script>
+                            jQuery(document).ready(function(){
+                                $('select[name="study_field_unique_code"]').on('change', function(){
+                                    jQuery('#study_area_unique_code').empty();
+                                    $('#study_area_unique_code').append('<option selected value> -- همه -- </option>');
+                                    $.ajaxSetup({
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                                        }
+                                    });
+                                    jQuery.ajax({
+                                        url: "{{ url('/notifications/ajaxStudyArea') }}",
+                                        method: 'get',
+                                        data: {
+                                            study_field_unique_code: jQuery('#study_field_unique_code').val(),
+                                            // study_level_unique_code: jQuery('#study_level_unique_code').val(),
+                                        },
+                                        success: function(data){
+                                            $.each(data, function(key, value){
+                                                $('#study_area_unique_code').append('<option value="'+ key +'">' + value + '</option>');
+                                            });
+                                        },
+                                        failure: function (data) {
+                                            console.log('failure');
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+
+                        <!-- Study Area Unique Code Field -->
+                        <div class="form-group col-sm-6">
+                            {!! Form::label('study_area_unique_code', 'گرایش:') !!}
+                            <select class="form-control" name="study_area_unique_code" id="study_area_unique_code">
+                                <option selected value> -- همه -- </option>
+                            </select>
+                        </div>
+
+                        <!-- Entrance Term Unique Code Field -->
+                        <div class="form-group col-sm-6">
+                            {!! Form::label('entrance_term_unique_code', 'ورودی:') !!}
+                            <select class="form-control" name="entrance_term_unique_code" id="entrance_term_unique_code">
+                                <option selected value> -- همه -- </option>
+                                @foreach($entrance_terms as $key => $value)
+                                    <option value="{{ $value }}">{{ $key }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Status Status Unique Code Field -->
+                        <div class="form-group col-sm-6">
+                            {!! Form::label('study_status_unique_code', 'وضعیت تحصیلی:') !!}
+                            <select class="form-control m-bot15" name="study_status_unique_code" id="study_status_unique_code">
+                                <option selected value> -- همه -- </option>
+                                @foreach($study_statuses as $key => $value)
+                                    <option value="{{ $value }}">{{ $key }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                 <!-- Submit Field -->
                     <div class="form-group col-sm-12">
                         {!! Form::submit('ایجاد', ['class' => 'btn btn-primary']) !!}
-                        <a href="{!! route('notifications.index') !!}" class="btn btn-default">لغو</a>
+                        <a href="{!! route('notificationSamples.index') !!}" class="btn btn-default">لغو</a>
                     </div>
 
                 {!! Form::close() !!}

@@ -131,7 +131,7 @@ class NewsController extends AppBaseController
         Flash::success('خبر با موفقیت ایجاد شد');
 
         if($input['make_notification']){
-            return redirect(route('notifications.showNotifyStudentsFromNotifier', [ get_class($news), $news->id ]));
+            return redirect(route('notifications.showNotifyFromNotifier', [ get_class($news), $news->id ]));
         } else {
             return redirect(route('news.index'));
         }
@@ -268,7 +268,12 @@ class NewsController extends AppBaseController
 
         Flash::success('خبر با موفقیت آپدیت شد');
 
-        return redirect(route('news.index'));
+
+        if($input['make_notification']){
+            return redirect(route('notifications.showNotifyFromNotifier', [ get_class($news), $news->id ]));
+        } else {
+            return redirect(route('news.index'));
+        }
     }
 
     /**
