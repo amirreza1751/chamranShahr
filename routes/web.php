@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\ValidationException;
 use Laravie\Parser\Xml\Reader;
 use Orchestra\Parser\Xml\Document;
 use Orchestra\Parser\Xml\Facade as XmlParser;
@@ -37,10 +38,45 @@ use phpseclib\Net\SSH1;
 use Weidner\Goutte\GoutteFacade;
 use function foo\func;
 
+//Route::get('GfIEpZz0QgdgdDz9hrpxfDo0cqk0Fw9vuBAdfM3titEyxDkOtGhPN8f0UESwBrdTWslIqA56iMSz10RZKZci2wLfGf3GJaT4wg8SBXyQg0CGBjbQYbo4I8NSNH1HodtQ/login'
+//    , 'CustomLoginController@show')->name('customLogin.show');
+
+Route::group(['prefix' => 'GfIEpZz0QgdgdDz9hrpxfDo0cqk0Fw9vuBAdfM3titEyxDkOtGhPN8f0UESwBrdTWslIqA56iMSz10RZKZci2wLfGf3GJaT4wg8SBXyQg0CGBjbQYbo4I8NSNH1HodtQ'], function () {
+
+//    Auth::routes();
+    // Authentication Routes...
+//    $this->get('login', 'Auth\LoginController@showLoginForm')->name('login');
+    $this->post('login', 'Auth\LoginController@login')->name('auth.login');
+
+//    // Registration Routes...
+//    $this->get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+//    $this->post('register', 'Auth\RegisterController@register');
+//
+//    // Password Reset Routes...
+//    $this->get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm');
+//    $this->post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
+//    $this->get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
+//    $this->post('password/reset', 'Auth\ResetPasswordController@reset');
+
+    Route::get('account', 'CustomLoginController@account')->name('auth.account');
+    Route::post('password', 'CustomLoginController@password')->name('auth.password');
+    Route::post('credentials', 'CustomLoginController@credentials')->name('auth.credentials');
+});
+
+Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+
+Route::get('signin', function (){
+    return view('auth.signin');
+});
+Route::post('signin', function (){
+    return view('auth.signin')
+        ->with('errors', collect(['email' => 'حساب کاربری با این مشخصات وجود ندارد']));
+});
+
 Route::get('/', function () {
 //    return view('welcome');
     return view('landing');
-});
+})->name('landing');
 Route::get('restore', function () {
 //    return view('welcome');
     $sample = NotificationSample::withTrashed()->find(6);
@@ -52,7 +88,7 @@ Route::get('/landingtest', function (){
     return view('landing');
 });
 
-Auth::routes();
+Route::post('custom_login/send_otp_ajax', 'CustomLoginController@send_otp_ajax')->name('custom_login.send_otp_ajax');
 
 Route::group(['middleware' => 'auth:web'], function(){
 

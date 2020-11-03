@@ -3,36 +3,72 @@
 namespace App\Http\Controllers\API;
 
 use App\PhonenumberToken;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class OtpController extends Controller
 {
     public function send_otp(Request $request)
     {
+        $input = $request->all();
+        Log::info($request);
 
-        $request->validate([
-            'phone_number' => 'required|regex:/^((0)[0-9\s\-\+\(\)]*)$/|min:10',
-//            'phone_number' => 'required',
-            // sample phone number 09126774496
+        /**
+         * validate phone_number field
+         */
+        $validator = Validator::make($input, [
+            'phone_number' => 'required|regex:/^((09)[0-9\s\-\+\(\)]*)$/|min:11|max:11',
         ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message'=> 'شماره وارد شده صحیح نیست',
+            ]);
+        }
+
+        $phonenumber_tokens_last = PhonenumberToken::where('phone_number', $input['phone_number'])->get()->last();
+
+        if (isset($phonenumber_tokens_last) && !$phonenumber_tokens_last->used && $phonenumber_tokens_last->created_at > Carbon::now()->subMinutes(2)){
+            /**
+             * after two minutes,
+             * new token will be create for specific phone number,
+             * otherwise this error will appear
+             */
+            return response()->json([
+                'success' => false,
+                'message'=> 'متاسفانه خطایی رخ داده است، لطفا مجددا تلاش کنید',
+            ]);
+        }
+
         $token = mt_rand(10000,99999);
         $client1 =  new Client();
         $r = $client1->request('POST',
             'https://api.kavenegar.com/v1/31453435764C6968545A545665696C63596A45654552535645626966336D374236716139743550557839453D/verify/lookup.json?receptor='.$request->phone_number.'&token='.$token.'&template=chamran-shahr',
             ['verify' => false]);
         $result = \GuzzleHttp\json_decode($r->getBody());
-        PhonenumberToken::create([
-            'phone_number' => $request->phone_number,
-            'token' => $token,
-//            'date' => $result->entries[0]->date
-            'used' => '0'
-        ]);
+
         if( $result->return->status == 200){
-            return response()->json(['status' => 'otp sent.'], 200);
+            foreach (PhonenumberToken::where('phone_number', $request->phone_number)->get() as $phonenumber_token){
+                $phonenumber_token->delete();
+            }
+            PhonenumberToken::create([
+                'phone_number' => $request->phone_number,
+                'token' => $token,
+                'used' => '0'
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'کد 5 رقمی با موفقیت ارسال شد']
+                , 200);
         } else {
-            return response()->json(['status' => 'failed to send otp.'], $result->return->status);
+            return response()->json([
+                'status' => false,
+                'message' => 'متاسفانه خطایی رخ داده است، لطفا مجددا تلاش کنید'], $result->return->status);
         }
     }
 }

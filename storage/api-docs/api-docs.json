@@ -6581,6 +6581,40 @@
                 }
             }
         },
+        "users/trashedNtifications": {
+            "get": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Get User Trashed Notifictions",
+                "description": "Get list of authenticated User soft deleted Notifications",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Notification"
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "users/unreadNotifications": {
             "get": {
                 "tags": [
