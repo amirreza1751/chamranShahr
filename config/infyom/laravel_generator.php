@@ -168,7 +168,7 @@ return [
 
             'enabled'       => true,
 
-            'menu_file'     => 'layouts/menu.blade.php',
+            'menu_file'     => 'layouts/developer_menu.blade.php',
         ],
     ],
 

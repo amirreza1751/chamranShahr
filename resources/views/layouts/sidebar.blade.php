@@ -34,9 +34,11 @@
 
         <ul class="sidebar-menu" data-widget="tree">
             @if(Auth::user()->hasRole('developer'))
-                @include('layouts.menu')
+                @include('layouts.developer_menu')
             @elseif(Auth::user()->hasRole('manager'))
                 @include('layouts.manager_menu')
+            @elseif(Auth::user()->hasRole('client_developer'))
+                @include('layouts.client_developer_menu')
             @else
                 @include('layouts.basic_menu')
             @endif

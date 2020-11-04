@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -19,6 +21,10 @@ class LoginController extends Controller
     */
 
     use AuthenticatesUsers;
+    use ThrottlesLogins;
+
+    protected $maxAttempts = 10;
+    protected $decayMinutes = 720;
 
     /**
      * Where to redirect users after login.
@@ -35,5 +41,19 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+//    public function clearThrottle(Request $request) {
+//        $this->clearLoginAttempts($request);
+//        // Forward elsewhere or display a view
+//    }
+
+    public function checkThrottle(Request $request)
+    {
+        if($this->hasTooManyLoginAttempts($request)){
+            return true;
+        }
+
+        return false;
     }
 }

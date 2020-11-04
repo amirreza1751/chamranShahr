@@ -65,7 +65,7 @@ class User extends Authenticatable
         'username' => 'unique:users',
         'scu_id' => 'unique:users',
         'phone_number' => 'unique:users|required|regex:/(09)[0-9]{9}/|size:11',
-        'password' => 'required',
+        'password' => 'regex:/^(?=.*\d)(?=.*\W+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/|min:8|max:191',
         'confirm_password' => 'required|same:password',
         'national_id' => 'unique:users',
     ];

@@ -36,8 +36,13 @@
 
 </head>
 <body class="hold-transition lockscreen vazir-font-fd">
+
     <!-- Automatic element centering -->
     <div class="lockscreen-wrapper">
+
+        @include('flash::message')
+        @include('adminlte-templates::common.errors')
+
         <div class="lockscreen-logo">
             <a href="{{ route('landing') }}"><b>چمران‌شهر</b></a>
         </div>
@@ -53,10 +58,10 @@
             <!-- /.lockscreen-image -->
 
             <!-- lockscreen credentials (contains the form) -->
-            <form class="lockscreen-credentials" action="{{ route('auth.login') }}" method="post">
+            <form class="lockscreen-credentials" action="{{ route('auth.credentials') }}" method="post">
                 {!! csrf_field() !!}
                 <div class="input-group">
-                    <input name="email" type="hidden" value="{{ $email }}">
+                    <input name="phone_number" type="hidden" value="{{ $phone_number }}">
                     <input id="password" name="password" type="password" class="form-control" placeholder="رمز عبور">
 
                     <div class="input-group-btn">

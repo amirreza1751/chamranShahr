@@ -31,6 +31,15 @@ class OtpController extends Controller
             ]);
         }
 
+        $today_phonenumber_tokens = PhonenumberToken::where('phone_number', $input['phone_number'])->where('used', '0')->where('created_at', '>', Carbon::now()->subDay())->get();
+
+        if($today_phonenumber_tokens->count() >= 15){
+            return response()->json([
+                'success' => false,
+                'message'=> 'تعداد مجاز درخواست کد احراز شماره تلفن همراه به پایان رسیده است.',
+            ]);
+        }
+
         $phonenumber_tokens_last = PhonenumberToken::where('phone_number', $input['phone_number'])->get()->last();
 
         if (isset($phonenumber_tokens_last) && !$phonenumber_tokens_last->used && $phonenumber_tokens_last->created_at > Carbon::now()->subMinutes(2)){
@@ -54,7 +63,8 @@ class OtpController extends Controller
 
         if( $result->return->status == 200){
             foreach (PhonenumberToken::where('phone_number', $request->phone_number)->get() as $phonenumber_token){
-                $phonenumber_token->delete();
+                $phonenumber_token->deleted_at = Carbon::now();
+                $phonenumber_token->save();
             }
             PhonenumberToken::create([
                 'phone_number' => $request->phone_number,
@@ -62,12 +72,12 @@ class OtpController extends Controller
                 'used' => '0'
             ]);
             return response()->json([
-                'status' => true,
-                'message' => 'کد 5 رقمی با موفقیت ارسال شد']
+                'success' => true,
+                'message' => 'کد احراز شماره تلفن همراه با موفقیت ارسال شد']
                 , 200);
         } else {
             return response()->json([
-                'status' => false,
+                'success' => false,
                 'message' => 'متاسفانه خطایی رخ داده است، لطفا مجددا تلاش کنید'], $result->return->status);
         }
     }

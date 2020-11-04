@@ -25,14 +25,9 @@
 
                         <h3 class="profile-username text-center">{{ Auth::user()->full_name }}</h3>
 
-                        <p class="text-muted text-center">مدیر</p>
+                        <p class="text-muted text-center">توسعه دهنده‌ی کلاینت</p>
 
                         <ul class="list-group list-group-unbordered">
-                            @foreach(Auth::user()->managements() as $management)
-                                <li class="list-group-item">
-                                    <b>مدیریت</b> <a class="pull-left">{{ $management->managed->title }}</a>
-                                </li>
-                            @endforeach
                             <li class="list-group-item">
                                 <b>آخرین ورود</b> <a
                                     class="pull-left">{{ Morilog\Jalali\Jalalian::fromDateTime(Auth::user()->last_login)->format('%A, %d %B') }}
@@ -45,7 +40,6 @@
                                 <b>نام کاربری</b> <a class="pull-left">{{ Auth::user()->username }}</a>
                             </li>
                         </ul>
-
                         <a disabled="disabled" class="btn btn-primary btn-block"><b>مشاهده‌ی صفحه‌ی عمومی</b></a>
                     </div>
                     <!-- /.box-body -->
@@ -53,59 +47,39 @@
                 <!-- /.box -->
 
                 <!-- About Me Box -->
-                <div class="box box-default">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">دپارتمان‌ها</h3>
-                    </div>
-                    <!-- /.box-header -->
-                    <div class="box-body">
-                        @if (sizeof($departments) == 0)
-                            <span class="box-title">هیچ دپارتمانی برای نمایش وجود ندارد</span>
-                        @else
-                            @foreach($departments as $index => $department)
-                                <a href="{{ route('departments.profile', $department->id) }}" class="btn btn-primary btn-block"><b>{{ $department->title }}</b></a>
-                            @endforeach
-                        @endif
+{{--                <div class="box box-default">--}}
+{{--                    <div class="box-header with-border">--}}
+{{--                        <h3 class="box-title">دپارتمان‌ها</h3>--}}
+{{--                    </div>--}}
+{{--                    <!-- /.box-header -->--}}
+{{--                    <div class="box-body">--}}
+{{--                        @if (sizeof($departments) == 0)--}}
+{{--                            <div class="box box-info">--}}
+{{--                                <div class="box-header with-border">--}}
+{{--                                    <h3 class="box-title">هیچ دپارتمانی برای نمایش وجود ندارد</h3>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        @else--}}
+{{--                            @foreach($departments as $index => $department)--}}
+{{--                                <a href="{{ route('departments.profile', $department->id) }}" class="btn btn-primary btn-block"><b>{{ $department->title }}</b></a>--}}
+{{--                            @endforeach--}}
+{{--                        @endif--}}
 {{--                        <p class="text-muted">--}}
 {{--                            غیر فعال--}}
 {{--                        </p>--}}
-                    </div>
-                    <!-- /.box-body -->
-                </div>
+{{--                    </div>--}}
+{{--                    <!-- /.box-body -->--}}
+{{--                </div>--}}
                 <!-- /.box -->
             </div>
             <!-- /.col -->
             <div class="col-md-8">
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs pull-right">
-                        <li class="active"><a href="#notifications" data-toggle="tab" aria-expanded="false">نوتیفیکیشن‌ها</a>
-                        </li>
-                        {{--                        <li class=""><a href="#timeline" data-toggle="tab" aria-expanded="false">Timeline</a></li>--}}
-                        <li class=""><a href="#settings" data-toggle="tab" aria-expanded="true">تنظیمات حساب</a></li>
+                        <li class="active"><a href="#settings" data-toggle="tab" aria-expanded="true">تنظیمات حساب</a></li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane active" id="notifications">
-                            @foreach($notificationSamples as $notificationSample)
-                                <div class="attachment-block clearfix">
-                                    <img class="attachment-img attachment-img-custom"
-                                         src="{{ $notificationSample->notifier->thumbnail }}"
-                                         alt="Attachment Image">
-
-                                    <div class="attachment-pushed">
-                                        <h4 class="attachment-heading"><a>{{ $notificationSample->title }}</a></h4>
-
-                                        <div class="attachment-text">
-                                            {{ $notificationSample->brief_description }}
-                                            <a href="{!! route(app($notificationSample->notifier_type)->getTable() . '.show', [$notificationSample->notifier_id]) !!}">more</a>
-                                        </div>
-                                        <!-- /.attachment-text -->
-                                    </div>
-                                    <!-- /.attachment-pushed -->
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <div class="tab-pane" id="settings">
+                        <div class="tab-pane active" id="settings">
 
                             {!! Form::model(Auth::user(), ['route' => ['profile.update'], 'method' => 'patch', 'enctype' => 'multipart/form-data', 'class' => 'form-horizontal']) !!}
 
@@ -137,7 +111,7 @@
                                 <label for="username" class="col-sm-2 control-label">نام کاربری</label>
 
                                 <div class="col-sm-10">
-                                    <input disabled type="text" class="form-control text-ltr" id="username"
+                                    <input name="username" type="text" class="form-control text-ltr" id="username"
                                            placeholder="{{ Auth::user()->username }}">
                                 </div>
                             </div>
@@ -168,24 +142,6 @@
                                            for="customFile"></label>
                                 </div>
                             </div>
-                            {{--                                <div class="form-group">--}}
-                            {{--                                    <label for="inputExperience" class="col-sm-2 control-label">Experience</label>--}}
-
-                            {{--                                    <div class="col-sm-10">--}}
-                            {{--                                        <textarea class="form-control" id="inputExperience"--}}
-                            {{--                                                  placeholder="Experience"></textarea>--}}
-                            {{--                                    </div>--}}
-                            {{--                                </div>--}}
-                            {{--                                <div class="form-group">--}}
-                            {{--                                    <div class="col-sm-offset-2 col-sm-10">--}}
-                            {{--                                        <div class="checkbox">--}}
-                            {{--                                            <label>--}}
-                            {{--                                                <input type="checkbox"> I agree to the <a href="#">terms and--}}
-                            {{--                                                    conditions</a>--}}
-                            {{--                                            </label>--}}
-                            {{--                                        </div>--}}
-                            {{--                                    </div>--}}
-                            {{--                                </div>--}}
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <button type="submit" class="btn btn-danger">ذخیره</button>

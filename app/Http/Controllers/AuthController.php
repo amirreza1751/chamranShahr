@@ -28,7 +28,7 @@ class AuthController extends Controller
             'token' => 'required',
         ]);
 
-        $record = PhonenumberToken::where('phone_number',$request->phone_number)->where('used','0')->latest()->first();
+        $record = PhonenumberToken::where('phone_number',$request->phone_number)->where('used','0')->where('deleted_at', NULL)->latest()->first();
         if ($record == null){
             return response()->json([
                 'status' => 'otp has used before or does not exist.'

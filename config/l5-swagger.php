@@ -51,7 +51,7 @@ return [
                 \Illuminate\Routing\Middleware\SubstituteBindings::class,
                 \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
                 'auth',
-                'role:developer',
+                'role:developer|client_developer',
             ],
             'asset' => [],
             'docs' => [],
