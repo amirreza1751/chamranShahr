@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\General\TimeHandling;
 use App\Http\Controllers\API\Sama\SamaRequestController;
 use App\Http\Requests\API\CreateStudentAPIRequest;
 use App\Http\Requests\API\UpdateStudentAPIRequest;
@@ -21,6 +22,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -354,6 +356,9 @@ class StudentAPIController extends AppBaseController
         $user->removeRole('verified');
         $user->removeRole('student');
         $user->is_verified = false;
+        $user->scu_id = null;
+        $user->national_id = null;
+        $user->save();
 
         return response()->json([
             'status' => 'دانشجو با موفقیت حذف شد.',
@@ -407,10 +412,36 @@ class StudentAPIController extends AppBaseController
      */
     public function verify(Request $request)
     {
-        $request->validate([
-            'scu_id' => 'required|regex:/[0-9]{6,7}/|max:7',
-            'national_id' => 'required|regex:/[0-9]{10}/|max:10',
+        $input = $request->all();
+
+        /**
+         * validate national_id field
+         */
+        $validator = Validator::make($input, [
+            'national_id' => 'required|regex:/^[0-9]{10}$/',
         ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message'=> 'شماره ملی صحیح نیست',
+            ]);
+        }
+
+        /**
+         * validate scu_id field
+         */
+        $validator = Validator::make($input, [
+            'scu_id' => 'required|regex:/^[0-9]{6,7}$/',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message'=> 'شماره دانشجویی صحیح نیست',
+            ]);
+        }
+        /** ************************************************************************************************/
+//        $student_fetch = SamaRequestController::sama_request('StudentService', 'GetStudentPersonInfo', ['studentNumber' => $input['scu_id']]);
+        /** ************************************************************************************************/
 
         /** @var User $user */
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
@@ -428,6 +459,7 @@ class StudentAPIController extends AppBaseController
             $user->assignRole('verified');
             $user->assignRole('student');
             $user->is_verified = true;
+            $user->save();
 
 
             $roles = array();
@@ -457,96 +489,183 @@ class StudentAPIController extends AppBaseController
             $user['student'] = $student;
 
             return response()->json([
-                'status' => 'اطلاعات دانشگاهی کاربر با موفقیت بازیابی شد.',
+                'success' => true,
+                'message' => 'اطلاعات دانشگاهی کاربر با موفقیت بازیابی شد.',
                 'user' => $user,
             ]);
         }
         elseif (isset($student)) { // verified user
             return response()->json([
-                'status' => 'کاربر اطلاعات دانشگاهی خود را قبلا احراز کرده است.'
-            ], 400);
+                'success' => false,
+                'message' => 'اطلاعات دانشگاهی خود را قبلا احراز کرده‌اید',
+            ]);
         }
         elseif (empty($student)) { // user not verified
+            $check_scu_id = User::where('scu_id', $input['scu_id'])->first();
+            $check_national_id = User::where('national_id', $input['national_id'])->first();
+
+            if (isset($check_scu_id) || isset($check_national_id)){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'این اطلاعات قبلا احراز شده است. اگر از صحت اطلاعات اطمینان دارید، لطفا به مدیریت سامانه اطلاع دهید',
+                ]);
+            }
             try {
                 $student_fetch = SamaRequestController::sama_request('StudentService', 'GetStudentPersonInfo', ['studentNumber' => $input['scu_id']]);
-                if ($student_fetch->StudentNumber == $input['scu_id']) { // Student with entered Scu Id is exist
+                if($student_fetch){ // requested scu_id is valid in SAMA db
+                    if (isset($student_fetch->StudentNumber)){
 
-                    if ($student_fetch->Person->NationalCode == $input['national_id']) { // matched entered national id with the Scu Id
+                        if ($student_fetch->StudentNumber == $input['scu_id']) { // Student with entered Scu Id is exist
 
-                        $birthday_array = explode('/', $student_fetch->Person->BirthDate);
-                        $jalalian_begin = new Jalalian($birthday_array[0], $birthday_array[1], $birthday_array[2]); // extract Solar date from String
-                        $user_information = array(
-                            'first_name' => $student_fetch->Person->FirstName,
-                            'last_name' => $student_fetch->Person->LastName,
-                            'birthday' => ($jalalian_begin)->toCarbon(),  // convert Solar date to A.D.
-                            'scu_id' => $student_fetch->StudentNumber,
-                            'national_id' => $student_fetch->Person->NationalCode,
-                            'gender_unique_code' => strtolower(array_last(explode("\\", Gender::class))) . $student_fetch->Person->Gender->GenderId,
-                            'updated_at' => Carbon::now(), // set update time
-                            'is_verified' => true,
-                        );
-                        if(empty($user->username)){
-                            $user_information['username'] = str_random(8) . $student_fetch->StudentNumber;
+                            if (isset($student_fetch->Person)){
+
+                                if (isset($student_fetch->Person->NationalCode)){
+
+                                    if ($student_fetch->Person->NationalCode == $input['national_id']) { // matched entered national id with the Scu Id
+
+                                        /**
+                                         * validate Person BirthDate field
+                                         */
+                                        $validator = Validator::make(['date_string' => $student_fetch->Person->BirthDate], [
+                                            'date_string' => ['required','regex:/(\d{3,4}(\/)(([0-9]|(0)[0-9])|((1)[0-2]))(\/)([0-9]|[0-2][0-9]|(3)[0-1]))$/'],
+                                        ]);
+                                        if (!$validator->fails()) {
+                                            $birthday_array = explode('/', $student_fetch->Person->BirthDate);
+                                            $year = $birthday_array[0];
+                                            $month = $birthday_array[1];
+                                            $day = $birthday_array[2];
+                                            if (TimeHandling::validateJalalian(intval($year), intval($month), intval($day))){
+                                                $birthday = new Jalalian($year, $month, $day);
+                                            } else {
+                                                $birthday = TimeHandling::parseJalalian($year, $month, $day);
+                                            }
+                                        }
+
+                                        $user_information = array(
+                                            'first_name' => $student_fetch->Person->FirstName,
+                                            'last_name' => $student_fetch->Person->LastName,
+                                            'birthday' => ($birthday)->toCarbon(),  // convert Solar date to A.D.
+                                            'scu_id' => $student_fetch->StudentNumber,
+                                            'national_id' => $student_fetch->Person->NationalCode,
+                                            'updated_at' => Carbon::now(), // set update time
+                                            'is_verified' => true,
+                                        );
+
+                                        if(isset($student_fetch->Person->Gender)){
+                                            if (isset($student_fetch->Person->Gender->GenderId))
+                                                $user_information['gender_unique_code'] = strtolower(array_last(explode("\\", Gender::class))) . $student_fetch->Person->Gender->GenderId;
+                                            else
+                                                $user_information['gender_unique_code'] = strtolower(array_last(explode("\\", Gender::class))) . 0;
+                                        } else
+                                            $user_information['gender_unique_code'] = strtolower(array_last(explode("\\", Gender::class))) . 0;
+
+                                        if(empty($user->username)){
+                                            $user_information['username'] = $student_fetch->StudentNumber;
+                                        }
+
+                                        $user = $this->userRepository->update($user_information, $user->id);
+
+                                        $user->assignRole('verified');
+                                        $user->assignRole('student');
+
+                                        /**
+                                         * static part of unique_code      CONCAT      numeric part of unique_code retrieve from SAMA
+                                         * example:            studyarea [CONCAT] 500 : studyarea500
+                                         * example:            term [CONCAT] 128 : term128
+                                         * example:            studylevel [CONCAT] 2 : studylevel2
+                                         * example:            studystatus [CONCAT] 2 : studystatus2
+                                         */
+                                        $student_information = array(
+                                            'is_active' => $student_fetch->IsActive,
+                                            'is_guest' => $student_fetch->IsGuest,
+                                            'is_iranian' => $student_fetch->Person->IsIranian,
+                                            'total_average' => $student_fetch->TotalAverage,
+                                            'user_id' => $user->id,
+                                        );
+
+                                        if(isset($student_fetch->CourseStudy)){
+                                            if (isset($student_fetch->CourseStudy->CourseStudyCode))
+                                                $student_information['study_area_unique_code'] = strtolower(array_last(explode("\\", StudyArea::class))) . $student_fetch->CourseStudy->CourseStudyCode;
+                                        }
+                                        if(isset($student_fetch->EntranceTerm)){
+                                            if (isset($student_fetch->EntranceTerm->TermCode))
+                                                $student_information['entrance_term_unique_code'] = Term::where('term_code', $student_fetch->EntranceTerm->TermCode)->first()->unique_code;// sama retrieve TermCode which isn't Unique (multiple null)!
+                                        }
+                                        if(isset($student_fetch->StudyLevel)){
+                                            if (isset($student_fetch->StudyLevel->StudyLevelId))
+                                                $student_information['study_level_unique_code'] = strtolower(array_last(explode("\\", StudyLevel::class))) . $student_fetch->StudyLevel->StudyLevelId;
+                                        }
+                                        if(isset($student_fetch->StudentStatus)){
+                                            if (isset($student_fetch->StudentStatus->StudentStatusId))
+                                                $student_information['study_status_unique_code'] = strtolower(array_last(explode("\\", StudyStatus::class))) . $student_fetch->StudentStatus->StudentStatusId;
+                                        }
+
+                                        $student = $this->studentRepository->create($student_information);
+
+                                        $roles = array();
+                                        foreach ($user->roles as $role){
+                                            array_push($roles, $role->only(['name', 'guard_name']));
+                                        }
+
+                                        $user = collect($user->toArray())
+                                            ->only([
+                                                'first_name',
+                                                'last_name',
+                                                'email',
+                                                'phone_number',
+                                                'birthday',
+                                                'username',
+                                                'gender_unique_code',
+                                                'scu_id',
+                                                'national_id',
+                                                'last_login',
+                                                'avatar_path',
+                                                'is_verified',
+                                                'updated_at',
+                                            ])
+                                            ->all();
+
+                                        $user['roles'] = $roles;
+                                        $user['student'] = $student;
+
+                                        return response()->json($user);
+
+                                    } else {
+                                        return response()->json([
+                                            'success' => false,
+                                            'message' => 'اطلاعات وارد شده صحیح نیست. لطفا مجددا تلاش کنید'
+                                        ]);
+                                    }
+                                } else { // this user has no NationalCode !
+                                    return response()->json([
+                                        'success' => false,
+                                        'message' => 'متاسفانه در اطلاعات دانشگاهی شما ایرادی وجود دارد. لطفا با مدیریت ارتباط برقرار کنید'
+                                    ]);
+                                }
+                            } else { // this user has no StudentNumber !
+                                return response()->json([
+                                    'success' => false,
+                                    'message' => 'متاسفانه در اطلاعات دانشگاهی شما ایرادی وجود دارد. لطفا با مدیریت ارتباط برقرار کنید'
+                                ]);
+                            }
+                        } else {
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'اطلاعات وارد شده صحیح نیست. لطفا مجددا تلاش کنید'
+                            ]);
                         }
-                        $user = $this->userRepository->update($user_information, $user->id);
-
-                        $user->assignRole('verified');
-                        $user->assignRole('student');
-
-                        /**
-                         * static part of unique_code      CONCAT      numeric part of unique_code retrieve from SAMA
-                         * example:            studyarea [CONCAT] 500 : studyarea500
-                         * example:            term [CONCAT] 128 : term128
-                         * example:            studylevel [CONCAT] 2 : studylevel2
-                         * example:            studystatus [CONCAT] 2 : studystatus2
-                         */
-                        $student_information = array(
-                            'study_area_unique_code' => strtolower(array_last(explode("\\", StudyArea::class))) . $student_fetch->CourseStudy->CourseStudyCode,
-                            'entrance_term_unique_code' => Term::where('term_code', $student_fetch->EntranceTerm->TermCode)->first()->unique_code, // sama retrieve TermCode which isn't Unique (multiple null)!
-                            'study_level_unique_code' => strtolower(array_last(explode("\\", StudyLevel::class))) . $student_fetch->StudyLevel->StudyLevelId,
-                            'study_status_unique_code' => strtolower(array_last(explode("\\", StudyStatus::class))) . $student_fetch->StudentStatus->StudentStatusId,
-
-                            'is_active' => $student_fetch->IsActive,
-                            'is_guest' => $student_fetch->IsGuest,
-                            'is_iranian' => $student_fetch->Person->IsIranian,
-                            'total_average' => $student_fetch->TotalAverage,
-                            'user_id' => $user->id,
-                        );
-                        $student = $this->studentRepository->create($student_information);
-
-                        $roles = array();
-                        foreach ($user->roles as $role){
-                            array_push($roles, $role->only(['name', 'guard_name']));
-                        }
-
-                        $user = collect($user->toArray())
-                            ->only([
-                                'first_name',
-                                'last_name',
-                                'email',
-                                'phone_number',
-                                'birthday',
-                                'username',
-                                'gender_unique_code',
-                                'scu_id',
-                                'national_id',
-                                'last_login',
-                                'avatar_path',
-                                'is_verified',
-                                'updated_at',
-                            ])
-                            ->all();
-
-                        $user['roles'] = $roles;
-                        $user['student'] = $student;
-
-                        return response()->json($user);
-
-                    } else {
-                        return $this->sendError('شماره ملی یا شماره دانشجویی صحیح نیست.');
+                    } else { // this user has no StudentNumber !
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'متاسفانه در اطلاعات دانشگاهی شما ایرادی وجود دارد. لطفا با مدیریت ارتباط برقرار کنید'
+                        ]);
                     }
-                } else {
-                    return $this->sendError('شماره ملی یا شماره دانشجویی صحیح نیست.');
+                }
+                else { // invalid scu_id
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'اطلاعات وارد شده صحیح نیست. لطفا مجددا تلاش کنید'
+                    ]);
                 }
             } catch (\Exception $e) {
                 /** ATTENTION!
@@ -554,9 +673,9 @@ class StudentAPIController extends AppBaseController
                  */
 //                return response()->json($e->getMessage());
                 return response()->json([
-                    'status' => 'An internal error has occurred. Please contact your administrator.',
-                    'e' => $e
-                ], 500);
+                    'status' => false,
+                    'message' => 'عملیات موفقیت آمیز نبود، در صورت صحت اطلاعات، لطفا به مدیریت سامانه اطلاع دهید',
+                ]);
             }
         }
     }
