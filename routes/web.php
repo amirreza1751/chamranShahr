@@ -154,8 +154,10 @@ Route::group(['middleware' => 'auth:web'], function(){
 
     });
 
-    Route::group(['middleware' => ['role:admin|developer']], function(){
+    Route::group(['middleware' => ['role:developer']], function(){
 
+        Route::get('users/{id}/unrestricted', 'UserController@unrestricted')->name('users.unrestricted'); // ++
+        Route::get('users/{id}/restrict', 'UserController@restrict')->name('users.restrict'); // ++
         Route::resource('users', 'UserController'); // ++
 
         Route::get('roles/guard_name_ajax', 'RoleController@guardNameAjax');

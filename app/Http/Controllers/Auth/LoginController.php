@@ -42,10 +42,14 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-//    public function clearThrottle(Request $request) {
-//        $this->clearLoginAttempts($request);
-//        // Forward elsewhere or display a view
-//    }
+    public function clearThrottle(Request $request) {
+        if(!$this->checkThrottle($request))
+            return false;
+        else{
+            $this->clearLoginAttempts($request);
+            return true;
+        }
+    }
 
     public function checkThrottle(Request $request)
     {
@@ -54,5 +58,10 @@ class LoginController extends Controller
         }
 
         return false;
+    }
+
+    public function restrict($request)
+    {
+        $this->fireLockoutEvent($request);
     }
 }

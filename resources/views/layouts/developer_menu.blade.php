@@ -33,7 +33,7 @@
     <ul class="treeview-menu" style="display: none">
 
         <li id="hide" style="" class="{{ Request::is('users*') ? 'active' : '' }}">
-            <a href="{!! route('users.index') !!}"><i class="fa fa-edit"></i><span class="title-secondary" >کاربران</span></a>
+            <a href="{!! route('users.index') !!}"><i class="fa fa-users"></i><span class="title-secondary" >مدیریت کاربران</span></a>
         </li>
 
         <li class="{{ Request::is('roles*') ? 'active' : '' }}">

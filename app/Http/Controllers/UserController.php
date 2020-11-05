@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\URL;
 use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
+use Spatie\Permission\Models\Role;
 
 class UserController extends AppBaseController
 {
@@ -57,9 +58,11 @@ class UserController extends AppBaseController
     public function create()
     {
         $genders = Gender::all();
+        $roles = Role::all();
 
         return view('users.create')
-            ->with('genders', $genders);
+            ->with('genders', $genders)
+            ->with('roles', $roles);
     }
 
     /**
@@ -99,9 +102,7 @@ class UserController extends AppBaseController
             return redirect(route('users.index'));
         }
 
-        if (isset($user->avatar_path)){
-            $user->avatar_path = URL::to('/') . '/' . $user->avatar_path;
-        }
+        $user->avatar = $user->avatar();
 
         return view('users.show')->with('user', $user);
     }
@@ -116,7 +117,6 @@ class UserController extends AppBaseController
     public function edit($id)
     {
         $user = $this->userRepository->findWithoutFail($id);
-        $genders = Gender::all();
 
         if (empty($user)) {
             Flash::error('User not found');
@@ -124,9 +124,17 @@ class UserController extends AppBaseController
             return redirect(route('users.index'));
         }
 
+        $genders = Gender::all();
+        $roles = Role::all();
+        foreach ($roles as $role){
+            if ($user->hasRole($role))
+                $role->selected = true;
+        }
+
         return view('users.edit')
             ->with('user', $user)
-            ->with('genders', $genders);
+            ->with('genders', $genders)
+            ->with('roles', $roles);
     }
 
     /**
@@ -149,6 +157,31 @@ class UserController extends AppBaseController
 
         $input = $request->all();
 
+        if (isset($input['delete_avatar'])){
+            $user->avatar_path = null;
+            $user->save();
+        } else {
+            if($request->hasFile('avatar_path')){
+                $path = $request->file('avatar_path')->store('/public/profile');
+                $path = str_replace('public', 'storage', $path);
+                $input['avatar_path'] = '/' . $path;
+
+                /**
+                 * delete old avatar image,
+                 * to prevent Accumulation of dead files
+                 */
+                $file_name = 'storage\\profile\\'.last(explode('/', $user->avatar_path));
+                if (is_file($file_name)){
+                    unlink($file_name); //delete old avatar image
+                    $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+                    $out->writeln('حذف: ' . $file_name);
+                } else {
+                    $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+                    $out->writeln('تصویر پیدا نشد.');
+                }
+            }
+        }
+
         if(!is_null($input['password'])){
             $input['password'] = Hash::make($input['password']);
         } else {
@@ -156,9 +189,16 @@ class UserController extends AppBaseController
         }
 
         $input['id'] = $id;
+
         $user = $this->userRepository->update($input, $id);
 
-        Flash::success('User updated successfully.');
+        $user->syncRoles([]);
+        foreach ($input['role_ids'] as $role_id){
+            $role = Role::findById($role_id);
+            $user->assignRole($role);
+        }
+
+        Flash::success('کاربر با موفقیت ویرایش شد');
 
         return redirect(route('users.index'));
     }
@@ -273,5 +313,63 @@ class UserController extends AppBaseController
         Flash::success('صفحه‌ی شخصی با موفقیت به روز شد');
 
         return redirect(route('users.showProfile'));
+    }
+
+    public function unrestricted($id)
+    {
+        $user = $this->userRepository->findWithoutFail($id);
+
+        if (empty($user)) {
+            Flash::error('کاربر وجود ندارد');
+
+            return redirect()->back();
+        }
+
+        $request = Request();
+        $request->request->add([
+            '_token' => csrf_token(),
+            'email' => $user->email,
+        ]);
+
+        if(!app('App\Http\Controllers\Auth\LoginController')->clearThrottle($request)){
+            Flash::message('حساب کاربری محدود نیست');
+
+            return redirect()->back();
+        }
+
+        Flash::success('حساب کاربری با موفقیت رفع محدودیت شد');
+
+        return redirect()->back();
+
+    }
+
+    public function restrict($id)
+    {
+        $user = $this->userRepository->findWithoutFail($id);
+
+        if (empty($user)) {
+            Flash::error('کاربر وجود ندارد');
+
+            return redirect()->back();
+        }
+
+        $request = Request();
+        $request->request->add([
+            '_token' => csrf_token(),
+            'email' => $user->email,
+        ]);
+
+        if(app('App\Http\Controllers\Auth\LoginController')->checkThrottle($request)){
+            Flash::message('حساب کاربری محدود است');
+
+            return redirect()->back();
+        }
+
+        app('App\Http\Controllers\Auth\LoginController')->restrict($request);
+
+        Flash::success('حساب کاربری با موفقیت محدود شد');
+
+        return redirect()->back();
+
     }
 }

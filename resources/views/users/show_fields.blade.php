@@ -3,7 +3,7 @@
         <!-- Avatar Path Field -->
         <div class="form-group">
             <div class="card" style="max-width: 80%">
-                <img class="card-img-top" src="{{ $user->avatar_path }}" alt="Card image">
+                <img class="card-img-top" src="{{ $user->avatar }}" alt="Card image">
                 <div class="card-body">
                     <h4 class="card-title">{!! Form::label('avatar_path', 'تصویر شخصی') !!}</h4>
                 </div>
