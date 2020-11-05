@@ -536,7 +536,7 @@ class NewsFetch extends Command
                      * delete all medias stored in in tmp directory due to put it to exact directory,
                      * because all needed medias should stored to their exact directory before, and the others probably are dummy files
                      */
-                    $files = glob(base_path().'tmp/news_tmp*'); //get all file names
+                    $files = glob(base_path().'/tmp/news_tmp*'); //get all file names
                     if (sizeof($files) > 0) {
                         $cc->print_warning('clean tmp directory:');
                         foreach ($files as $file) {
@@ -545,7 +545,7 @@ class NewsFetch extends Command
                         }
                         dump($files);
                     } else {
-                        $cc->print_warning('no new media to store');
+                        $cc->print_warning('no new media to remove');
                     }
 
                     $cc->print_success("----------------------------------------------------------------------------------------\tretrieve " . $external_service->title . " done successfully.\n");
