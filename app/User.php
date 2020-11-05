@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Gender;
 use App\Models\ManageHistory;
 use App\Models\Student;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,6 +22,15 @@ class User extends Authenticatable
     use Authorizable;
     use HasRoles;
     use HasPushSubscriptions;
+    use SoftDeletes;
+
+    public $table = 'users';
+
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
+
+
+    protected $dates = ['deleted_at'];
 
     /**
      * The attributes that are mass assignable.
