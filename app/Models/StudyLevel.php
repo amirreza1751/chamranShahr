@@ -89,7 +89,7 @@ class StudyLevel extends Model
      */
     public static $rules = [
         'title' => 'required',
-        'english_title' => 'required',
+//        'english_title' => 'required',
         'unique_code' => 'required'
     ];
 

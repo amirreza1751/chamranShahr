@@ -61,14 +61,14 @@ class StudyFieldFetch extends Command
             $study_field = StudyField::where('unique_code', $class_name.$study_field_item->RegistryGroupCode)->first();
 //            $translated = $tr->translate($study_field_item->Title);
 
-            if(is_null($study_field)) { // new study field
+            if(empty($study_field)) { // new study field
                 printf($cc->getColoredString("-\tadd\t", $cc::CREATE)."new study field:\t".$cc->getColoredString($study_field_item->Title, $cc::CREATE)."\n");
                 $study_field = new StudyField();
                 $department = new Department();
 
                 $department->title = $study_field_item->Title;
 
-                if(!is_null($study_field_item->EnglishTitle)){ // check for empty english title field
+                if(isset($study_field_item->EnglishTitle)){ // check for empty english title field
                     $department->english_title = $study_field_item->EnglishTitle;
                 }
 //                else {
@@ -97,7 +97,7 @@ class StudyFieldFetch extends Command
                 printf($cc->getColoredString("-\tupdate\t", $cc::UPDATE)."existing study field:\t".$cc->getColoredString($study_field_item->Title, $cc::UPDATE)."\n");
                 $study_field->department->title = $study_field_item->Title;
 
-                if(!is_null($study_field_item->EnglishTitle)){ // check for empty english title field
+                if(isset($study_field_item->EnglishTitle)){ // check for empty english title field
                     $study_field->department->english_title = $study_field_item->EnglishTitle;
                 }
 //                else {

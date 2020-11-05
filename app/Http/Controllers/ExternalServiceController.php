@@ -250,39 +250,6 @@ class ExternalServiceController extends AppBaseController
 
     public function fetch($id)
     {
-        echo '<html>
-<head>
-    <style>
-        .center-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            min-height: 100vh;
-            font-weight: 800;
-            direction: rtl;
-        }
-        .center-screen > p {
-            max-width: 300px;
-            padding: 20px;
-            border: white solid 1px;
-            border-radius: 0.5rem;
-            background: whitesmoke;
-        }
-        body {
-            background-color: #3c8dbc;
-        }
-    </style>
-</head>
-<body>
-<div class="center-screen">
-    <p>فرایند استخراج اطلاعات از سرویس خارجی ممکن است تا چند دقیقه زمان ببرد. لطفا تا پایان فرایند و انتقال به صفحه‌ی نتایج شکیبا باشید.</p>
-</div>
-</body>
-</html>';
-
-
         $external_service = ExternalService::find($id);
         $cc = new ConsoleColor();
         if(isset($external_service)){

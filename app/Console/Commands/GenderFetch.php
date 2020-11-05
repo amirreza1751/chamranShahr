@@ -23,7 +23,7 @@ class GenderFetch extends Command
      *
      * @var string
      */
-    protected $description = "retrieve genders's information from SAMA webservice";
+    protected $description = "retrieve genders information from SAMA webservice";
 
     /**
      * Create a new command instance.
@@ -58,7 +58,7 @@ class GenderFetch extends Command
             $gender = Gender::where('unique_code', $class_name.$gender_item->GenderId)->first();
 //            $translated = $tr->translate($gender_item->Title);
 
-            if(is_null($gender)) { // new gender
+            if(empty($gender)) { // new gender
                 printf($cc->getColoredString("-\tadd\t", $cc::CREATE)."new gender type:\t".$cc->getColoredString($gender_item->Title, $cc::CREATE)."\n");
                 $gender = new Gender();
             } else { // existing gender
@@ -67,7 +67,7 @@ class GenderFetch extends Command
 
             $gender->title = $gender_item->Title;
 
-            if(!is_null($gender_item->EnglishTitle)){ // check for empty english title field
+            if(isset($gender_item->EnglishTitle)){ // check for empty english title field
                 $gender->english_title = $gender_item->EnglishTitle;
             }
 //            else {

@@ -76,7 +76,7 @@ class TermFetch extends Command
 
             $jalalian_begin = new Jalalian($begin_date_array[0], $begin_date_array[1], $begin_date_array[2]);
             $jalalian_end = new Jalalian($end_date_array[0], $end_date_array[1], $end_date_array[2]);
-            if (is_null($term)) { // new term
+            if (empty($term)) { // new term
                 printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new term:\t" . $cc->getColoredString($term_item->Title . ",\tBegin Date: " . Jalalian::forge($jalalian_begin->getTimestamp())->format('Y-m-d'), $cc::CREATE) . "\t");
                 $term = new Term();
             } else { // existing term

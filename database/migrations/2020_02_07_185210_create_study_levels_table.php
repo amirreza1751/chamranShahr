@@ -16,7 +16,7 @@ class CreateStudyLevelsTable extends Migration
         Schema::create('study_levels', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->string('english_title');
+            $table->string('english_title')->nullable();
             $table->string('unique_code')->unique();
             $table->timestamps();
             $table->softDeletes();

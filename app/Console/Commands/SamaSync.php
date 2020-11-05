@@ -67,6 +67,7 @@ class SamaSync extends Command
             $cc->print_error("\n\n\noops!");
             $cc->print_warning("retrieve and synchronize procedure crash due to some problem with this error:");
             $cc->print_error($e->getMessage());
+
             if(!isset($gender_fetch_exitCode)){
                 $cc->print_help("the exception thrown by GenderFetch logic at line " . $e->getLine() . " of\t" . str_after($e->getFile(), base_path()) . "\tfile, pls check that and try again");
                 $cc->print_warning("do you want to see exception trace back?(y or n)");

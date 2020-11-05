@@ -21,7 +21,7 @@ class RoleInitial extends Command
      *
      * @var string
      */
-    protected $description = 'fill roles table with basic records';
+    protected $description = 'populate roles table with basic records';
 
     /**
      * Create a new command instance.
@@ -42,16 +42,16 @@ class RoleInitial extends Command
     {
         $cc = new ConsoleColor();
         $gf = new GeneralFunction();
-        $cc->print_error("this procedure will truncate roles, permissions, role_has_permissions, model_has_permissions and model_has_roles tables which may permanently delete some records, also affected some other functionality relative to users and other tables!\nDo you want to continue? (pls type\t\tHellYeah\t\tto continue or anything to skip)");
+        $cc->print_error("this procedure will truncate \"roles\", \"permissions\", \"role_has_permissions\", \"model_has_permissions\" and \"model_has_roles\" tables which may permanently delete some records, also affected some other functionality relative to users and other tables!\nDo you want to continue? (pls type\t\tHellYeah\t\tto continue or anything to skip)");
         $answer = trim(fgets(STDIN));
         if ($answer == 'HellYeah') {
 
             $gf->truncate([
-                'roles'],
-//                'permissions',
-//                'role_has_permissions',
-//                'model_has_permissions',
-//                'model_has_roles'],
+                'roles',
+                'permissions',
+                'role_has_permissions',
+                'model_has_permissions',
+                'model_has_roles'],
                 false);
 
             $role = Role::create([
@@ -61,7 +61,7 @@ class RoleInitial extends Command
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
 
             $role = Role::create([
-                'name' => 'admin',
+                'name' => 'client_developer',
                 'guard_name' => 'web',
             ]);
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
@@ -73,11 +73,16 @@ class RoleInitial extends Command
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
 
             $role = Role::create([
-                'name' => 'student',
+                'name' => 'manager',
                 'guard_name' => 'web',
             ]);
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
 
+            $role = Role::create([
+                'name' => 'student',
+                'guard_name' => 'web',
+            ]);
+            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
 
             $role = Role::create([
                 'name' => 'professor',
@@ -97,19 +102,6 @@ class RoleInitial extends Command
                 'guard_name' => 'web',
             ]);
             printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
-
-            $role = Role::create([
-                'name' => 'manager',
-                'guard_name' => 'web',
-            ]);
-            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
-
-            $role = Role::create([
-                'name' => 'client_developer',
-                'guard_name' => 'web',
-            ]);
-            printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new role:\t" . $cc->getColoredString($role->name, $cc::CREATE) . " for " . $cc->getColoredString($role->guard_name, $cc::CREATE) ."\n");
-
 
         } else {
             $cc->print_warning("\nno changes has been made; good luck...");

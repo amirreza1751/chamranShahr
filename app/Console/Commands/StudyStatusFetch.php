@@ -59,7 +59,7 @@ class StudyStatusFetch extends Command
             $study_status = StudyStatus::where('unique_code', $class_name.$study_status_item->StudentStatusId)->first();
 //            $translated = $tr->translate($study_status_item->Title);
 
-            if(is_null($study_status)) { // new study status
+            if(empty($study_status)) { // new study status
                 printf($cc->getColoredString("-\tadd\t", $cc::CREATE)."new study status:\t".$cc->getColoredString($study_status_item->Title, $cc::CREATE)."\n");
                 $study_status = new StudyStatus();
             } else { // existing study status

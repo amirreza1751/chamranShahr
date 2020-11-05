@@ -60,7 +60,6 @@ class NewsFetch extends Command
 
         ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
         $cc = new ConsoleColor();
-        $default_image_dir = Storage::url('news_images/news_default_image.jpg');
 
         try {
             /**
@@ -121,7 +120,6 @@ class NewsFetch extends Command
                             $default_image = false;
                             $default_image_message = '';
 
-
                             //                      < scraping news link >
                             $crawler = GoutteFacade::request('GET', 'http://scu.ac.ir/-/' . urlencode(str_replace('http://scu.ac.ir/-/', '', strval($data->link))));
                             $node = $crawler->filter('div.news-page-image > img')->first();
@@ -139,6 +137,7 @@ class NewsFetch extends Command
 
                             foreach ($news as $key => $value){
                                 $news[$key] = strip_tags($value);
+                                $news[$key] = str_replace("&nbsp;", '', $value);
                             }
 
                             /**
@@ -203,7 +202,7 @@ class NewsFetch extends Command
                              * so check out that in news table to find out that is a new one or not
                              */
                             $check = News::where('link', $news['link'])->first();
-                            if (!isset($check)) { // if this news is a new one
+                            if (empty($check)) { // if this news is a new one
                                 if (isset($new['path'])){
                                     if ($news['path'] != "") {// image exist
                                         /**
@@ -491,10 +490,8 @@ class NewsFetch extends Command
                                                     $default_image = true;
                                                     $default_image_message = 'image file was invalid';
                                                 }
-
-
                                                 /**
-                                                 * ************************* VERY IMPORTANT
+                                                 * ************************* SO IMPORTANT
                                                  * if for some reason can't get media of this news
                                                  * use default image that MUST exist with this specific directory and name:
                                                  * /storage/app/public/news_images/news_default_image.jpg

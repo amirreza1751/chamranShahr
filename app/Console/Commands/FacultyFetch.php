@@ -60,12 +60,12 @@ class FacultyFetch extends Command
             $faculty = Faculty::where('unique_code', $class_name.$faculty_item->FacultyCode)->first();
 //            $translated = $tr->translate($faculty_item->Title);
 
-            if(is_null($faculty)) { // new faculty
+            if(empty($faculty)) { // new faculty
                 printf($cc->getColoredString("-\tadd\t", $cc::CREATE)."new faculty:\t".$cc->getColoredString($faculty_item->Title, $cc::CREATE)."\n");
                 $faculty = new Faculty();
                 $department = new Department();
                 $department->title = $faculty_item->Title;
-                if(!is_null($faculty_item->EnglishTitle)){ // check for empty english title field
+                if(isset($faculty_item->EnglishTitle)){ // check for empty english title field
                     $department->english_title = $faculty_item->EnglishTitle;
                 }
 //                else {
@@ -92,7 +92,7 @@ class FacultyFetch extends Command
             } else { // existing faculty
                 printf($cc->getColoredString("-\tupdate\t", $cc::UPDATE)."existing faculty:\t".$cc->getColoredString($faculty_item->Title, $cc::UPDATE)."\n");
                 $faculty->department->title = $faculty_item->Title;
-                if(!is_null($faculty_item->EnglishTitle)){ // check for empty english title field
+                if(isset($faculty_item->EnglishTitle)){ // check for empty english title field
                     $faculty->department->english_title = $faculty_item->EnglishTitle;
                 }
 //                else {

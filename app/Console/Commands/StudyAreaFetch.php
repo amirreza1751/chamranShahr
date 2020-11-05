@@ -63,10 +63,10 @@ class StudyAreaFetch extends Command
             foreach ($study_area_list as $study_area_item) {
                 $study_area = StudyArea::where('unique_code', $class_name . $study_area_item->CourseStudyCode)->first();
 
-                if (is_null($study_area)) { // new study area
+                if (empty($study_area)) { // new study area
                     printf($cc->getColoredString("-\tadd\t", $cc::CREATE) . "new study area:\t" . $cc->getColoredString($study_area_item->Title, $cc::CREATE) . "\n");
                     $study_area = new StudyArea();
-                    if (!is_null($study_area_item->EnglishTitle)) { // check for empty english title field
+                    if (isset($study_area_item->EnglishTitle)) { // check for empty english title field
                         $study_area->english_title = $study_area_item->EnglishTitle;
                     }
 //                    else {
@@ -74,8 +74,8 @@ class StudyAreaFetch extends Command
 //                    }
                 } else { // existing study area
                     printf($cc->getColoredString("-\tupdate\t", $cc::UPDATE) . "existing study area:\t" . $cc->getColoredString($study_area->title, $cc::UPDATE) . "\n");
-                    if (is_null($study_area->english_title)) { // check for empty english title field
-                        if (!is_null($study_area_item->EnglishTitle)) { // check for empty english title field
+                    if (empty($study_area->english_title)) { // check for empty english title field
+                        if (isset($study_area_item->EnglishTitle)) { // check for empty english title field
                             $study_area->english_title = $study_area_item->EnglishTitle;
                         }
 //                    else {

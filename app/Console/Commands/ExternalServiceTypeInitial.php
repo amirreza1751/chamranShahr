@@ -22,7 +22,7 @@ class ExternalServiceTypeInitial extends Command
      *
      * @var string
      */
-    protected $description = 'fill external_service_types table with basic records';
+    protected $description = 'populate external_service_types table with basic records';
 
     /**
      * Create a new command instance.
@@ -43,7 +43,7 @@ class ExternalServiceTypeInitial extends Command
     {
         $cc = new ConsoleColor();
         $gf = new GeneralFunction();
-        $cc->print_error("this procedure will truncate external_service_types table which may permanently delete some records, also affected some other functionality relative to external_services and other tables!\nDo you want to continue? (pls type\t\tHellYeah\t\tto continue or anything to skip)");
+        $cc->print_error("this procedure will truncate \"external_service_types\" table which may permanently delete some records, also affected some other functionality relative to external_services and other tables!\nDo you want to continue? (pls type\t\tHellYeah\t\tto continue or anything to skip)");
         $answer = trim(fgets(STDIN));
         if ($answer == 'HellYeah') {
 

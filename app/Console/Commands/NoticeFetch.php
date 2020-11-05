@@ -14,6 +14,7 @@ use Illuminate\Container\Container;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 
 class NoticeFetch extends Command
@@ -58,7 +59,7 @@ class NoticeFetch extends Command
     {
         ini_set('max_execution_time', '1200'); // temporary set php execution limit time to 20 minutes
         $cc = new ConsoleColor();
-        $default_image_dir = Storage::url('notices_images/notice_default_image.jpg');
+
         try {
             /**
              * get all external services which are notice type
@@ -129,6 +130,62 @@ class NoticeFetch extends Command
                             'owner_id' => $external_service->owner_id,
                         ];
 
+                        foreach ($notice as $key => $value){
+                            $notice[$key] = strip_tags($value);
+                            $notice[$key] = str_replace("&nbsp;", '', $value);
+                        }
+
+
+                        /**
+                         * validate title field
+                         */
+                        $validator = Validator::make($notice, [
+                            'title' => 'nullable|string|max:191',
+                        ]);
+                        if ($validator->fails()) {
+                            unset($notice['title']);
+                        }
+
+                        /**
+                         * validate link field
+                         */
+                        $validator = Validator::make($notice, [
+                            'link' => 'nullable|url|max:191',
+                        ]);
+                        if ($validator->fails()) {
+                            unset($notice['link']);
+                        }
+
+                        /**
+                         * validate description field
+                         */
+                        $validator = Validator::make($notice, [
+                            'path' => 'nullable|url|max:191',
+                        ]);
+                        if ($validator->fails()) {
+                            unset($notice['path']);
+                        }
+
+                        /**
+                         * validate description field
+                         */
+                        $validator = Validator::make($notice, [
+                            'description' => 'nullable|string',
+                        ]);
+                        if ($validator->fails()) {
+                            unset($notice['description']);
+                        }
+
+                        /**
+                         * validate author field
+                         */
+                        $validator = Validator::make($notice, [
+                            'author' => 'nullable|string|max:191',
+                        ]);
+                        if ($validator->fails()) {
+                            unset($notice['author']);
+                        }
+
                         /**
                          * check that this notice's owner has manager or not
                          * if not, use default user of the university created first of this procedure
@@ -144,98 +201,121 @@ class NoticeFetch extends Command
                             $notice['creator_id'] = $scu_user->id;
                         }
 
-
-                        $notice['description'] = str_replace("<br>", '\n', $notice['description']);
-                        $notice['description'] = str_replace("&nbsp;", ' ', $notice['description']);
-
                         /**
-                         * identifier of each retrieved notice is its "link" (id attribute in xml),
+                         * identifier of each retrieved news is its "link" (id attribute in xml),
                          * so check out that in notices table to find out that is a new one or not
+                         * if exist, there is nothing to do with this data,
+                         * because existing news created using this procedure for sure
+                         * and we don't care about update FOR NOW :)
                          */
                         $check = Notice::where('link', $notice['link'])->first();
                         if (!isset($check)) { // if this notice is a new one
-                            if ($notice['path'] != "") {// image exist
+                            if (isset($notice['path'])) {
+                                if (filter_var($notice['path'], FILTER_VALIDATE_URL)) {// image exist
 
-                                /**
-                                 * brief look at request header to check some details
-                                 * such as file size, extension and etc.
-                                 */
-                                stream_context_set_default(array('http' => array('method' => 'HEAD')));
-                                $head = array_change_key_case(get_headers($notice['path'], 1));
-                                $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
+                                    /**
+                                     * brief look at request header to check some details
+                                     * such as file size, extension and etc.
+                                     */
+                                    stream_context_set_default(array('http' => array('method' => 'HEAD')));
+                                    $head = array_change_key_case(get_headers($notice['path'], 1));
+                                    $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
 
-                                if (!$clen) { // cannot retrieve file size, return "-1"
-                                    $clen = -1;
-                                }
-
-                                $pathinfo = pathinfo($notice['path']);
-                                /**
-                                 * < get media extension >
-                                 * extract substring after last '.' and remove possible parameters
-                                 * example:
-                                 * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
-                                 * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
-                                 *                                              we need this^
-                                 */
-                                $extension = explode("?", $pathinfo['extension'])[0];
-
-                                if ($this->str_contains_array(strtolower($extension), GeneralVariable::$inbound_acceptable_media)) { // acceptable extension such png and jpg
-                                    /** < get media size > */
-                                    if ($clen < 2097152) { // if media size < 2MiB
-
-                                        $name = 'tmp/notices_tmp' . str_random(4) . '.tmp';
-                                        $ch = curl_init($notice['path']);
-                                        $fp = fopen($name, 'wb') or die('Permission error');
-                                        curl_setopt($ch, CURLOPT_FILE, $fp);
-                                        curl_setopt($ch, CURLOPT_HEADER, 0);
-                                        curl_exec($ch);
-                                        curl_close($ch);
-                                        fclose($fp);
-                                        //put media to relative folder to its owner such department
-                                        $path = Storage::putFile('public/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
-                                        $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
-                                        $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
-                                        // retrieve the stored media
-                                        $file = Storage::get($path);
-                                        // create laravel symbolic link for this media
-                                        $path = '/' . str_replace('public', 'storage', $path);
-                                        $notice['path'] = $path;
-
-                                        /**
-                                         * create thumbnail of the original image
-                                         * this image will store with a postfix '-thumbnail' beside the original image
-                                         */
-                                        $destinationPath = public_path('storage/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
-                                        $img = Image::make($file);
-                                        // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
-                                        $img->resize(100, 100, function ($constraint) {
-                                            $constraint->aspectRatio();
-                                        })->save($destinationPath.'/' . $file_name . '-thumbnail.' . $file_extension);
-
-                                        /**
-                                         * ************************* SO IMPORTANT
-                                         * if for some reason can't get media of this notice
-                                         * use default image that MUST exist with this specific directory and name:
-                                         * /storage/app/public/notices_images/notice_default_image.jpg
-                                         * creating this default image is an INITIAL functionality :)
-                                         */
-                                    } else { // media size is > 2MiB
-                                        $notice['path'] = $default_image_dir;
-                                        $default_image = true;
-                                        $default_image_message = 'image file was too big';
+                                    if (!$clen) { // cannot retrieve file size, return "-1"
+                                        $clen = -1;
                                     }
-                                } else { // media's extension is not acceptable for this functionality
-                                    $notice['path'] = $default_image_dir;
+
+                                    $pathinfo = pathinfo($notice['path']);
+                                    /**
+                                     * < get media extension >
+                                     * extract substring after last '.' and remove possible parameters
+                                     * example:
+                                     * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
+                                     * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
+                                     *                                              we need this^
+                                     */
+                                    if (isset($pathinfo['extension'])) {
+                                        $extension = explode("?", $pathinfo['extension'])[0];
+                                    }
+
+                                    if (isset($extension) && $this->str_contains_array(strtolower($extension), GeneralVariable::$inbound_acceptable_media)) { // acceptable extension such png and jpg
+                                        /** < get media size > */
+                                        if ($clen < 2097152) { // if media size < 2MiB
+
+                                            $name = 'tmp/notices_tmp' . str_random(4) . '.tmp';
+                                            $ch = curl_init($notice['path']);
+                                            $fp = fopen($name, 'wb') or die('Permission error');
+                                            curl_setopt($ch, CURLOPT_FILE, $fp);
+                                            curl_setopt($ch, CURLOPT_HEADER, 0);
+                                            curl_exec($ch);
+                                            curl_close($ch);
+                                            fclose($fp);
+
+                                            /**
+                                             * validate image file
+                                             */
+                                            $validator = Validator::make(['img' => new File($name)], [
+                                                'img' => 'image|mimes:jpg,jpeg,png|max:2048',
+                                            ]);
+                                            if (!$validator->fails()){
+                                                //put media to relative folder to its owner such department
+                                                $path = Storage::putFile('public/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
+                                                $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
+                                                $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
+                                                // retrieve the stored media
+                                                $file = Storage::get($path);
+                                                // create laravel symbolic link for this media
+                                                $path = '/' . str_replace('public', 'storage', $path);
+                                                $notice['path'] = $path;
+
+                                                /**
+                                                 * create thumbnail of the original image
+                                                 * this image will store with a postfix '-thumbnail' beside the original image
+                                                 */
+                                                $destinationPath = public_path('storage/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
+                                                $img = Image::make($file);
+                                                // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
+                                                $img->resize(100, 100, function ($constraint) {
+                                                    $constraint->aspectRatio();
+                                                })->save($destinationPath . '/' . $file_name . '-thumbnail.' . $file_extension);
+                                            } else { // image is invalid
+                                                unset($notice['path']);
+                                                $default_image = true;
+                                                $default_image_message = 'image file was invalid';
+                                            }
+                                                /**
+                                             * ************************* SO IMPORTANT
+                                             * if for some reason can't get media of this notice
+                                             * use default image that MUST exist with this specific directory and name:
+                                             * /storage/app/public/notices_images/notice_default_image.jpg
+                                             * creating this default image is an INITIAL functionality :)
+                                             */
+                                        } else { // media size is > 2MiB
+//                                          $notice['path'] = $default_image_dir;
+                                            unset($notice['path']);
+                                            $default_image = true;
+                                            $default_image_message = 'image file was too big';
+                                        }
+                                    } else { // media's extension is not acceptable for this functionality
+//                                      $notice['path'] = $default_image_dir;
+                                        unset($notice['path']);
+                                        $default_image = true;
+                                        $default_image_message = 'media extension was not acceptable : ' . $extension;
+                                    }
+                                } else { // notice have no media
+//                                $notice['path'] = $default_image_dir;
+                                    unset($notice['path']);
                                     $default_image = true;
-                                    $default_image_message = 'media extension was not acceptable : ' . $extension;
+                                    $default_image_message = 'media file not found';
                                 }
-                            } else { // notice have no media
-                                $notice['path'] = $default_image_dir;
+                            } else { // image is invalid
                                 $default_image = true;
-                                $default_image_message = 'media file not found';
+                                $default_image_message = 'image file was invalid';
                             }
                             $cc->print_success('media url:', "\t");
-                            dump($notice['path']);
+                            if (isset($notice['path'])){
+                                dump($notice['path']);
+                            }
                             if ($default_image) {
                                 $cc->print_warning("\t-> default image; " . $default_image_message);
                             }
@@ -259,7 +339,6 @@ class NoticeFetch extends Command
                     } else {
                         $cc->print_warning('no new media to store');
                     }
-                    //                      < clear tmp directory >
 
                     $cc->print_success("----------------------------------------------------------------------------------------\tretrieve " . $external_service->title . " done successfully.\n");
                 }
