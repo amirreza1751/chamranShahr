@@ -76,11 +76,40 @@ class UserController extends AppBaseController
     {
         $input = $request->all();
 
-        $input['password'] = Hash::make($input['password']);
+        if($request->hasFile('avatar_path')){
+            $path = $request->file('avatar_path')->store('/public/profile');
+            $path = str_replace('public', 'storage', $path);
+            $input['avatar_path'] = '/' . $path;
+
+            /**
+             * delete old avatar image,
+             * to prevent Accumulation of dead files
+             */
+            $file_name = 'storage\\profile\\'.last(explode('/', $user->avatar_path));
+            if (is_file($file_name)){
+                unlink($file_name); //delete old avatar image
+                $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+                $out->writeln('حذف: ' . $file_name);
+            } else {
+                $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+                $out->writeln('تصویر پیدا نشد.');
+            }
+        }
+
+        if(isset($input['password'])){
+            $input['password'] = Hash::make($input['password']);
+        } else {
+            $input['password'] = $user->password;
+        }
 
         $user = $this->userRepository->create($input);
 
-        Flash::success('News saved successfully.');
+        foreach ($input['role_ids'] as $role_id){
+            $role = Role::findById($role_id);
+            $user->assignRole($role);
+        }
+
+        Flash::success('کاربر با موفقیت ساخته شد');
 
         return redirect(route('users.index'));
     }
@@ -182,7 +211,7 @@ class UserController extends AppBaseController
             }
         }
 
-        if(!is_null($input['password'])){
+        if(isset($input['password'])){
             $input['password'] = Hash::make($input['password']);
         } else {
             $input['password'] = $user->password;
