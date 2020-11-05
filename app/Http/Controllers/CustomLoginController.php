@@ -92,7 +92,7 @@ class CustomLoginController extends Controller
 
         /** otp code is a one-time disposable token, so should been expire after first match */
         $phonenumber_token->used = '1';
-//        $phonenumber_token->save();
+        $phonenumber_token->save();
 
         $user = User::where('phone_number', $request->phone_number)->first();
 
