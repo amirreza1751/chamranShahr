@@ -33,4 +33,18 @@ class Constants
         self::CULTURAL_NOTIFICATION => 'فرهنگی',
     ];
     /** ************* */
+
+
+    /** ************* */
+
+    /** notifier_types */  /* Use as NotificationSample type */
+
+    const NOTICE = 'App\Models\Notice';
+    const NEWS = 'App\Models\News';
+
+    const notifier_types = [
+        self::NOTICE => 'اطلاعیه',
+        self::NEWS => 'خبر',
+    ];
+    /** ************* */
 }

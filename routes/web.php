@@ -100,7 +100,9 @@ Route::group(['middleware' => 'auth:web'], function(){
     Route::get('profile', 'ProfileController@profile')->name('profile');
     Route::patch('profile', 'ProfileController@updateProfile')->name('profile.update');
 
-    Route::group(['middleware' => ['role:admin|developer|content_manager|manager']], function(){
+    Route::group(['middleware' => ['role:developer|content_manager|manager']], function(){
+
+        Route::resource('notificationSamples', 'NotificationSampleController');
 
         Route::patch('departments/{department}/editProfile/', [
             'as' => 'departments.updateProfile', 'uses' => 'DepartmentController@updateProfile'
@@ -379,5 +381,3 @@ Route::get('temp', function (){
 //make a push notification.
 Route::middleware('auth:web')->get('/push/{message?}','PushController@push')->name('push');
 
-
-Route::resource('notificationSamples', 'NotificationSampleController');

@@ -27,4 +27,9 @@ class UpdateNewsRequest extends FormRequest
     {
         return News::$rules;
     }
+
+    public function messages()
+    {
+        return News::$messages;
+    }
 }

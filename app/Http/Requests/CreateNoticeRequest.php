@@ -27,4 +27,9 @@ class CreateNoticeRequest extends FormRequest
     {
         return Notice::$rules;
     }
+
+    public function messages()
+    {
+        return Notice::$messages;
+    }
 }
