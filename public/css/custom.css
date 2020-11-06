@@ -126,6 +126,9 @@
     font-style: normal;
 }
 
+.vazir-font {
+    font-family: Vazir !important;
+}
 .vazir-font-fd {
     font-family: VazirFD !important;
 }

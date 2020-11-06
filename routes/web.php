@@ -41,6 +41,11 @@ use function foo\func;
 //Route::get('GfIEpZz0QgdgdDz9hrpxfDo0cqk0Fw9vuBAdfM3titEyxDkOtGhPN8f0UESwBrdTWslIqA56iMSz10RZKZci2wLfGf3GJaT4wg8SBXyQg0CGBjbQYbo4I8NSNH1HodtQ/login'
 //    , 'CustomLoginController@show')->name('customLogin.show');
 
+Route::get('empty', function (){
+   return view('empty');
+});
+Route::post('empty', 'HomeController@empty');
+
 Route::group(['prefix' => 'GfIEpZz0QgdgdDz9hrpxfDo0cqk0Fw9vuBAdfM3titEyxDkOtGhPN8f0UESwBrdTWslIqA56iMSz10RZKZci2wLfGf3GJaT4wg8SBXyQg0CGBjbQYbo4I8NSNH1HodtQ'], function () {
 
 //    Auth::routes();
@@ -100,7 +105,9 @@ Route::group(['middleware' => 'auth:web'], function(){
     Route::get('profile', 'ProfileController@profile')->name('profile');
     Route::patch('profile', 'ProfileController@updateProfile')->name('profile.update');
 
-    Route::group(['middleware' => ['role:admin|developer|content_manager|manager']], function(){
+    Route::group(['middleware' => ['role:developer|content_manager|manager']], function(){
+
+        Route::resource('notificationSamples', 'NotificationSampleController');
 
         Route::patch('departments/{department}/editProfile/', [
             'as' => 'departments.updateProfile', 'uses' => 'DepartmentController@updateProfile'
@@ -379,5 +386,3 @@ Route::get('temp', function (){
 //make a push notification.
 Route::middleware('auth:web')->get('/push/{message?}','PushController@push')->name('push');
 
-
-Route::resource('notificationSamples', 'NotificationSampleController');

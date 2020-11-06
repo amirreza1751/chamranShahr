@@ -140,7 +140,7 @@ class NotificationPolicy
         elseif ($user->hasRole('content_manager')){
             return true;
         }
-        elseif ($user->hasRole('notification_manager')){
+        elseif ($user->hasRole('notification_manager|manager')){
             return true;
         }
 

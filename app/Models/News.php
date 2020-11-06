@@ -106,7 +106,32 @@ class News extends Model
      * @var array
      */
     public static $rules = [
+        'title' => 'required|string|max:191',
+        'link' => 'required|url',
+        'description' => 'required|string',
+        'path' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'owner_type' => 'required|string',
+        'owner_id' => 'required|numeric',
+        'creator_id' => 'required|numeric',
+    ];
 
+    public static $messages = [
+        'title.required' => 'عنوان را وارد کنید',
+        'title.string' => 'عنوان به درستی وارد نشده است',
+        'title.max' => 'حداکثر طول عنوان 191 کاراکتر است',
+        'link.required' => 'پیوند را وارد کنید',
+        'link.string' => 'پیوند به درستی وارد نشده است',
+        'description.required' => 'توضیحات را وارد کنید',
+        'description.string' => 'توضیحات به درستی وارد نشده است',
+        'path.image' => 'تصویر به درستی وارد نشده است',
+        'path.mimes' => 'فرمت های مجاز برای تصویر jpg و png هستند',
+        'path.uploaded' => 'حداکثر حجم مجاز باری تصویر 2MB است',
+        'owner_type.required' => 'نوع مالک را وارد کنید',
+        'owner_type.string' => 'نوع مالک به درستی وارد نشده است',
+        'owner_id.required' => 'مالک را وارد کنید',
+        'owner_id.numeric' => 'مالک به درستی وارد نشده است',
+        'creator_id.required' => 'سازنده را وارد کنید',
+        'creator_id.numeric' => 'سازنده به درستی وارد نشده است',
     ];
 
     public function notifications()

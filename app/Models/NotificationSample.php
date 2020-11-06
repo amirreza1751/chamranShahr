@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\General\Constants;
 use Illuminate\Database\Eloquent\Model as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -111,8 +112,22 @@ class NotificationSample extends Model
      * @var array
      */
     public static $rules = [
-//        'notifier_type' => 'required',
-//        'notifier_id' => 'required'
+        'title' => 'required|string|max:191',
+        'type' => ['nullable','regex:/' . '^'.Constants::EDUCATIONAL_NOTIFICATION.'$' . '|' . '^'.Constants::STUDIOUS_NOTIFICATION.'$' . '|' . '^'.Constants::COLLEGIATE_NOTIFICATION.'$' . '|' . '^'.Constants::CULTURAL_NOTIFICATION.'$/'],
+        'brief_description' => 'required|string|max:191',
+        'deadline' => ['required','regex:/(\d{3,4}(\/)(([0-9]|(0)[0-9])|((1)[0-2]))(\/)([0-9]|[0-2][0-9]|(3)[0-1]))$/'],
+    ];
+
+    public static $messages = [
+        'title.string' => 'عنوان  به درستی وارد نشده است',
+        'title.required' => 'عنوان را وارد کنید',
+        'title.max' => 'حداکثر طول عنوان 191 کاراکتر است',
+        'brief_description.string' => 'توضیحات به درستی وارد نشده است',
+        'brief_description.required' => 'توضیحات را وارد کنید',
+        'type.regex' => 'نوع نوتیفیکیشن به درستی وارد نشده است',
+        'type.required' => 'نوع نوتیفیکیشن را وارد کنید',
+        'deadline.required' => 'تاریخ انقضا را از طریق تقویم وارد کنید',
+        'deadline.regex' => 'تاریخ انقضا به درستی وارد نشده است',
     ];
 
     public function getAbsolutePathAttribute(){ return $this->notifier->absolute_path; }

@@ -39,6 +39,9 @@
     <!-- Custom Css -->
     <link rel="stylesheet" href="{{ asset('/css/custom.css') }}">
 
+    <!-- Persian Date Picker -->
+    <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@1.2.0/dist/css/persian-datepicker.css">
+
     @yield('css')
 
 <!-- jQuery 3.1.1 -->
@@ -53,6 +56,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/icheck.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
+
+    <!-- Persian Date Picker -->
+    <script src="https://unpkg.com/persian-date@1.1.0/dist/persian-date.js"></script>
+    <script src="https://unpkg.com/persian-datepicker@1.2.0/dist/js/persian-datepicker.js"></script>
 
 
     @yield('scripts')

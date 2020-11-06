@@ -27,4 +27,9 @@ class CreateDepartmentRequest extends FormRequest
     {
         return Department::$rules;
     }
+
+    public function messages()
+    {
+        return Department::$messages;
+    }
 }

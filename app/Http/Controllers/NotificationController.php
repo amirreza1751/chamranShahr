@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\General\Constants;
 use App\Http\Requests\CreateNotificationRequest;
+use App\Http\Requests\NotifyRequest;
 use App\Http\Requests\UpdateNotificationRequest;
 use App\Models\Faculty;
 use App\Models\News;
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Flash;
 use Illuminate\Support\Facades\Auth;
+use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -186,14 +188,17 @@ class NotificationController extends AppBaseController
         $this->authorize('delete', $notification);
 
         if (empty($notification)) {
-            Flash::error('Notification not found');
+            Flash::error('نوتیفیکیشن وجود ندارد');
 
             return redirect(route('notifications.index'));
         }
 
         $this->notificationRepository->delete($id);
 
-        Flash::success('Notification deleted successfully.');
+        Flash::success('نوتیفیکیشن کاربر با موفقیت حذف شد');
+
+        if (Auth::user()->hasRole('manager'))
+            return redirect(route('notificationSamples.index'));
 
         return redirect(route('notifications.index'));
     }
@@ -224,7 +229,7 @@ class NotificationController extends AppBaseController
             ->with('study_levels', $study_levels)
             ->with('entrance_terms', $entrance_terms)
             ->with('study_statuses', $study_statuses)
-            ->with('notifiers', $notifiers)
+            ->with('notifier_types', Constants::notifier_types)
             ->with('notification_types', Constants::notification_types)
             ->with('user_types', Constants::user_types);
     }
@@ -235,10 +240,6 @@ class NotificationController extends AppBaseController
 
         $notifier = $notifier_type::find($notifier_id);
 
-        $notifiers = [
-            'Notice' => Notice::class,
-            'News' => News::class,
-        ];
         $faculties = Faculty::all()->pluck('unique_code', 'title');
         $study_levels = StudyLevel::all()->pluck('unique_code', 'title');
         $entrance_terms = Term::orderBy('begin_date', 'desc')->pluck('unique_code', 'title');
@@ -248,33 +249,18 @@ class NotificationController extends AppBaseController
             ->with('study_levels', $study_levels)
             ->with('entrance_terms', $entrance_terms)
             ->with('study_statuses', $study_statuses)
-            ->with('notifiers', $notifiers)
+            ->with('notifier_types', Constants::notifier_types)
             ->with('notifier', $notifier)
             ->with('notification_types', Constants::notification_types)
             ->with('user_types', Constants::user_types);
     }
 
-    public function notify(Request $request)
+    public function notify(NotifyRequest $request)
     {
         $input = $request->all();
+
         $title = null;
         $brief_description = null;
-
-        $request->validate([
-            'notifier_type' => 'required|string',
-            'notifier_id' => 'required|numeric',
-            'title' => 'string|nullable',
-            'brief_description' => 'string',
-            'deadline' => 'required|date',
-            'study_status_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyStatus::class))) . '[0-9]/',
-            'faculty_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", Faculty::class))) . '[0-9]/',
-            'study_field_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyField::class))) . '[0-9]/',
-            'study_level_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyLevel::class))) . '[0-9]/',
-            'study_area_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", StudyArea::class))) . '[0-9]/',
-            'entrance_term_unique_code' => 'nullable|regex:/' . strtolower(array_last(explode("\\", Term::class))) . '[0-9]/',
-            'type' => ['nullable','regex:(' . '^'.Constants::EDUCATIONAL_NOTIFICATION.'$' . '|' . '^'.Constants::STUDIOUS_NOTIFICATION.'$' . '|' . '^'.Constants::COLLEGIATE_NOTIFICATION.'$' . '|' . '^'.Constants::CULTURAL_NOTIFICATION.'$' . ')'],
-            'user_type' => ['nullable','regex:(' . '^'.Constants::ALL_USERS.'$' . '|' . '^'.Constants::STUDENTS.'$' . '|' . '^'.Constants::EMPLOYEES.'$' . '|' . '^'.Constants::PROFESSORS.'$' . ')'],
-        ]);
 
         $this->authorize('notify', [$input['notifier_type'], $input['notifier_id']]);
 
@@ -303,17 +289,14 @@ class NotificationController extends AppBaseController
 
         $input['title'] = $title;
         $input['brief_description'] = $brief_description;
-
-        $input_deadline = Carbon::createFromFormat('Y-m-d', $input['deadline']);
-        $input['deadline'] = Carbon::create($input_deadline->year, $input_deadline->month, $input_deadline->day, 0, 0, 0)->addDays(1)->subSecond(1);
+        $deadline_array = explode("/", $input['deadline']);
+        $input['deadline'] =  (new Jalalian($deadline_array[0], $deadline_array[1], $deadline_array[2]))->toCarbon()->addDay()->subMinute();
 
         if ($input['user_type'] == Constants::ALL_USERS){
             $this->notifyUsers($input);
         } elseif ($input['user_type'] == Constants::STUDENTS){
             $this->notifyStudents($input);
         }
-
-        Flash::success('نوتیفیکیشن با موفقیت ایجاد شد');
 
         return redirect(route('notificationSamples.index'));
     }
@@ -327,6 +310,8 @@ class NotificationController extends AppBaseController
 
             return redirect(route('notificationSamples.index'));
         }
+
+        Flash::success('نوتیفیکیشن با موفقیت ایجاد شد');
 
         $this->send($users, $input['notifier_type'], $input['notifier_id'], $input['deadline'], $input['title'], $input['brief_description'], $input['type']);
 
@@ -367,6 +352,8 @@ class NotificationController extends AppBaseController
 
             return redirect(route('notificationSamples.index'));
         }
+
+        Flash::success('نوتیفیکیشن با موفقیت ایجاد شد');
 
         $this->send($students, $input['notifier_type'], $input['notifier_id'], $input['deadline'], $input['title'], $input['brief_description'], $input['type']);
 

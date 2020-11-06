@@ -26,7 +26,14 @@ class UpdateNotificationSampleRequest extends FormRequest
     public function rules()
     {
         $rules = NotificationSample::$rules;
-        
+
         return $rules;
+    }
+
+    public function messages()
+    {
+        $messages = NotificationSample::$messages;
+
+        return $messages;
     }
 }
