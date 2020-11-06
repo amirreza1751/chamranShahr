@@ -75,4 +75,9 @@ class HomeController extends Controller
     {
         return view('homes.client_developer_home');
     }
+
+    public function empty(Request $request)
+    {
+        dump($request);
+    }
 }

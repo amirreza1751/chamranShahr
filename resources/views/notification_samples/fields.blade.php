@@ -17,13 +17,27 @@
     {!! Form::label('type', 'نوع:') !!}
     <select class="form-control m-bot15" name="type" id="type">
         <option disabled selected value> -- انتخاب کنید -- </option>
-        @foreach($notification_types as $key => $value)
-            @if($key == $notificationSample->type)
-                <option value="{{ $key }}" selected>{{ $value }}</option>
-            @else
+        @if(old('type'))
+            @foreach($notification_types as $key => $value)
+                @if($key == old('type'))
+                    <option value="{{ $key }}" selected>{{ $value }}</option>
+                @else
+                    <option value="{{ $key }}">{{ $value }}</option>
+                @endif
+            @endforeach
+        @elseif($notificationSample->type)
+            @foreach($notification_types as $key => $value)
+                @if($key == $notificationSample->type)
+                    <option value="{{ $key }}" selected>{{ $value }}</option>
+                @else
+                    <option value="{{ $key }}">{{ $value }}</option>
+                @endif
+            @endforeach
+        @else
+            @foreach($notification_types as $key => $value)
                 <option value="{{ $key }}">{{ $value }}</option>
-            @endif
-        @endforeach
+            @endforeach
+        @endif
     </select>
 </div>
 
@@ -101,20 +115,43 @@
 <!-- Deadline Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('deadline', 'تاریخ انقضا:') !!}
-    {!! Form::date('deadline', null, ['class' => 'form-control','id'=>'deadline']) !!}
+{{--    {!! Form::date('deadline', null, ['class' => 'form-control','id'=>'deadline']) !!}--}}
+    <input class="form-control" dir="ltr" type="text" value="{{old('deadline_pd')}}" placeholder="{{$deadline_pd}}" id="deadline_pd" name="deadline_pd"/>
+    <input type="hidden" id="deadline" name="deadline" value="{{old('deadline')}}"/>
 </div>
 
-@push('scripts')
-    <script type="text/javascript">
-        $('#deadline').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm:ss',
-            useCurrent: false
-        })
-    </script>
-@endpush
+
+<script>
+    function convert(str){
+        var persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g], englishNumbers  = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        if(typeof str === 'string')
+        {
+            for(var i=0; i<10; i++)
+            {
+                str = str.replace(persianNumbers[i], i).replace(englishNumbers[i], i);
+            }
+        }
+        return str;
+    }
+
+    jQuery(document).ready(function () {
+
+            $('#submit').on('click', function () {
+                var deadline_pd = $('#deadline_pd');
+                $('#deadline').val(convert(deadline_pd.val()));
+            });
+
+
+            $('#deadline_pd').persianDatepicker({
+                observer: true,
+                format: 'YYYY/MM/DD',
+                initialValue: false,
+            });
+        });
+</script>
 
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
-    {!! Form::submit('ذخیره', ['class' => 'btn btn-primary']) !!}
+    {!! Form::submit('ذخیره', ['class' => 'btn btn-primary', 'id' => 'submit']) !!}
     <a href="{{ route('notificationSamples.index') }}" class="btn btn-default">لغو</a>
 </div>

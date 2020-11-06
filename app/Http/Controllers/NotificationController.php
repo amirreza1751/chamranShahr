@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Flash;
 use Illuminate\Support\Facades\Auth;
+use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -187,14 +188,17 @@ class NotificationController extends AppBaseController
         $this->authorize('delete', $notification);
 
         if (empty($notification)) {
-            Flash::error('Notification not found');
+            Flash::error('نوتیفیکیشن وجود ندارد');
 
             return redirect(route('notifications.index'));
         }
 
         $this->notificationRepository->delete($id);
 
-        Flash::success('Notification deleted successfully.');
+        Flash::success('نوتیفیکیشن کاربر با موفقیت حذف شد');
+
+        if (Auth::user()->hasRole('manager'))
+            return redirect(route('notificationSamples.index'));
 
         return redirect(route('notifications.index'));
     }
@@ -254,6 +258,7 @@ class NotificationController extends AppBaseController
     public function notify(NotifyRequest $request)
     {
         $input = $request->all();
+
         $title = null;
         $brief_description = null;
 
@@ -284,17 +289,14 @@ class NotificationController extends AppBaseController
 
         $input['title'] = $title;
         $input['brief_description'] = $brief_description;
-
-        $input_deadline = Carbon::createFromFormat('Y-m-d', $input['deadline']);
-        $input['deadline'] = Carbon::create($input_deadline->year, $input_deadline->month, $input_deadline->day, 0, 0, 0)->addDays(1)->subSecond(1);
+        $deadline_array = explode("/", $input['deadline']);
+        $input['deadline'] =  (new Jalalian($deadline_array[0], $deadline_array[1], $deadline_array[2]))->toCarbon()->addDay()->subMinute();
 
         if ($input['user_type'] == Constants::ALL_USERS){
             $this->notifyUsers($input);
         } elseif ($input['user_type'] == Constants::STUDENTS){
             $this->notifyStudents($input);
         }
-
-        Flash::success('نوتیفیکیشن با موفقیت ایجاد شد');
 
         return redirect(route('notificationSamples.index'));
     }
@@ -308,6 +310,8 @@ class NotificationController extends AppBaseController
 
             return redirect(route('notificationSamples.index'));
         }
+
+        Flash::success('نوتیفیکیشن با موفقیت ایجاد شد');
 
         $this->send($users, $input['notifier_type'], $input['notifier_id'], $input['deadline'], $input['title'], $input['brief_description'], $input['type']);
 
@@ -348,6 +352,8 @@ class NotificationController extends AppBaseController
 
             return redirect(route('notificationSamples.index'));
         }
+
+        Flash::success('نوتیفیکیشن با موفقیت ایجاد شد');
 
         $this->send($students, $input['notifier_type'], $input['notifier_id'], $input['deadline'], $input['title'], $input['brief_description'], $input['type']);
 

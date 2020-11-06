@@ -61,9 +61,6 @@
                         </select>
                     </div>
 
-                    <script src="http://code.jquery.com/jquery-3.3.1.min.js"
-                            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous">
-                    </script>
                     <script>
                         jQuery(document).ready(function () {
                             $('select[name="notifier_type"]').on('change', function () {
@@ -180,11 +177,12 @@
                     <!-- Deadline Field -->
                     <div class="form-group col-sm-6">
                         {!! Form::label('deadline', 'تاریخ انقضا:') !!}
-                        {!! Form::date('deadline', null, ['class' => 'form-control','id'=>'deadline']) !!}
+{{--                        {!! Form::date('deadline', null, ['class' => 'form-control','id'=>'deadline']) !!}--}}
+                        <input class="form-control" dir="ltr" type="text" value="{{old('deadline_pd')}}" id="deadline_pd" name="deadline_pd"/>
+                        <input type="hidden" id="deadline" name="deadline" value="{{old('deadline')}}"/>
                     </div>
 
 
-                    <input type="text" id="date-field"/>
 
                     <!-- Notification Type Field -->
                     <div class="form-group col-sm-6">
@@ -367,27 +365,47 @@
                             </select>
                         </div>
                     </div>
-
-                    <!-- Submit Field -->
-                    <div class="form-group col-sm-12">
-                        {!! Form::submit('ایجاد', ['class' => 'btn btn-primary']) !!}
-                        <a href="{!! route('notificationSamples.index') !!}" class="btn btn-default">لغو</a>
-                    </div>
-
-                    {!! Form::close() !!}
                 </div>
+
+                <!-- Submit Field -->
+                <div class="form-group col-sm-12">
+                    {!! Form::submit('ایجاد', ['class' => 'btn btn-primary', 'id' => 'submit']) !!}
+                    <a href="{!! route('notificationSamples.index') !!}" class="btn btn-default">لغو</a>
+                </div>
+
+                {!! Form::close() !!}
             </div>
         </div>
     </div>
 
-
-    <script src="http://code.jquery.com/jquery-3.3.1.min.js"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous">
-    </script>
     <script>
+        function convert(str){
+            var persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g], englishNumbers  = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            if(typeof str === 'string')
+            {
+                for(var i=0; i<10; i++)
+                {
+                    str = str.replace(persianNumbers[i], i).replace(englishNumbers[i], i);
+                }
+            }
+            return str;
+        }
+
         jQuery(document).ready(function () {
 
-            $('#date-field').persianDatepicker();
+            $('#submit').on('click', function() {
+                var deadline_pd = $('#deadline_pd');
+                $('#deadline').val(convert(deadline_pd.val()));
+            });
+
+
+
+            $('#deadline_pd').persianDatepicker({
+                observer: true,
+                format: 'YYYY/MM/DD',
+                initialValue: false,
+            });
+
 
             var old_notifier_type = "{{str_replace("\\", "\\\\", old('notifier_type'))}}";
             var old_notifier_id = '{{old('notifier_id')}}';

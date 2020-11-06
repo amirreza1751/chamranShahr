@@ -25,11 +25,11 @@ class UpdateDepartmentRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'title' => 'nullable|string',
-            'english_title' => 'nullable|string',
-            'description' => 'nullable|string',
-            'path' => 'image|mimes:jpg,jpeg|max:2048',
-        ];
+        return Department::$rules;
+    }
+
+    public function messages()
+    {
+        return Department::$messages;
     }
 }

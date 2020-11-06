@@ -32,7 +32,7 @@
             @if (sizeof($externalServices) == 0)
                 <div class="box box-info">
                     <div class="box-header with-border">
-                        <h3 class="box-title">هیچ دپارتمانی برای نمایش وجود ندارد</h3>
+                        <h3 class="box-title">هیچ سرویسی برای نمایش وجود ندارد</h3>
                     </div>
                 </div>
             @else

@@ -41,6 +41,11 @@ use function foo\func;
 //Route::get('GfIEpZz0QgdgdDz9hrpxfDo0cqk0Fw9vuBAdfM3titEyxDkOtGhPN8f0UESwBrdTWslIqA56iMSz10RZKZci2wLfGf3GJaT4wg8SBXyQg0CGBjbQYbo4I8NSNH1HodtQ/login'
 //    , 'CustomLoginController@show')->name('customLogin.show');
 
+Route::get('empty', function (){
+   return view('empty');
+});
+Route::post('empty', 'HomeController@empty');
+
 Route::group(['prefix' => 'GfIEpZz0QgdgdDz9hrpxfDo0cqk0Fw9vuBAdfM3titEyxDkOtGhPN8f0UESwBrdTWslIqA56iMSz10RZKZci2wLfGf3GJaT4wg8SBXyQg0CGBjbQYbo4I8NSNH1HodtQ'], function () {
 
 //    Auth::routes();

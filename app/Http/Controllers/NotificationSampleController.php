@@ -12,6 +12,7 @@ use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
 use Illuminate\Support\Facades\Auth;
+use Morilog\Jalali\Jalalian;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -131,9 +132,12 @@ class NotificationSampleController extends AppBaseController
             'Notice' => Notice::class,
             'News' => News::class,
         ];
+        $j = Jalalian::fromCarbon($notificationSample->deadline);
+        $deadline_pd = $j->getYear()."/".$j->getMonth()."/".$j->getDay();
 
         return view('notification_samples.edit')
             ->with('notificationSample', $notificationSample)
+            ->with('deadline_pd', $deadline_pd)
             ->with('notifiers', $notifiers)
             ->with('notification_types', Constants::notification_types);
     }
@@ -157,8 +161,8 @@ class NotificationSampleController extends AppBaseController
         }
         $input = $request->all();
 
-        if (empty($input['deadline']))
-            unset($input['deadline']);
+        $deadline_array = explode("/", $input['deadline']);
+        $input['deadline'] =  (new Jalalian($deadline_array[0], $deadline_array[1], $deadline_array[2]))->toCarbon()->addDay()->subMinute();
 
         $notificationSample = $this->notificationSampleRepository->update($input, $id);
 

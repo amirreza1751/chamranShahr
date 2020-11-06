@@ -106,7 +106,7 @@ class News extends Model
      * @var array
      */
     public static $rules = [
-        'title' => 'required|string',
+        'title' => 'required|string|max:191',
         'link' => 'required|url',
         'description' => 'required|string',
         'path' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -118,6 +118,7 @@ class News extends Model
     public static $messages = [
         'title.required' => 'عنوان را وارد کنید',
         'title.string' => 'عنوان به درستی وارد نشده است',
+        'title.max' => 'حداکثر طول عنوان 191 کاراکتر است',
         'link.required' => 'پیوند را وارد کنید',
         'link.string' => 'پیوند به درستی وارد نشده است',
         'description.required' => 'توضیحات را وارد کنید',

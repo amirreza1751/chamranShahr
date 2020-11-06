@@ -105,8 +105,27 @@ class Department extends Model
      * @var array
      */
     public static $rules = [
-        'title' => 'required',
-        'manage_level_id' => 'required'
+//        'title' => 'required|string|max:191',
+//        'english_title' => 'required|string|max:191',
+//        'description' => 'required|string',
+//        'path' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'title' => 'nullable|string|max:191',
+        'english_title' => 'nullable|string|max:191',
+        'description' => 'nullable|string',
+        'path' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ];
+    public static $messages = [
+        'title.string' => 'عنوان به درستی وارد نشده است',
+//        'title.required' => 'عنوان را وارد کنید',
+        'title.max' => 'حداکثر طول عنوان 191 کاراکتر است',
+        'english_title.string' => 'عنوان انگلیسی به درستی وارد نشده است',
+//        'english_title.required' => 'عنوان انگلیسی را وارد کنید',
+        'english_title.max' => 'حداکثر طول عنوان انگلیسی 191 کاراکتر است',
+        'description.string' => 'توضیحات به درستی وارد نشده است',
+//        'description.required' => 'توضیحات را وارد کنید',
+        'path.image' => 'تصویر به درستی وارد نشده است',
+        'path.mimes' => 'فرمت های مجاز برای تصویر jpg و png هستند',
+        'path.uploaded' => 'حداکثر حجم مجاز باری تصویر 2MB است',
     ];
 
     public function faculty()

@@ -62,7 +62,7 @@ class UpdateUserRequest extends FormRequest
             'confirm_password.same' => 'رمز عبور هاي وارد شده مطابقت ندارند',
             'avatar_path.image' => 'فایل تصویر مجاز نیست',
             'avatar_path.mimes' => 'فرمت هاي مجاز براي تصوير پروفايل jpg و png مي‌باشند',
-            'avatar_path.max' => 'حداکثر اندازه‌ی تصویر باید 1MB باشد',
+            'avatar_path.uploaded' => 'حداکثر اندازه‌ی تصویر باید 1MB باشد',
         ];
     }
 }
