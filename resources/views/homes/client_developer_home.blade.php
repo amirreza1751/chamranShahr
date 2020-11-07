@@ -10,7 +10,7 @@
 
                     <div class="info-box-content">
                         <span class="info-box-text">داکیومنتیشن سوگر</span>
-                        <span class="info-box-number"><a href="/api/documentation" target="_blank">ورود <small><i class="fa fa-chevron-left"></i></small></a></span>
+                        <span class="info-box-number"><a href="/api/documentation?token={{ credentials('SWAGGER_DOCS_TOKEN') }}" target="_blank">ورود <small><i class="fa fa-chevron-left"></i></small></a></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
