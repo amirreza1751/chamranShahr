@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\CollectionHelper;
 use App\Http\Requests\API\CreateNoticeAPIRequest;
 use App\Http\Requests\API\UpdateNoticeAPIRequest;
+use App\Models\Department;
 use App\Models\Notice;
 use App\Repositories\NoticeRepository;
 use Illuminate\Http\Request;
@@ -66,7 +67,9 @@ class NoticeAPIController extends AppBaseController
         $this->noticeRepository->pushCriteria(new RequestCriteria($request));
         $this->noticeRepository->pushCriteria(new LimitOffsetCriteria($request));
 
-        $notices = Notice::orderBy('created_at', 'desc')->get();
+//        $notices = Notice::orderBy('created_at', 'desc')->get();
+
+        $notices = Department::find(1)->notices->merge(Department::find(2)->notices)->sortByDesc('updated_at');;
 
         $notices = Notice::staticRetrieves($notices);
 
@@ -74,7 +77,7 @@ class NoticeAPIController extends AppBaseController
 
         $paginated = CollectionHelper::paginate($notices, sizeof($notices), $pageSize);
 
-        return $this->sendResponse($paginated->toArray(), 'Notices retrieved successfully');
+        return $this->sendResponse($paginated->toArray(), 'اطلاعیه ها با موفقیت بازیابی شدند');
     }
 
     /**

@@ -5,9 +5,11 @@ namespace App\Http\Controllers\API;
 use App\CollectionHelper;
 use App\Http\Requests\API\CreateNewsAPIRequest;
 use App\Http\Requests\API\UpdateNewsAPIRequest;
+use App\Models\Department;
 use App\Models\News;
 use App\Repositories\NewsRepository;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Support\Facades\DB;
@@ -67,7 +69,9 @@ class NewsAPIController extends AppBaseController
         $this->newsRepository->pushCriteria(new RequestCriteria($request));
         $this->newsRepository->pushCriteria(new LimitOffsetCriteria($request));
 
-        $news = News::orderBy('created_at', 'desc')->get();
+//        $news = News::orderBy('created_at', 'desc')->get();
+
+        $news =  Department::find(1)->news->merge(Department::find(2)->news)->sortByDesc('updated_at');
 
         $news = News::staticRetrieves($news);
 
@@ -75,7 +79,7 @@ class NewsAPIController extends AppBaseController
 
         $paginated = CollectionHelper::paginate($news, sizeof($news), $pageSize);
 
-        return $this->sendResponse($paginated->toArray(), 'News retrieved successfully');
+        return $this->sendResponse($paginated->toArray(), 'اخبار با موفقیت بازیابی شدند');
     }
 
     /**
