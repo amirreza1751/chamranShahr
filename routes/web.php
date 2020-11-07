@@ -52,6 +52,9 @@ Route::group(['prefix' => 'GfIEpZz0QgdgdDz9hrpxfDo0cqk0Fw9vuBAdfM3titEyxDkOtGhPN
 
 //    Auth::routes();
     // Authentication Routes...
+    $this->get('login', function (){
+        return redirect(route('landing'));
+    })->name('login');
 //    $this->get('login', 'Auth\LoginController@showLoginForm')->name('login');
     $this->post('login', 'Auth\LoginController@login')->name('auth.login');
 
