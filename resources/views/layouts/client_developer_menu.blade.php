@@ -13,7 +13,7 @@
                 </span>
     </a>
     <ul class="treeview-menu" style="display: none;">
-        <li><a href="{!! 'api/documentation' !!}"><i class="fa fa-file-text"></i><span class="title-secondary">داکیومنتیشن سوگر</span></a></li>
+        <li><a href="{!! 'api/documentation?token='. credentials('SWAGGER_DOCS_TOKEN')  !!}"><i class="fa fa-file-text"></i><span class="title-secondary">داکیومنتیشن سوگر</span></a></li>
         <li><a href="https://gitlab.com/leviathann/chamran-shahr"><i class="fa fa-gitlab"></i><span class="title-secondary">ریپوزیتوری گیت سورس فرانت‌اند</span></a></li>
         <li><a href="https://git.parscoders.com/theAmD/chamranshahr"><i class="fa fa-git"></i><span class="title-secondary">ریپوزیتوری گیت سورس بک‌اند</span></a></li>
         <li><a href="https://chamranshahr.postman.co/"><i class="fa fa-code"></i><span class="title-secondary">تیم چمران‌شهر در پست‌من</span></a></li>

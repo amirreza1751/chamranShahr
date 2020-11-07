@@ -13,7 +13,7 @@
                 </span>
     </a>
     <ul class="treeview-menu" style="display: none;">
-        <li><a href="{!! 'api/documentation' !!}"><i class="fa fa-file-text"></i><span class="title-secondary">داکیومنتیشن سوگر</span></a>
+        <li><a href="{!! 'api/documentation?token='. credentials('SWAGGER_DOCS_TOKEN')  !!}"><i class="fa fa-file-text"></i><span class="title-secondary">داکیومنتیشن سوگر</span></a>
         </li>
         <li><a href="https://gitlab.com/leviathann/chamran-shahr"><i class="fa fa-gitlab"></i><span
                     class="title-secondary">ریپوزیتوری گیت سورس فرانت‌اند</span></a></li>
