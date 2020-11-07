@@ -11,6 +11,7 @@
         "appointer/swaggervel": "dev-master",
         "barryvdh/laravel-ide-helper": "^2.5",
         "bensampo/laravel-enum": "^1.26",
+        "beyondcode/laravel-credentials": "^1.5",
         "darkaonline/l5-swagger": "5.6.*",
         "doctrine/dbal": "^2.10",
         "fideloper/proxy": "^4.0",

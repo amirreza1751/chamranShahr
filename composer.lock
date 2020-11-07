@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8df091c2232d26a49daf0ee1a26953ff",
+    "content-hash": "500b1b9ee2b7cf16e1f0c64abf821458",
     "packages": [
         {
             "name": "appointer/swaggervel",
@@ -318,6 +318,64 @@
                 "validation"
             ],
             "time": "2020-06-07T12:26:17+00:00"
+        },
+        {
+            "name": "beyondcode/laravel-credentials",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beyondcode/laravel-credentials.git",
+                "reference": "417c66e14a924b3e71241e03b001d15be2d9804a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beyondcode/laravel-credentials/zipball/417c66e14a924b3e71241e03b001d15be2d9804a",
+                "reference": "417c66e14a924b3e71241e03b001d15be2d9804a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/encryption": "5.6.*|5.7.*|5.8.*|^6.0|^7.0|^8.0",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.6|~3.7|~3.8|^4.0|^5.0|^6.0",
+                "phpunit/phpunit": "^7.0|^8.0|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "BeyondCode\\Credentials\\CredentialsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "BeyondCode\\Credentials\\": "src"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marcel Pociot",
+                    "email": "marcel@beyondco.de",
+                    "homepage": "https://beyondcode.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Store and access encrypted credentials in your Laravel application.",
+            "homepage": "https://github.com/beyondcode/laravel-credentials",
+            "keywords": [
+                "Laravel-Credentials",
+                "beyondcode"
+            ],
+            "time": "2020-10-16T07:54:41+00:00"
         },
         {
             "name": "brick/math",
