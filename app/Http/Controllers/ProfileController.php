@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUserProfileRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Department;
 use App\Repositories\NotificationRepository;
@@ -100,7 +101,7 @@ class ProfileController extends Controller
      *
      * @return Response
      */
-    public function updateProfile(UpdateUserRequest $request)
+    public function updateProfile(UpdateUserProfileRequest $request)
     {
 
         if(Auth::user()->hasRole('developer')){
@@ -209,7 +210,7 @@ class ProfileController extends Controller
 
     public function manager_update($request)
     {
-        $input = collect(request()->only(['first_name', 'last_name', 'password', 'confirm_password', 'avatar_path']))->filter(function($value) {
+        $input = collect(request()->only(['first_name', 'last_name', 'password', 'confirm_password', 'avatar_path', 'username']))->filter(function($value) {
             return null !== $value;
         })->toArray();
         $user = $this->userRepository->findWithoutFail(Auth::user()->id);

@@ -22,7 +22,7 @@ class NoticeController extends AppBaseController
     /** @var  NoticeRepository */
     private $noticeRepository;
     private $owner_types = array(
-        'Department' => Department::class,
+        'دپارتمان' => Department::class,
     );
 
     public function __construct(NoticeRepository $noticeRepo)

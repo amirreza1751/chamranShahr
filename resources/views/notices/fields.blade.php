@@ -81,7 +81,7 @@
 
 <script>
     jQuery(document).ready(function(){
-        $('select[name="owner_type"]').on('change', function(){
+        $('select[name="owner_type"]').on('click change', function(){
             jQuery('#owner_id').empty();
             $.ajaxSetup({
                 headers: {

@@ -22,7 +22,7 @@ class NewsController extends AppBaseController
     /** @var  NewsRepository */
     private $newsRepository;
     private $owner_types = array(
-        'Department' => Department::class,
+        'دپارتمان' => Department::class,
     );
 
     public function __construct(NewsRepository $newsRepo)

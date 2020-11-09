@@ -137,7 +137,7 @@
                                 <label for="username" class="col-sm-2 control-label">نام کاربری</label>
 
                                 <div class="col-sm-10">
-                                    <input disabled type="text" class="form-control text-ltr" id="username"
+                                    <input name="username" type="text" class="form-control text-ltr" id="username"
                                            placeholder="{{ Auth::user()->username }}">
                                 </div>
                             </div>
