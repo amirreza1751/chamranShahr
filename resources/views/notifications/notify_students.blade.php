@@ -178,7 +178,7 @@
                     <div class="form-group col-sm-6">
                         {!! Form::label('deadline', 'تاریخ انقضا:') !!}
 {{--                        {!! Form::date('deadline', null, ['class' => 'form-control','id'=>'deadline']) !!}--}}
-                        <input class="form-control" dir="ltr" type="text" value="{{old('deadline_pd')}}" id="deadline_pd" name="deadline_pd"/>
+                        <input autocomplete="off" class="form-control" dir="ltr" type="text" value="{{old('deadline_pd')}}" id="deadline_pd" name="deadline_pd"/>
                         <input type="hidden" id="deadline" name="deadline" value="{{old('deadline')}}"/>
                     </div>
 

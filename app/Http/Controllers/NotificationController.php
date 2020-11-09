@@ -306,7 +306,7 @@ class NotificationController extends AppBaseController
         $users = User::all();
 
         if ($users->isEmpty()) {
-            Flash::error('کاربری با مشخصات انتخابی پیدا نشد.');
+            Flash::error('کاربری با مشخصات انتخابی پیدا نشد');
 
             return redirect(route('notificationSamples.index'));
         }
@@ -348,7 +348,7 @@ class NotificationController extends AppBaseController
         }
 
         if ($students->isEmpty()) {
-            Flash::error('دانشجویی با شخصات انتخابی پیدا نشد.');
+            Flash::error('دانشجویی با مشخصات انتخابی پیدا نشد');
 
             return redirect(route('notificationSamples.index'));
         }

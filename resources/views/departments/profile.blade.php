@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+    @include('adminlte-templates::common.errors')
+    @include('flash::message')
     <section class="content-header">
         <ol class="breadcrumb top-0">
             <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>
@@ -12,8 +14,6 @@
         <div class="content" style="padding: 0">
 
             <div class="clearfix"></div>
-            @include('adminlte-templates::common.errors')
-            @include('flash::message')
             <div class="clearfix"></div>
 
             <div class="col-sm-12">
