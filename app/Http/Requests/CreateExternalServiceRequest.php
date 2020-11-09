@@ -27,4 +27,9 @@ class CreateExternalServiceRequest extends FormRequest
     {
         return ExternalService::$rules;
     }
+
+    public function messages()
+    {
+        return ExternalService::$messages;
+    }
 }

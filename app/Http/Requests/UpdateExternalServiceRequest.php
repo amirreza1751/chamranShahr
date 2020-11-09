@@ -26,7 +26,14 @@ class UpdateExternalServiceRequest extends FormRequest
     public function rules()
     {
         $rules = ExternalService::$rules;
-        
+
         return $rules;
+    }
+
+    public function messages()
+    {
+        $messages = ExternalService::$messages;
+
+        return $messages;
     }
 }

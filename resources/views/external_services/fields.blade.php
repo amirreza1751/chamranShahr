@@ -17,7 +17,7 @@
 <!-- Url Field -->
 <div class="form-group col-sm-12">
     {!! Form::label('url', 'آدرس:') !!}
-    {!! Form::text('url', null, ['class' => 'form-control']) !!}
+    {!! Form::text('url', null, ['class' => 'form-control', 'dir' => 'ltr']) !!}
 </div>
 
 <!-- Type Field -->
@@ -71,7 +71,7 @@
 
 <script>
     jQuery(document).ready(function(){
-        $('select[name="owner_type"]').on('click', function(){
+        $('select[name="owner_type"]').on('click change', function(){
             jQuery('#owner_id').empty();
             $.ajaxSetup({
                 headers: {

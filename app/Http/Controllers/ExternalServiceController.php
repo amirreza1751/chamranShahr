@@ -39,11 +39,11 @@ class ExternalServiceController extends AppBaseController
     /** @var  NoticeRepository */
     private $noticeRepository;
     private $content_types = [
-        'Notice' => Notice::class,
-        'News' => News::class,
+        'اطلاعیه' => Notice::class,
+        'خبر' => News::class,
     ];
     private $owner_types = [
-        'Department' => Department::class,
+        'دپارتمان' => Department::class,
     ];
 
     public function __construct(ExternalServiceRepository $externalServiceRepo, NewsRepository $newsRepo, NoticeRepository $noticeRepo)
@@ -132,7 +132,7 @@ class ExternalServiceController extends AppBaseController
         $externalService = $this->externalServiceRepository->findWithoutFail($id);
 
         if (empty($externalService)) {
-            Flash::error('سرویس خراجی پیدا نشد');
+            Flash::error('سرویس خارجی وجود ندارد');
 
             return redirect(route('externalServices.index'));
         }
@@ -152,7 +152,7 @@ class ExternalServiceController extends AppBaseController
         $external_service = $this->externalServiceRepository->findWithoutFail($id);
 
         if (empty($external_service)) {
-            Flash::error('سرویس خارجی پیدا نشد');
+            Flash::error('سرویس خارجی وجود ندارد');
 
             return redirect(route('externalServices.index'));
         }
@@ -176,14 +176,14 @@ class ExternalServiceController extends AppBaseController
         $externalService = $this->externalServiceRepository->findWithoutFail($id);
 
         if (empty($externalService)) {
-            Flash::error('سروسی خارجی پیدا نشد');
+            Flash::error('سرویس خارجی وجود ندارد');
 
             return redirect(route('externalServices.index'));
         }
 
         $externalService = $this->externalServiceRepository->update($request->all(), $id);
 
-        Flash::success('سرویس خارجی باموفقیت به روز رسانی شد ');
+        Flash::success('سرویس خارجی باموفقیت ویرایش شد');
 
         return redirect(route('externalServices.index'));
     }
@@ -200,7 +200,7 @@ class ExternalServiceController extends AppBaseController
         $externalService = $this->externalServiceRepository->findWithoutFail($id);
 
         if (empty($externalService)) {
-            Flash::error('سرویس خارجی پیدا نشد');
+            Flash::error('سرویس خارجی وجود ندارد');
 
             return redirect(route('externalServices.index'));
         }
@@ -266,12 +266,13 @@ class ExternalServiceController extends AppBaseController
                     ->where('username', 'scu')->first();
 
                 if(!isset($scu_user)){
+                    Flash::error('متاسفانه یک مشکل فنی در فرایند بروزرسانی به وجود آمده است. لطفا جهت کسب اطلاع بیشتر با مدیریت سامانه ارتباط برقرار کنید.');
 //                    $cc->print_warning("default user that should created before, not found for some reason.");
 //                    $cc->print_error("this may cause some error during fetch procedure...");
 //                    $cc->print_help("problem maybe be somewhere in user:initial command logic (according to my creators thoughts)");
 //                    $cc->print_help("if you don't execute this command, so do it first and try again.");
 //                    $cc->print_warning("do you want to continue anyway?(y or n)");
-                    $c = fread(STDIN, 1);
+//                    $c = fread(STDIN, 1);
                 } else {
                     $c = 'y';
                 }
@@ -499,6 +500,8 @@ class ExternalServiceController extends AppBaseController
                                     $this->newsRepository->create($news);
                                 }
                             }
+
+                            Flash::success('سرویس خارجی با موفقیت به روز رسانی شد');
                         }
                         /**
                          * scu portal have special structure and we don't need all information its provide;
@@ -716,6 +719,11 @@ class ExternalServiceController extends AppBaseController
                                     $this->newsRepository->create($news);
                                 }
                             }
+
+                            Flash::success('سرویس خارجی با موفقیت به روز رسانی شد');
+
+                        } else {
+                            Flash::error('متاسفانه یک مشکل فنی در فرایند بروزرسانی به وجود آمده است. لطفا جهت کسب اطلاع بیشتر با مدیریت سامانه ارتباط برقرار کنید. کد خطا: ExSeFetch101');
                         }
 
                         /**
@@ -736,221 +744,229 @@ class ExternalServiceController extends AppBaseController
                         }
                     }
                     elseif ($external_service->content_type == Notice::class){
-                        /**
-                         * scu portal have special structure and we don't need all information its provide;
-                         * so we use certain part of information which retrieved in "entry" key
-                         * that's an array of notices
-                         */
-                        $datas = $xml->entry;
 
-                        /** retrieve owner of the notice; for example: department */
-                        $model_name = $external_service->owner_type;
-                        $model = new $model_name();
-                        $owner = $model::findOrFail($external_service->owner_id);
+                        if (isset($xml->entry)){
+                            /**
+                             * scu portal have special structure and we don't need all information its provide;
+                             * so we use certain part of information which retrieved in "entry" key
+                             * that's an array of notices
+                             */
+                            $datas = $xml->entry;
+
+                            /** retrieve owner of the notice; for example: department */
+                            $model_name = $external_service->owner_type;
+                            $model = new $model_name();
+                            $owner = $model::findOrFail($external_service->owner_id);
 
 //                        dump('medias store on server for specific notice:');
-                        foreach ($datas as $data) {
-                            $default_image = false;
-                            $default_image_message = '';
+                            foreach ($datas as $data) {
+                                $default_image = false;
+                                $default_image_message = '';
 
-                            $notice = [
-                                'title' => strval($data->title),
-                                'link' => strval(($data->link)[0]['href']),
-                                'path' => strval(($data->link)[1]['href']),
-                                'description' => strval($data->summary),
-                                'author' => strval($data->author->name),
-                                'owner_type' => $external_service->owner_type,
-                                'owner_id' => $external_service->owner_id,
-                            ];
+                                $notice = [
+                                    'title' => strval($data->title),
+                                    'link' => strval(($data->link)[0]['href']),
+                                    'path' => strval(($data->link)[1]['href']),
+                                    'description' => strval($data->summary),
+                                    'author' => strval($data->author->name),
+                                    'owner_type' => $external_service->owner_type,
+                                    'owner_id' => $external_service->owner_id,
+                                ];
 
-                            foreach ($notice as $key => $value){
-                                $notice[$key] = strip_tags($value);
-                                $notice[$key] = str_replace("&nbsp;", '', $value);
-                            }
+                                foreach ($notice as $key => $value){
+                                    $notice[$key] = strip_tags($value);
+                                    $notice[$key] = str_replace("&nbsp;", '', $value);
+                                }
 
-                            /**
-                             * validate title field
-                             */
-                            $validator = Validator::make($notice, [
-                                'title' => 'nullable|string|max:191',
-                            ]);
-                            if ($validator->fails()) {
-                                unset($notice['title']);
-                            }
+                                /**
+                                 * validate title field
+                                 */
+                                $validator = Validator::make($notice, [
+                                    'title' => 'nullable|string|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($notice['title']);
+                                }
 
-                            /**
-                             * validate link field
-                             */
-                            $validator = Validator::make($notice, [
-                                'link' => 'nullable|url|max:191',
-                            ]);
-                            if ($validator->fails()) {
-                                unset($notice['link']);
-                            }
+                                /**
+                                 * validate link field
+                                 */
+                                $validator = Validator::make($notice, [
+                                    'link' => 'nullable|url|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($notice['link']);
+                                }
 
-                            /**
-                             * validate description field
-                             */
-                            $validator = Validator::make($notice, [
-                                'path' => 'nullable|url|max:191',
-                            ]);
-                            if ($validator->fails()) {
-                                unset($notice['path']);
-                            }
+                                /**
+                                 * validate description field
+                                 */
+                                $validator = Validator::make($notice, [
+                                    'path' => 'nullable|url|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($notice['path']);
+                                }
 
-                            /**
-                             * validate description field
-                             */
-                            $validator = Validator::make($notice, [
-                                'description' => 'nullable|string',
-                            ]);
-                            if ($validator->fails()) {
-                                unset($notice['description']);
-                            }
+                                /**
+                                 * validate description field
+                                 */
+                                $validator = Validator::make($notice, [
+                                    'description' => 'nullable|string',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($notice['description']);
+                                }
 
-                            /**
-                             * validate author field
-                             */
-                            $validator = Validator::make($notice, [
-                                'author' => 'nullable|string|max:191',
-                            ]);
-                            if ($validator->fails()) {
-                                unset($notice['author']);
-                            }
+                                /**
+                                 * validate author field
+                                 */
+                                $validator = Validator::make($notice, [
+                                    'author' => 'nullable|string|max:191',
+                                ]);
+                                if ($validator->fails()) {
+                                    unset($notice['author']);
+                                }
 
-                            /**
-                             * check that this notice's owner has manager or not
-                             * if not, use default user of the university created first of this procedure
-                             */
-                            if (isset($owner)) {
-                                $manager = $owner->manager();
-                                if (isset($manager)) {
-                                    $notice['creator_id'] = $owner->manager()->id;
+                                /**
+                                 * check that this notice's owner has manager or not
+                                 * if not, use default user of the university created first of this procedure
+                                 */
+                                if (isset($owner)) {
+                                    $manager = $owner->manager();
+                                    if (isset($manager)) {
+                                        $notice['creator_id'] = $owner->manager()->id;
+                                    } else {
+                                        $notice['creator_id'] = $scu_user->id;
+                                    }
                                 } else {
                                     $notice['creator_id'] = $scu_user->id;
                                 }
-                            } else {
-                                $notice['creator_id'] = $scu_user->id;
-                            }
 
-                            /**
-                             * identifier of each retrieved notice is its "link" (id attribute in xml),
-                             * so check out that in notices table to find out that is a new one or not
-                             * if exist, there is nothing to do with this data,
-                             * because existing notice created using this procedure for sure
-                             * and we don't care about update FOR NOW :)
-                             */
-                            $check = Notice::where('link', $notice['link'])->first();
-                            if (!isset($check)) { // if this notice is a new one
-                                if(isset($notice['path'])){
-                                    if ($notice['path'] != "") {// image exist
+                                /**
+                                 * identifier of each retrieved notice is its "link" (id attribute in xml),
+                                 * so check out that in notices table to find out that is a new one or not
+                                 * if exist, there is nothing to do with this data,
+                                 * because existing notice created using this procedure for sure
+                                 * and we don't care about update FOR NOW :)
+                                 */
+                                $check = Notice::where('link', $notice['link'])->first();
+                                if (!isset($check)) { // if this notice is a new one
+                                    if(isset($notice['path'])){
+                                        if ($notice['path'] != "") {// image exist
 
-                                        /**
-                                         * brief look at request header to check some details
-                                         * such as file size, extension and etc.
-                                         */
-                                        stream_context_set_default(array('http' => array('method' => 'HEAD')));
-                                        $head = array_change_key_case(get_headers($notice['path'], 1));
-                                        $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
+                                            /**
+                                             * brief look at request header to check some details
+                                             * such as file size, extension and etc.
+                                             */
+                                            stream_context_set_default(array('http' => array('method' => 'HEAD')));
+                                            $head = array_change_key_case(get_headers($notice['path'], 1));
+                                            $clen = isset($head['content-length']) ? $head['content-length'] : 0; // content-length of download (in bytes), read from Content-Length: field
 
-                                        if (!$clen) { // cannot retrieve file size, return "-1"
-                                            $clen = -1;
-                                        }
+                                            if (!$clen) { // cannot retrieve file size, return "-1"
+                                                $clen = -1;
+                                            }
 
-                                        $pathinfo = pathinfo($notice['path']);
-                                        /**
-                                         * < get media extension >
-                                         * extract substring after last '.' and remove possible parameters
-                                         * example:
-                                         * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
-                                         * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
-                                         *                                              we need this^
-                                         */
-                                        if (isset($pathinfo['extension'])) {
-                                            $extension = explode("?", $pathinfo['extension'])[0];
-                                        }
+                                            $pathinfo = pathinfo($notice['path']);
+                                            /**
+                                             * < get media extension >
+                                             * extract substring after last '.' and remove possible parameters
+                                             * example:
+                                             * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.jpg?t=1568533120548
+                                             * http://scu.ac.ir/documents/236544/0/etelaeiyeh-6.    + jpg +     ?t=1568533120548
+                                             *                                              we need this^
+                                             */
+                                            if (isset($pathinfo['extension'])) {
+                                                $extension = explode("?", $pathinfo['extension'])[0];
+                                            }
 
-                                        if (isset($extension) && $this->str_contains_array(strtolower($extension), GeneralVariable::$inbound_acceptable_media)) { // acceptable extension such png and jpg
-                                            /** < get media size > */
-                                            if ($clen < 2097152) { // if media size < 2MiB
+                                            if (isset($extension) && $this->str_contains_array(strtolower($extension), GeneralVariable::$inbound_acceptable_media)) { // acceptable extension such png and jpg
+                                                /** < get media size > */
+                                                if ($clen < 2097152) { // if media size < 2MiB
 
-                                                $name = base_path().'/tmp/notices_tmp' . str_random(4) . '.tmp';
-                                                $ch = curl_init($notice['path']);
-                                                $fp = fopen($name, 'wb') or die('Permission error');
-                                                curl_setopt($ch, CURLOPT_FILE, $fp);
-                                                curl_setopt($ch, CURLOPT_HEADER, 0);
-                                                curl_exec($ch);
-                                                curl_close($ch);
-                                                fclose($fp);
-
-                                                /**
-                                                 * validate image file
-                                                 */
-                                                $validator = Validator::make(['img' => new File($name)], [
-                                                    'img' => 'image|mimes:jpg,jpeg,png|max:2048',
-                                                ]);
-                                                if (!$validator->fails()) {
-                                                    //put media to relative folder to its owner such department
-                                                    $path = Storage::putFile('public/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
-                                                    $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
-                                                    $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
-                                                    // retrieve the stored media
-                                                    $file = Storage::get($path);
-                                                    // create laravel symbolic link for this media
-                                                    $path = '/' . str_replace('public', 'storage', $path);
-                                                    $notice['path'] = $path;
+                                                    $name = base_path().'/tmp/notices_tmp' . str_random(4) . '.tmp';
+                                                    $ch = curl_init($notice['path']);
+                                                    $fp = fopen($name, 'wb') or die('Permission error');
+                                                    curl_setopt($ch, CURLOPT_FILE, $fp);
+                                                    curl_setopt($ch, CURLOPT_HEADER, 0);
+                                                    curl_exec($ch);
+                                                    curl_close($ch);
+                                                    fclose($fp);
 
                                                     /**
-                                                     * create thumbnail of the original image
-                                                     * this image will store with a postfix '-thumbnail' beside the original image
+                                                     * validate image file
                                                      */
-                                                    $destinationPath = public_path('storage/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
-                                                    $img = Image::make($file);
-                                                    // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
-                                                    $img->resize(100, 100, function ($constraint) {
-                                                        $constraint->aspectRatio();
-                                                    })->save('storage/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension);
-                                                } else { // image is invalid
+                                                    $validator = Validator::make(['img' => new File($name)], [
+                                                        'img' => 'image|mimes:jpg,jpeg,png|max:2048',
+                                                    ]);
+                                                    if (!$validator->fails()) {
+                                                        //put media to relative folder to its owner such department
+                                                        $path = Storage::putFile('public/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id, new File($name));
+                                                        $file_name = pathinfo(basename($path), PATHINFO_FILENAME); // file name
+                                                        $file_extension = pathinfo(basename($path), PATHINFO_EXTENSION); // file extension
+                                                        // retrieve the stored media
+                                                        $file = Storage::get($path);
+                                                        // create laravel symbolic link for this media
+                                                        $path = '/' . str_replace('public', 'storage', $path);
+                                                        $notice['path'] = $path;
+
+                                                        /**
+                                                         * create thumbnail of the original image
+                                                         * this image will store with a postfix '-thumbnail' beside the original image
+                                                         */
+                                                        $destinationPath = public_path('storage/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id);
+                                                        $img = Image::make($file);
+                                                        // create a thumbnail for the god sake because of OUR EXCELLENT INTERNET  :/
+                                                        $img->resize(100, 100, function ($constraint) {
+                                                            $constraint->aspectRatio();
+                                                        })->save('storage/notices_images/' . app($external_service->owner_type)->getTable() . '/' . $external_service->owner_id . '/' . $file_name . '-thumbnail.' . $file_extension);
+                                                    } else { // image is invalid
+                                                        unset($notice['path']);
+                                                        $default_image = true;
+                                                        $default_image_message = 'image file was invalid';
+                                                    }
+
+                                                    /**
+                                                     * ************************* SO IMPORTANT
+                                                     * if for some reason can't get media of this notice
+                                                     * use default image that MUST exist with this specific directory and name:
+                                                     * /storage/app/public/notices_images/notice_default_image.jpg
+                                                     * creating this default image is an INITIAL functionality :)
+                                                     */
+                                                } else { // media size is > 2MiB
                                                     unset($notice['path']);
                                                     $default_image = true;
-                                                    $default_image_message = 'image file was invalid';
+                                                    $default_image_message = 'image file was too big';
                                                 }
-
-                                                /**
-                                                 * ************************* SO IMPORTANT
-                                                 * if for some reason can't get media of this notice
-                                                 * use default image that MUST exist with this specific directory and name:
-                                                 * /storage/app/public/notices_images/notice_default_image.jpg
-                                                 * creating this default image is an INITIAL functionality :)
-                                                 */
-                                            } else { // media size is > 2MiB
+                                            } else { // media's extension is not acceptable for this functionality
                                                 unset($notice['path']);
                                                 $default_image = true;
-                                                $default_image_message = 'image file was too big';
+                                                $default_image_message = 'media extension was not acceptable : ' . $extension;
                                             }
-                                        } else { // media's extension is not acceptable for this functionality
+                                        } else { // notice have no media
                                             unset($notice['path']);
                                             $default_image = true;
-                                            $default_image_message = 'media extension was not acceptable : ' . $extension;
+                                            $default_image_message = 'media file not found';
                                         }
-                                    } else { // notice have no media
-                                        unset($notice['path']);
+                                    } else { // image is invalid=
                                         $default_image = true;
-                                        $default_image_message = 'media file not found';
+                                        $default_image_message = 'image file was invalid';
                                     }
-                                } else { // image is invalid=
-                                    $default_image = true;
-                                    $default_image_message = 'image file was invalid';
-                                }
 //                                $cc->print_success('media url:', "\t");
-                                if (isset($notice['path'])){
+                                    if (isset($notice['path'])){
 //                                    dump($notice['path']);
-                                }
-                                if ($default_image) {
+                                    }
+                                    if ($default_image) {
 //                                    $cc->print_warning("\t-> default image; " . $default_image_message);
+                                    }
+                                    $this->noticeRepository->create($notice);
                                 }
-                                $this->noticeRepository->create($notice);
                             }
+
+                            Flash::success('سرویس خارجی با موفقیت به روز رسانی شد');
+                        }
+                        else {
+                            Flash::error('متاسفانه یک مشکل فنی در فرایند بروزرسانی به وجود آمده است. لطفا جهت کسب اطلاع بیشتر با مدیریت سامانه ارتباط برقرار کنید. کد خطا: ExSeFetch101');
                         }
 
 
@@ -972,15 +988,18 @@ class ExternalServiceController extends AppBaseController
 //                            $cc->print_warning('no new media to store');
                         }
                     }
+                    else {
+                        Flash::error('متاسفانه یک مشکل فنی در فرایند بروزرسانی به وجود آمده است. لطفا جهت کسب اطلاع بیشتر با مدیریت سامانه ارتباط برقرار کنید. کد خطا: ExSeFetch102');
+                    }
 
 //                    $cc->print_success("----------------------------------------------------------------------------------------\tretrieve " . $external_service->title . " done successfully.\n");
                 } else { // scu user not found
 //                    $cc->print_error("\n\n\nfetch procedure canceled; check and try again.");
-                    Flash::error('متاسفانه یک مشکل فنی در فرایند بروزرسانی به وجود آمده است. لطفا جهت کسب اطلاع بیشتر با مدیریت سامانه ارتباط برقرار کنید.');
+                    Flash::error('متاسفانه یک مشکل فنی در فرایند بروزرسانی به وجود آمده است. لطفا جهت کسب اطلاع بیشتر با مدیریت سامانه ارتباط برقرار کنید. کد خطا: ExSeFetch103');
                 }
 
             } catch (\Exception $e) {
-                Flash::error('متاسفانه یک مشکل فنی در فرایند بروزرسانی به وجود آمده است. لطفا جهت کسب اطلاع بیشتر با مدیریت سامانه ارتباط برقرار کنید.');
+                Flash::error('متاسفانه یک مشکل فنی در فرایند بروزرسانی به وجود آمده است. لطفا جهت کسب اطلاع بیشتر با مدیریت سامانه ارتباط برقرار کنید. کد خطا: ExSeFetch104');
 //                dump($e->getMessage());
 //                dump($e->getLine());
 //                dump($e->getTrace());
@@ -998,8 +1017,6 @@ class ExternalServiceController extends AppBaseController
         } else {
             Flash::error('سرویس خارجی وجود ندارد');
         }
-
-        Flash::success('محتوای سرویس خارجی باموفقیت به روز رسانی شد');
 
         if ($external_service->content_type == News::class)
             return redirect(route('news.index'));

@@ -118,10 +118,32 @@ class ExternalService extends Model
      * @var array
      */
     public static $rules = [
-        'url' => 'required',
-        'content_type' => 'required',
-        'owner_type' => 'required',
-        'owner_id' => 'required'
+        'title' => 'required|string|max:191',
+        'english_title' => 'nullable|string|max:191',
+        'url' => 'required|url|max:400',
+        'content_type' => 'required|string|max:32',
+        'owner_type' => 'required|string',
+        'owner_id' => 'required|numeric',
+    ];
+
+    public static $messages = [
+        'title.required' => 'عنوان را وارد کنید',
+        'title.string' => 'عنوان به درستی وارد نشده است',
+        'title.max' => 'حداکثر طول عنوان 191 کاراکتر است',
+        'english_title.string' => 'عنوان انگلیسی به درستی وارد نشده است',
+        'english_title.max' => 'حداکثر طول عنوان انگلیسی 191 کاراکتر است',
+        'url.required' => 'آدرس را وارد کنید',
+        'url.url' => 'آدرس به درستی وارد نشده است',
+        'url.max' => 'حداکثر طول آدرس 400 کاراکتر است',
+        'content_type.required' => 'نوع محتوا را وارد کنید',
+        'content_type.string' => 'نوع محتوا به درستی وارد نشده است',
+        'content_type.max' => 'حداکثر طول نوع محتوا 32 کاراکتر است',
+        'owner_type.required' => 'نوع مالک را انتخاب کنید',
+        'owner_type.string' => 'نوع مالک به درستی انتخاب نشده است',
+        'owner_id.required' => 'مالک را انتخاب کنید',
+        'owner_id.numeric' => 'مالک به درستی انتخاب نشده است',
+        'type_id.required' => 'نوع را انتخاب کنید',
+        'type_id.numeric' => 'نوع به درستی انتخاب نشده است',
     ];
 
     public function owner()
