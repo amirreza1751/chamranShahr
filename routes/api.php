@@ -116,6 +116,22 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
 
     Route::group(['middleware' => ['role:admin|developer']], function(){
 
+        /** Fire Event */
+
+        Route::get('test-broadcast/', function (Request $request) {
+
+            return event(new \App\Events\NewMessage($request->get('message')));
+
+        });
+
+        /** Fire Event */
+
+        Route::resource('external_service_types', 'ExternalServiceTypeAPIController');
+
+        Route::resource('external_services', 'ExternalServiceAPIController');
+
+        Route::resource('notification_samples', 'NotificationSampleAPIController');
+
         Route::get('locations/bytype/{id}', 'LocationAPIController@byType');
         Route::resource('locations', 'LocationAPIController');
 
@@ -293,25 +309,7 @@ Route::group(['middleware' => 'cors'], function() {
 //    return event(new NewMessage($message));
 //});
 
-    /** Fire Event */
-
-    Route::get('test-broadcast/', function (Request $request) {
-
-        return event(new \App\Events\NewMessage($request->get('message')));
-
-    });
-
-    /** Fire Event */
-
-
-    Route::resource('external_service_types', 'ExternalServiceTypeAPIController');
-
-    Route::resource('external_services', 'ExternalServiceAPIController');
-
-
 //store a push subscriber.
     Route::post('/push', 'PushController@store');
 });
 
-
-Route::resource('notification_samples', 'NotificationSampleAPIController');

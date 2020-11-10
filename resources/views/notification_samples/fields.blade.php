@@ -8,13 +8,13 @@
 
 <!-- Title Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('title', 'عنوان:') !!}
+    {!! Form::label('title', 'عنوان:') !!} <span class="text-danger text-small">الزامی</span>
     {!! Form::text('title', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Type Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('type', 'نوع:') !!}
+    {!! Form::label('type', 'نوع:') !!} <span class="text-danger text-small">الزامی</span>
     <select class="form-control m-bot15" name="type" id="type">
         <option disabled selected value> -- انتخاب کنید -- </option>
         @if(old('type'))
@@ -43,7 +43,7 @@
 
 <!-- Brief Description Field -->
 <div class="form-group col-sm-12">
-    {!! Form::label('brief_description', 'توضیحات:') !!}
+    {!! Form::label('brief_description', 'توضیحات:') !!} <span class="text-danger text-small">الزامی</span>
     {!! Form::textarea('brief_description', null, ['class' => 'form-control', 'rows' => 2, 'maxlength' => 145]) !!}
 </div>
 
@@ -114,7 +114,7 @@
 
 <!-- Deadline Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('deadline', 'تاریخ انقضا:') !!}
+    {!! Form::label('deadline', 'تاریخ انقضا:') !!} <span class="text-danger text-small">الزامی</span>
 {{--    {!! Form::date('deadline', null, ['class' => 'form-control','id'=>'deadline']) !!}--}}
     <input autocomplete="off" class="form-control" dir="ltr" type="text" value="{{old('deadline_pd')}}" placeholder="{{$deadline_pd}}" id="deadline_pd" name="deadline_pd"/>
     <input type="hidden" id="deadline" name="deadline" value="{{old('deadline')}}"/>

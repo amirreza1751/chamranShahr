@@ -7,6 +7,27 @@
             <h1 class="pull-right">
                <a class="btn btn-primary btn-xs pull-right" style="margin-right: 10px" href="{!! route('externalServices.create') !!}">ایجاد سرویس</a>
             </h1>
+            <h1 class="pull-right">
+                <a class="btn btn-default btn-xs pull-right" style="margin-right: 10px"  data-toggle="modal" data-target="#input-help">راهنما</a>
+            </h1>
+            <div class="modal fade" id="input-help" style="display: none;">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button class="pull-left close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title text-primary">راهنما</h4>
+                        </div>
+                        <div class="modal-body" style="border-bottom: 10px solid #286090">
+                            <div class="help-modal-section">
+                                <p><span class="fa fa-star bullet"></span><span class="text-primary fontsize-bolder title fontsize-large">بسیار مهم:</span><span class="text fontsize-large">پس از ایجاد سرویس خارجی با استفاده از دکمه‌ی <span class="label label-primary">بروزرسانی</span> در منوی اصلی مدیریت سرویس‌های خارجی محتوای مربوطه در سامانه برای شما بارگزاری و بروزرسانی خواهد شد؛ این فرایند پس از ایجاد سرویس توسط شما به صورت خودکار در زمان بندی معینی توسط سامانه انجام می‌شود و نیازی به انجام دستی آن پس از اولین به روز رسانی نخواهد بود</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
         @endif
         <ol class="breadcrumb">
             <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>

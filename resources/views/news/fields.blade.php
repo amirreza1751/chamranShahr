@@ -9,15 +9,38 @@
 
 <!-- Title Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('title', 'عنوان:') !!}
+    {!! Form::label('title', 'عنوان:') !!} <span class="text-danger text-small">الزامی</span>
     {!! Form::text('title', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Creator Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('creator_id', 'سازنده:') !!}
+    {!! Form::label('creator_id', 'سازنده:') !!} <span class="text-danger text-small">الزامی</span>
     {{--    {!! Form::text('creator_id', null, ['class' => 'form-control']) !!}--}}
-    {!! Form::select('creator_id', $creators, null, ['class' => 'form-control']) !!}
+    <select class="form-control m-bot15" name="creator_id" id="creator_id">
+        <option disabled selected value> -- یک گزینه انتخاب کنید -- </option>
+        @if(old('owner_type')) // edit view
+            @foreach($creators as $key => $value)
+                @if($key == old('creator_id'))
+                    <option value="{{ $key }}" selected>{{ $value }}</option>
+                @else
+                    <option value="{{ $key }}">{{ $value }}</option>
+                @endif
+            @endforeach
+        @elseif(isset($news)) // edit view
+            @foreach($creators as $key => $value)
+                @if($key == $news->creator_id)
+                    <option value="{{ $key }}" selected>{{ $value }}</option>
+                @else
+                    <option value="{{ $key }}">{{ $value }}</option>
+                @endif
+            @endforeach
+        @else                   // create view
+            @foreach($creators as $key => $value)
+                <option value="{{ $key }}">{{ $value }}</option>
+            @endforeach
+        @endif
+    </select>
 </div>
 
 <!-- Link Field -->
@@ -28,7 +51,7 @@
 
 <!-- Description Field -->
 <div class="form-group col-sm-12 col-lg-12">
-    {!! Form::label('description', 'توضیحات:') !!}
+    {!! Form::label('description', 'توضیحات:') !!} <span class="text-danger text-small">الزامی</span>
     {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
 </div>
 
@@ -40,18 +63,34 @@
     <div class="col-md-10">
         <input type="file" name="path" class="form-control custom-file-input"
                id="customFile">
-        <label style="margin-right: 10px" class="form-control custom-file-label"
+        <label style="margin-right: 10px" class="form-control custom-file-label text-center"
                for="customFile"></label>
     </div>
 </div>
+<script>
+    $('#customFile').on('change',function(){
+        //get the file name
+        var fileName = $(this).val();
+        //replace the "Choose a file" label
+        $(this).next('.custom-file-label').html(fileName);
+    })
+</script>
 
 <!-- Owner Type Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('owner_type', 'نوع مالک:') !!}
+    {!! Form::label('owner_type', 'نوع مالک:') !!} <span class="text-danger text-small">الزامی</span>
     {{--    {!! Form::text('creator_id', null, ['class' => 'form-control']) !!}--}}
     <select class="form-control m-bot15" name="owner_type" id="owner_type">
         <option disabled selected value> -- یک گزینه انتخاب کنید -- </option>
-        @if(isset($news)) // edit view
+        @if(old('owner_type')) // edit view
+            @foreach($owner_types as $key => $value)
+                @if($value == old('owner_type'))
+                    <option value="{{ $value }}" selected>{{ $key }}</option>
+                @else
+                    <option value="{{ $value }}">{{ $key }}</option>
+                @endif
+            @endforeach
+        @elseif(isset($news)) // edit view
             @foreach($owner_types as $key => $value)
                 @if($value == $news->owner_type)
                     <option value="{{ $value }}" selected>{{ $key }}</option>
@@ -69,7 +108,7 @@
 
 <script>
     jQuery(document).ready(function(){
-        $('select[name="owner_type"]').on('click change', function(){
+        $('select[name="owner_type"]').on('change', function(){
             jQuery('#owner_id').empty();
             $.ajaxSetup({
                 headers: {
@@ -102,13 +141,15 @@
 
 <!-- Owner Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('owner_id', 'مالک:') !!}
+    {!! Form::label('owner_id', 'مالک:') !!} <span class="text-danger text-small">الزامی</span>
     {{--    {!! Form::text('creator_id', null, ['class' => 'form-control']) !!}--}}
     <select class="form-control" name="owner_id" id="owner_id"></select>
 </div>
-
+<span style="max-height: 100px">{{old('owner_id')}}</span>
 <script>
     jQuery(document).ready(function(){
+        jQuery('#owner_id').empty();
+        var old_owner_id = '{{ old('owner_id') }}';
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
@@ -123,7 +164,7 @@
             },
             success: function(data){
                 $.each(data, function(id, owner){
-                    if(owner['selected']){
+                    if(old_owner_id && old_owner_id == owner['id']){
                         $('#owner_id').append('<option selected value="'+ owner['id'] +'">' + owner['title'] + '</option>');
                     } else {
                         $('#owner_id').append('<option value="'+ owner['id'] +'">' + owner['title'] + '</option>');

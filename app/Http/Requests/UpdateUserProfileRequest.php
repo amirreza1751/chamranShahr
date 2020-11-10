@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\PersianAlphabet;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,16 +26,16 @@ class UpdateUserProfileRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'nullable|string|max:50',
-            'last_name' => 'nullable|string|max:50',
-            'birthday' => 'nullable|date',
+            'first_name' => ['nullable', new PersianAlphabet() ,'max:100'],
+            'last_name' => ['nullable', new PersianAlphabet() ,'max:100'],
+//            'birthday' => 'nullable|date',
             'email' => 'nullable|email|unique:users,email,'.Auth::user()->id,
             'username' => 'nullable|regex:/^(?![.])(?!.*[.]{2})[a-zA-Z0-9.]+(?<![.])$/|min:6|max:21|unique:users,username,'.Auth::user()->id, // regex length : (?=.{6,21}$)
-            'password' => 'nullable|regex:/^(?=.*\d)(?=.*\W+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/|min:8|max:191', // regex min length : .{8} at the end
+            'password' => 'nullable|regex:/^(?=.*\d)(?=.*[!@#$%^&*():<>\/{}]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/|min:8|max:191', // regex min length : .{8} at the end special characters: ! @ # $ % ^ & * ( ) : < > / { }
             'confirm_password' => 'same:password',
-            'scu_id' => 'nullable|unique:users,scu_id,'.Auth::user()->id,
-            'phone_number' => 'nullable|regex:/(09)[0-9]{9}/|size:11|unique:users,phone_number,'.Auth::user()->id,
-            'national_id' => 'nullable|unique:users,national_id,'.Auth::user()->id,
+//            'scu_id' => 'nullable|unique:users,scu_id,'.Auth::user()->id,
+//            'phone_number' => 'nullable|regex:/(09)[0-9]{9}/|size:11|unique:users,phone_number,'.Auth::user()->id,
+//            'national_id' => 'nullable|unique:users,national_id,'.Auth::user()->id,
             'avatar_path' => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
         ];
     }
@@ -42,9 +43,7 @@ class UpdateUserProfileRequest extends FormRequest
     public function messages()
     {
         return [
-            'first_name.string' => 'نام به درستی وارد نشده است',
             'first_name.max' => 'حداكثر طول مجاز نام 50 كركتر است',
-            'last_name.string' => 'نام‌خانوادگي به درستی وارد نشده است',
             'last_name.max' => 'حداكثر طول مجاز نام‌خانوادگي 50 كركتر است',
             'email.unique' => 'پست الکترونیک تکراری است',
             'email.email' => 'پست الکترونیک معتبر نیست',
@@ -62,6 +61,15 @@ class UpdateUserProfileRequest extends FormRequest
             'avatar_path.image' => 'فایل تصویر مجاز نیست',
             'avatar_path.mimes' => 'فرمت هاي مجاز براي تصوير پروفايل jpg و png مي‌باشند',
             'avatar_path.uploaded' => 'حداکثر اندازه‌ی تصویر باید 1MB باشد',
+            'avatar_path.max' => 'حداکثر اندازه‌ی تصویر باید 1MB باشد',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'first_name' => 'نام',
+            'last_name' => 'نام خانوادگی',
         ];
     }
 }

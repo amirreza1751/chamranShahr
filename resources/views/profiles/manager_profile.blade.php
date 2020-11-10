@@ -107,6 +107,34 @@
 
                         <div class="tab-pane" id="settings">
 
+                            <div class="row" style="margin-bottom: 1rem">
+                                <div class="col-md-3 col-sm-4 col-xs-12">
+                                    <a class="btn btn-block btn-default btn-xs pull-right" data-toggle="modal" data-target="#input-help">راهنمای ورودی‌ها</a>
+                                    <div class="modal fade" id="input-help" style="display: none;">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button class="pull-left close" type="button" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span></button>
+                                                    <h4 class="modal-title text-primary">راهنمای ورودی‌ها</h4>
+                                                </div>
+                                                <div class="modal-body" style="border-bottom: 10px solid #286090">
+                                                    <div class="help-modal-section">
+                                                        <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">نام و نام‌خانوادگی:</span><span class="text">نام و نام‌خانوادگی شما است که در سامانه و برای سایر کاربران نمایش داده خواهد شد</span></p>
+                                                        <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">پست الکترونیک:</span><span class="text">پست الکترونیک مربوط به حساب شماست که برای سرویس‌های مختلفی از جمله سرویس های احراز هویت و بازیابی حساب استفاده خواهد شد</span></p>
+                                                        <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">نام کاربری:</span><span class="text">نام کاربری منحصر به فرد حساب شما در سامانه است. حروف مجاز برای نام کاربری عبارتند از: <span class="text-danger fontsize-black">حرف a تا حرف z، حرف A تا حرف Z و حرف .</span> که استفاده از . در ابتدا و انتهای نام کاربری و تکرار بیش از یک مرتبه آن بلافاصله پشت سر هم مجاز نیست</span></p>
+                                                        <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">رمز عبور:</span><span class="text">رمز عبور شما جهت ورود به سامانه است. این رمز باید شروط حداقلی سامانه را جهت تامین امنیت حساب شما رعایت نماید که متشکل هستند از: دارا بودن حداقل یک حرف کوچک، یک حرف بزرگ، یک عدد و یک کرکتر خاص شامل : <span class="text-danger fontsize-black">! @ # $ % ^ & * ( ) : < > / { }</span></span></p>
+                                                        <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">تصویر:</span><span class="text">تصویر شخصی کاربر است که حداکثر اندازه‌ی قابل قبول آن 1MB و فرمت‌های مجاز jpg و png می‌باشند</span></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                    </div>
+                                </div>
+                            </div>
+
                             {!! Form::model(Auth::user(), ['route' => ['profile.update'], 'method' => 'patch', 'enctype' => 'multipart/form-data', 'class' => 'form-horizontal']) !!}
 
                             <div class="form-group">
@@ -164,10 +192,18 @@
                                 <div class="col-md-10">
                                     <input type="file" name="avatar_path" class="form-control custom-file-input"
                                            id="customFile">
-                                    <label style="margin: 10px" class="form-control custom-file-label"
+                                    <label style="margin: 10px" class="form-control custom-file-label text-center"
                                            for="customFile"></label>
                                 </div>
                             </div>
+                            <script>
+                                $('#customFile').on('change',function(){
+                                    //get the file name
+                                    var fileName = $(this).val();
+                                    //replace the "Choose a file" label
+                                    $(this).next('.custom-file-label').html(fileName);
+                                })
+                            </script>
                             {{--                                <div class="form-group">--}}
                             {{--                                    <label for="inputExperience" class="col-sm-2 control-label">Experience</label>--}}
 

@@ -11,6 +11,8 @@ use App\Models\StudyField;
 use App\Models\StudyLevel;
 use App\Models\StudyStatus;
 use App\Models\Term;
+use App\Rules\EnglishPersianAlphabet;
+use App\Rules\ModelClassName;
 use Illuminate\Foundation\Http\FormRequest;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -33,13 +35,11 @@ class NotifyRequest extends FormRequest
      */
     public function rules()
     {
-        $console = new ConsoleOutput();
-        $console->writeln(Notice::class);
         return [
-            'notifier_type' => ['required','string'],
+            'notifier_type' => ['required', new ModelClassName()],
             'notifier_id' => 'required|numeric',
-            'title' => 'required_if:use_notifier_title,==,""|max:191',
-            'brief_description' => 'required_if:use_notifier_description,==,""',
+            'title' => ['required_if:use_notifier_title,==,""','max:191', new EnglishPersianAlphabet()],
+            'brief_description' => ['required_if:use_notifier_description,==,""', new EnglishPersianAlphabet()],
             'deadline' => ['required','regex:/(\d{3,4}(\/)(([0-9]|(0)[0-9])|((1)[0-2]))(\/)([0-9]|[0-2][0-9]|(3)[0-1]))$/'],
             'study_status_unique_code' => ['nullable','regex:/^' . strtolower(array_last(explode("\\", StudyStatus::class))) . '[0-9]+$/'],
             'faculty_unique_code' => ['nullable','regex:/^' . strtolower(array_last(explode("\\", Faculty::class))) . '[0-9]+$/'],
@@ -73,6 +73,15 @@ class NotifyRequest extends FormRequest
             'type.regex' => 'نوع نوتیفیکیشن به درستی وارد نشده است',
             'type.required' => 'نوع نوتیفیکیشن را وارد کنید',
             'user_type.regex' => 'نوع کاربری به درستی وارد نشده است',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'notifier_type' => 'نوع منبع',
+            'title' => 'عنوان',
+            'brief_description' => 'توضیحات',
         ];
     }
 }

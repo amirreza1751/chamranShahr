@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateDepartmentRequest;
+use App\Http\Requests\UpdateDepartmentProfileRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use App\Models\Department;
 use App\Models\ManageLevel;
@@ -228,7 +229,7 @@ class DepartmentController extends AppBaseController
      *
      * @return Response
      */
-    public function updateProfile($id, UpdateDepartmentRequest $request)
+    public function updateProfile($id, UpdateDepartmentProfileRequest $request)
     {
         $department = $this->departmentRepository->findWithoutFail($id);
         $input = collect(request()->only(['title', 'english_title', 'description', 'path']))->filter(function($value) {

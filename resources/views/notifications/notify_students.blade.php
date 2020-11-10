@@ -2,9 +2,36 @@
 
 @section('content')
     <section class="content-header">
-        <h1>
-            ایجاد نوتیفیکیشن
+        <h1 class="pull-right">ایجاد نوتیفیکیشن</h1>
+        <h1 class="pull-right">
+            <a class="btn btn-default btn-xs pull-right" style="margin-right: 10px"  data-toggle="modal" data-target="#input-help">راهنمای ورودی‌ها</a>
         </h1>
+        <div class="modal fade" id="input-help" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="pull-left close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title text-primary">راهنمای ورودی‌ها</h4>
+                    </div>
+                    <div class="modal-body" style="border-bottom: 10px solid #286090">
+                        <div class="help-modal-section">
+                            <p><span class="fa fa-star bullet"></span><span class="text-primary fontsize-bolder title fontsize-large">بسیار مهم:</span><span class="text fontsize-large">پیش از ایجاد خبر یا اطلاعیه های مناسب و یا ایجاد سرویس خارجی جهت بارگزاری و به روزرسانی اخبار و اطلاعیه‌های دپارتمان خود نمیتوانید نوتیفیکیشن تولید کنید زیرا هر نوتیفیکیشن می‌بایست یک منبع مشخص که متعلق به دپارتمان های تحت مدیریت شماست، داشته باشد؛ بنابراین اگر پیش از این اخبار یا اطلاعیه های مورد نظر را به وجود نیاورده‌اید، لازم است ابتدا این مرحله را طی کنید</span></p>
+                            <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">نوع منبع:</span><span class="text">نوع منبعی است که نوتیفیکیشن از آن ساخته می‌شود؛ برای مثال نوع منبع برای نوتیفیکیشنی که از خبر <span class="fontsize-bolder text-success">تاریخ بازگشایی دانشگاه شهید چمران اهواز اعلام شد</span> «خبر» و همچنین نوع منبع برای اطلاعیه‌ی <span class="fontsize-bolder text-success">نحوه‌ی نام نویسی نوورودان دوره‌ی کارشناسی</span> «اطلاعیه» می‌باشد</span></p>
+                            <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">منبع:</span><span class="text">یک از گزینه‌های موجود از نوع انتخاب شده در مرحله‌ی قبل است</span></p>
+                            <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">عنوان:</span><span class="text">عنوان نوتیفیکیشن است که می‌توان از عنوان منبع آن با انتخاب گزینه‌ی مربوطه استفاده و یا عنوان متفاوتی وارد کرد</span></p>
+                            <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">توضیحات:</span><span class="text">متن نوتیفیکیشن است که می‌توان از بخش ابتدایی متن منبع آن با انتخاب گزینه‌ی مربوطه استفاده و یا عنوان متفاوتی وارد کرد</span></p>
+                            <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">تاریخ انقضا:</span><span class="text">تاریخی است که نوتیفیکیشن تا آن زمان اعتبار دارد؛ نوتیفیکیشن تا ساعت 24 روز انتخابی معتبر خواهد بود و پس از آن منقضی شده برای کاربران نمایش داده نخواهد شد اما همچنان از طریق پنل در دسترس است</span></p>
+                            <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">نوع:</span><span class="text">دسته بندی نوتفیکیشن‌ها است که در حال حاضر شامل <span class="text-success fontsize-bolder">آموزشی، پژوهشی، دانشجویی-رفاهی و فرهنگی</span> می‌باشد</span></p>
+                            <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">نوع کاربری دریافت‌کنندگان:</span><span class="text">نوع کاربرانی است که این نوتیفیکیشن را دریافت خواهند کرد؛ در حال حاضر می‌توان برای تمامی کاربران و یا دانشجویان با انتخاب ورودی های مناسب ارسال کرد</span></p>
+                            <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">دانشکده، رشته، مقطع، گرایش، ورودی و وضعیت تحصیلی:</span><span class="text">پارامترهایی هستند که بر اساس آن‌ها محدوده‌ی دانشجویان دریافت کننده‌ی نوتیفیکیشن مشخص می‌شود؛ <span class="text-success fontsize-bolder">این گزینه‌ها با انتخاب نوع کاربری دانشجویان فعال خواهند شد</span></span></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
         <ol class="breadcrumb">
             <li><a href="{{ route('home') }}"><i class="fa fa-dashboard"></i>داشبورد</a></li>
             <li><a href="{{ route('notificationSamples.index') }}"><i class="fa fa-bell"></i>مدیریت نوتیفیکیشن‌ها</a>
@@ -13,7 +40,11 @@
         </ol>
     </section>
     <div class="content">
+
+        <div class="clearfix"></div>
         @include('adminlte-templates::common.errors')
+        <div class="clearfix"></div>
+
         <div class="box box-primary">
 
             <div class="box-body">
@@ -38,25 +69,25 @@
 
                 <!-- Notifier Type Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('notifier_type', 'دسته‌ی منبع:') !!}
+                        {!! Form::label('notifier_type', 'نوع منبع:') !!} <span class="text-danger text-small">الزامی</span>
                         <select class="form-control m-bot15" name="notifier_type" id="notifier_type">
                             <option disabled selected value> -- انتخاب کنید --</option>
                             @if(isset($notifier)) // edit view
-                            @foreach($notifier_types as $key => $value)
-                                @if($key == get_class($notifier))
-                                    <option value="{{ $key }}" selected>{{ $value }}</option>
-                                @else
-                                    <option value="{{ $key }}">{{ $value }}</option>
-                                @endif
-                            @endforeach
+                                @foreach($notifier_types as $key => $value)
+                                    @if($key == get_class($notifier))
+                                        <option value="{{ $key }}" selected>{{ $value }}</option>
+                                    @else
+                                        <option value="{{ $key }}">{{ $value }}</option>
+                                    @endif
+                                @endforeach
                             @else                   // create view
-                            @foreach($notifier_types as $key => $value)
-                                @if($key == old('notifier_type'))
-                                    <option value="{{ $key }}" selected>{{ $value }}</option>
-                                @else
-                                    <option value="{{ $key }}">{{ $value }}</option>
-                                @endif
-                            @endforeach
+                                @foreach($notifier_types as $key => $value)
+                                    @if($key == old('notifier_type'))
+                                        <option value="{{ $key }}" selected>{{ $value }}</option>
+                                    @else
+                                        <option value="{{ $key }}">{{ $value }}</option>
+                                    @endif
+                                @endforeach
                             @endif
                         </select>
                     </div>
@@ -100,7 +131,7 @@
 
                     <!-- Notifier Id Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('notifier_id', 'منبع:') !!}
+                        {!! Form::label('notifier_id', 'منبع:') !!} <span class="text-danger text-small">الزامی</span>
                         <select class="form-control m-bot15" name="notifier_id" id="notifier_id">
                             <option disabled selected value> -- انتخاب کنید --</option>
                             @if(isset($notifier)) // edit view
@@ -111,7 +142,7 @@
 
                     <!-- Title Field -->
                     <div class="form-group col-sm-8">
-                        {!! Form::label('title', 'عنوان:') !!}
+                        {!! Form::label('title', 'عنوان:') !!} <span class="text-danger text-small">الزامی</span>
                         {!! Form::text('title', null, ['class' => 'form-control', 'id' => 'title']) !!}
                     </div>
                     <div class="form-group col-sm-4">
@@ -143,7 +174,7 @@
 
                     <!-- Brief Description Field -->
                     <div class="form-group col-sm-8">
-                        {!! Form::label('brief_description', 'توضیحات:') !!}
+                        {!! Form::label('brief_description', 'توضیحات:') !!} <span class="text-danger text-small">الزامی</span>
                         {!! Form::textarea('brief_description', null, ['class' => 'form-control', 'id' => 'brief_description', 'maxlength' => 145, 'rows' => 3]) !!}
                     </div>
                     <div class="form-group col-sm-4">
@@ -176,7 +207,7 @@
 
                     <!-- Deadline Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('deadline', 'تاریخ انقضا:') !!}
+                        {!! Form::label('deadline', 'تاریخ انقضا:') !!} <span class="text-danger text-small">الزامی</span>
 {{--                        {!! Form::date('deadline', null, ['class' => 'form-control','id'=>'deadline']) !!}--}}
                         <input autocomplete="off" class="form-control" dir="ltr" type="text" value="{{old('deadline_pd')}}" id="deadline_pd" name="deadline_pd"/>
                         <input type="hidden" id="deadline" name="deadline" value="{{old('deadline')}}"/>
@@ -186,7 +217,7 @@
 
                     <!-- Notification Type Field -->
                     <div class="form-group col-sm-6">
-                        {!! Form::label('type', 'نوع نوتیفیکیشن:') !!}
+                        {!! Form::label('type', 'نوع نوتیفیکیشن:') !!} <span class="text-danger text-small">الزامی</span>
                         <select class="form-control" name="type" id="type">
                             <option disabled selected value> -- انتخاب کنید --</option>
                             @foreach($notification_types as $key => $value)
@@ -201,7 +232,7 @@
 
                     <!-- User Type Field -->
                     <div class="form-group col-sm-12">
-                        {!! Form::label('user_types', 'نوع کاربری دریافت‌کنندگان:') !!}
+                        {!! Form::label('user_types', 'نوع کاربری دریافت‌کنندگان:') !!} <span class="text-danger text-small">الزامی</span>
                         <select class="form-control" name="user_type" id="user_type">
                             @foreach($user_types as $key => $value)
                                 @if($key == old('user_type'))

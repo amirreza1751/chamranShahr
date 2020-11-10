@@ -88,6 +88,34 @@
 
                 <div class="tab-pane" id="settings">
 
+                    <div class="row" style="margin-bottom: 1rem">
+                        <div class="col-md-3 col-sm-4 col-xs-12">
+                            <a class="btn btn-block btn-default btn-xs pull-right" data-toggle="modal" data-target="#input-help">راهنمای ورودی‌ها</a>
+                            <div class="modal fade" id="input-help" style="display: none;">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button class="pull-left close" type="button" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">×</span></button>
+                                            <h4 class="modal-title text-primary">راهنمای ورودی‌ها</h4>
+                                        </div>
+
+                                        <div class="modal-body" style="border-bottom: 10px solid #286090">
+                                            <div class="help-modal-section">
+                                                <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">عنوان:</span><span class="text">نام این دپارتمان است که در سامانه با همین عنوان نمایش داده خواهد شد و تنها استفاده از حروف فارسی در آن مجاز است</span></p>
+                                                <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">عنوان انگلیسی:</span><span class="text">نام این دپارتمان است که در سامانه با همین عنوان نمایش داده خواهد شد و تنها استفاده از حروف و اعداد انگلیسی، علائم نگارشی و برخی علائم دیگر مانند - _ ' " در آن مجاز است</span></p>
+                                                <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">توضیحات:</span><span class="text">توضیحات مرتبط با دپارتمان است که برای آشنایی بیشتر کاربران با این دپارتمان و جهت معرفی آن در سامانه نمایش داده خواهد شد و تنها استفاده از حروف و اعداد فارسی، حروف و اعداد انگلیسی، علائم نگارشی برخی علائم دیگر مانند - _ : ; ' " , ؛ + مجاز است</span></p>
+                                                <p><span class="fa fa-caret-left bullet"></span><span class="text-primary fontsize-bolder title">تصویر:</span><span class="text">تصویر مرتبط با دپارتمان است که حداکثر اندازه‌ی قابل قبول آن 2MB و فرمت‌های مجاز jpg و png می‌باشند</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                        </div>
+                    </div>
+
                     {!! Form::model($department, ['route' => ['departments.updateProfile', $department->id], 'method' => 'patch', 'enctype' => 'multipart/form-data', 'class' => 'form-horizontal']) !!}
 
                     <div class="form-group">
@@ -122,10 +150,18 @@
                         <div class="col-md-10">
                             <input type="file" name="path" class="form-control custom-file-input"
                                    id="customFile">
-                            <label style="margin: 10px" class="form-control custom-file-label"
+                            <label style="margin: 10px" class="form-control custom-file-label text-center"
                                    for="customFile"></label>
                         </div>
                     </div>
+                    <script>
+                        $('#customFile').on('change',function(){
+                            //get the file name
+                            var fileName = $(this).val();
+                            //replace the "Choose a file" label
+                            $(this).next('.custom-file-label').html(fileName);
+                        })
+                    </script>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-1 pull-left">
                             <button type="submit" class="btn btn-danger">ذخیره</button>

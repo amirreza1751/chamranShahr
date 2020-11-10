@@ -1125,12 +1125,40 @@ body.sidebar-collapse > .wrapper > .main-sidebar > .sidebar > .user-panel > .ima
 
 /* <Details> */
 
- .back-icon {
+.text-small {
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.fontsize-lighter{
+    font-weight: 100;
+}
+.fontsize-light{
+    font-weight: 200;
+}
+.fontsize-medium{
+    font-weight: 400;
+}
+.fontsize-bold{
+    font-weight: 600;
+}
+.fontsize-bolder{
+    font-weight: 700;
+}
+.fontsize-black{
+    font-weight: 900;
+}
+
+.fontsize-large {
+    font-size: 1.3rem;
+}
+
+.back-icon {
      position: absolute;
      left: 20px;
      top: 20px;
      color: white;
- }
+}
 .text-ltr {
     direction: ltr;
 }
@@ -1339,3 +1367,19 @@ body.sidebar-collapse > .wrapper > .main-sidebar > .sidebar > .user-panel > .ima
     padding: 8px 15px 8px 5px;
 }
 /* Developer Menu*/
+
+/* Help Modal Section */
+.help-modal-section{
+
+}
+.help-modal-section > p > .bullet {
+    margin-left: 1rem;
+}
+.help-modal-section > p > .title {
+    margin-left: 0.4rem;
+}
+.help-modal-section > p > .text {
+    color: #595959;
+}
+
+/* Help Modal Section */

@@ -31,7 +31,7 @@ class UpdateUserRequest extends FormRequest
             'birthday' => 'nullable|date',
             'email' => 'nullable|email|unique:users,email,'.$this->route('user'),
             'username' => 'nullable|regex:/^(?![.])(?!.*[.]{2})[a-zA-Z0-9.]+(?<![.])$/|min:6|max:21|unique:users,username,'.$this->route('user'), // regex length : (?=.{6,21}$)
-            'password' => 'nullable|regex:/^(?=.*\d)(?=.*\W+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/|min:8|max:191', // regex min length : .{8} at the end
+            'password' => 'nullable|regex:/^(?=.*\d)(?=.*[!@#$%^&*():<>\/{}]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/|min:8|max:191', // regex min length : .{8} at the end special characters: ! @ # $ % ^ & * ( ) : < > / { }
             'confirm_password' => 'same:password',
             'scu_id' => 'nullable|unique:users,scu_id,'.$this->route('user'),
             'phone_number' => 'nullable|regex:/(09)[0-9]{9}/|size:11|unique:users,phone_number,'.$this->route('user'),
