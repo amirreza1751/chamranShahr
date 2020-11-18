@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Morilog\Jalali\Jalalian;
 use mysql_xdevapi\Exception;
@@ -583,20 +584,20 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->notifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->notifications;
 
         $retrieves = Notification::staticRetrieves($notifications->merge($user->notifications));
 
         if (sizeof($retrieves) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'هیچ نوتیفیکیشنی پیدا نشد'
-            ], 200);
+            ], 404);
 
         return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
     }
@@ -641,21 +642,22 @@ class UserAPIController extends AppBaseController
             return $this->sendError('ابتدا وارد سامانه شوید');
         }
 
+
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->notifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->notifications;
 
         $retrieves = Notification::staticRetrievesWithTrashed($notifications->merge($user->notifications));
 
         if (sizeof($retrieves) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'هیچ نوتیفیکیشنی پیدا نشد'
-            ], 200);
+            ], 404);
 
         return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
     }
@@ -701,20 +703,20 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->notifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->notifications;
 
         $retrieves = Notification::staticRetrievesTrashed($notifications->merge($user->notifications));
 
         if (sizeof($retrieves) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'هیچ نوتیفیکیشن حذف شده‌ای پیدا نشد'
-            ], 200);
+            ], 404);
 
         return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
     }
@@ -760,20 +762,20 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->unreadNotifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->unreadNotifications;
 
         $retrieves = Notification::staticRetrieves($notifications->merge($user->unreadNotifications));
 
         if (sizeof($retrieves) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'نوتیفیکیشن خوانده نشده‌ای پیدا نشد'
-            ], 200);
+            ], 404);
 
         return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
     }
@@ -819,21 +821,21 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->readNotifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->readNotifications;
 
         $retrieves = Notification::staticRetrieves($notifications->merge($user->readNotifications));
 
 
         if (sizeof($retrieves) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'نوتیفیکیشن خوانده شده‌ای پیدا نشد'
-            ], 200);
+            ], 404);
 
         return $this->sendResponse($retrieves, 'عملیات موفقیت آمیز بود.');
     }
@@ -866,11 +868,25 @@ class UserAPIController extends AppBaseController
      */
     public function markAsReadNotifications(Request $request)
     {
-        $request->validate([
-            'notifications_id' => 'required|array'
-        ]);
-
         $input = $request->all();
+
+        /**
+         * validate phone_number field
+         */
+        $validator = Validator::make($input, [
+            'notifications_id' => 'required|array',
+            'notifications_id.*' => 'required|regex:/^([0-9a-z]{8})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{12})$/|distinct',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message'=> 'The given data was invalid.',
+                'errors'=> [
+                    'notifications_id' => [
+                        'فرمت شناسه نوتیفیکیشن‌ها صحیح نیست'
+                    ]
+                ],
+            ], 422);
+        }
 
         /** @var User $user */
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
@@ -880,20 +896,20 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->unreadNotifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->unreadNotifications;
 
         $notifications = Notification::staticRemoveTrashedAndExpired($notifications->merge($user->unreadNotifications)); /** check for soft deleted notifications */
 
         if (sizeof($notifications) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'نوتیفیکیشن خوانده نشده‌ای پیدا نشد'
-            ], 200);
+            ], 404);
 
         $notFoundNotificationsId = array();
         foreach ($input['notifications_id'] as $index => $notification_id){
@@ -906,10 +922,12 @@ class UserAPIController extends AppBaseController
 
         if (sizeof($notFoundNotificationsId) > 0)
             return response()->json([
+                'success' => true,
                 'message' => 'بعضی از نوتیفیکیشن ها در لیست خوانده نشده‌ها وجود ندارند',
                 'data' => $notFoundNotificationsId,
             ]);
         return response()->json([
+            'success' => true,
             'message' => 'عملیات موفقیت آمیز بود'
         ]);
     }
@@ -943,11 +961,25 @@ class UserAPIController extends AppBaseController
      */
     public function markAsUnreadNotifications(Request $request)
     {
-        $request->validate([
-            'notifications_id' => 'required|array'
-        ]);
-
         $input = $request->all();
+
+        /**
+         * validate phone_number field
+         */
+        $validator = Validator::make($input, [
+            'notifications_id' => 'required|array',
+            'notifications_id.*' => 'required|regex:/^([0-9a-z]{8})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{12})$/|distinct',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message'=> 'The given data was invalid.',
+                'errors'=> [
+                    'notifications_id' => [
+                        'فرمت شناسه نوتیفیکیشن‌ها صحیح نیست'
+                    ]
+                ],
+            ], 422);
+        }
 
         /** @var User $user */
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
@@ -957,20 +989,20 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->readNotifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->readNotifications;
 
         $notifications = Notification::staticRemoveTrashedAndExpired($notifications->merge($user->readNotifications)); /** check for soft deleted notifications */
 
         if (sizeof($notifications) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'نوتیفیکیشن خوانده شده‌ای پیدا نشد'
-            ], 200);
+            ], 404);
 
         $notFoundNotificationsId = array();
         foreach ($input['notifications_id'] as $index => $notification_id){
@@ -983,10 +1015,12 @@ class UserAPIController extends AppBaseController
 
         if (sizeof($notFoundNotificationsId) > 0)
             return response()->json([
+                'success' => true,
                 'message' => 'بعضی از نوتیفیکیشن ها در لیست خوانده شده‌ها وجود ندارند',
                 'data' => $notFoundNotificationsId,
             ]);
         return response()->json([
+            'success' => true,
             'message' => 'عملیات موفقیت آمیز بود'
         ]);
     }
@@ -1020,11 +1054,25 @@ class UserAPIController extends AppBaseController
      */
     public function deleteNotifications(Request $request)
     {
-        $request->validate([
-            'notifications_id' => 'required|array'
-        ]);
-
         $input = $request->all();
+
+        /**
+         * validate phone_number field
+         */
+        $validator = Validator::make($input, [
+            'notifications_id' => 'required|array',
+            'notifications_id.*' => 'required|regex:/^([0-9a-z]{8})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{12})$/|distinct',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message'=> 'The given data was invalid.',
+                'errors'=> [
+                    'notifications_id' => [
+                        'فرمت شناسه نوتیفیکیشن‌ها صحیح نیست'
+                    ]
+                ],
+            ], 422);
+        }
 
         /** @var User $user */
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
@@ -1034,20 +1082,20 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->notifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->notifications;
 
         $notifications = Notification::staticRemoveTrashedAndExpired($notifications->merge($user->notifications)); /** check for soft deleted notifications */
 
         if (sizeof($notifications) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'هیچ نوتیفیکیشنی پیدا نشد'
-            ], 200);
+            ], 404);
 
         $notFoundNotificationsId = array();
         foreach ($input['notifications_id'] as $index => $notification_id){
@@ -1063,10 +1111,12 @@ class UserAPIController extends AppBaseController
 
         if (sizeof($notFoundNotificationsId) > 0)
             return response()->json([
+                'success' => true,
                 'message' => 'بعضی از نوتیفیکیشن ها وجود ندارند',
                 'data' => $notFoundNotificationsId,
             ]);
         return response()->json([
+            'success' => true,
             'message' => 'عملیات موفقیت آمیز بود'
         ]);
     }
@@ -1108,20 +1158,20 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->notifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->notifications;
 
         $notifications = Notification::staticRemoveTrashedAndExpired($notifications->merge($user->notifications)); /** check for soft deleted notifications */
 
         if (sizeof($notifications) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'هیچ نوتیفیکیشنی پیدا نشد'
-            ], 200);
+            ], 404);
 
         foreach ($notifications as $notification){
             $notification->deleted_at = Carbon::now();
@@ -1129,6 +1179,7 @@ class UserAPIController extends AppBaseController
         }
 
         return response()->json([
+            'success' => true,
             'message' => 'عملیات موفقیت آمیز بود'
         ]);
     }
@@ -1162,11 +1213,25 @@ class UserAPIController extends AppBaseController
      */
     public function restoreNotifications(Request $request)
     {
-        $request->validate([
-            'notifications_id' => 'required|array'
-        ]);
-
         $input = $request->all();
+
+        /**
+         * validate phone_number field
+         */
+        $validator = Validator::make($input, [
+            'notifications_id' => 'required|array',
+            'notifications_id.*' => 'required|regex:/^([0-9a-z]{8})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{12})$/|distinct',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message'=> 'The given data was invalid.',
+                'errors'=> [
+                    'notifications_id' => [
+                        'فرمت شناسه نوتیفیکیشن‌ها صحیح نیست'
+                    ]
+                ],
+            ], 422);
+        }
 
         /** @var User $user */
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
@@ -1176,20 +1241,20 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->notifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->notifications;
 
         $notifications = Notification::staticRemoveUnTrashedAndExpired($notifications->merge($user->notifications)); /** check for soft deleted notifications */
 
         if (sizeof($notifications) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'هیچ نوتیفیکیشن حذف شده‌ای پیدا نشد'
-            ], 200);
+            ], 404);
 
         $notFoundNotificationsId = array();
         foreach ($input['notifications_id'] as $index => $notification_id){
@@ -1205,10 +1270,12 @@ class UserAPIController extends AppBaseController
 
         if (sizeof($notFoundNotificationsId) > 0)
             return response()->json([
+                'success' => true,
                 'message' => 'بعضی از نوتیفیکیشن‌ها در لیست حذف‌شده‌ها وجود ندارند',
                 'data' => $notFoundNotificationsId,
             ]);
         return response()->json([
+            'success' => true,
             'message' => 'عملیات موفقیت آمیز بود'
         ]);
     }
@@ -1250,20 +1317,20 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->notifications;
         }
-
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->notifications;
 
         $notifications = Notification::staticRemoveUnTrashedAndExpired($notifications->merge($user->notifications)); /** check for soft deleted notifications */
 
         if (sizeof($notifications) == 0)
             return response()->json([
+                'success' => false,
                 'message' => 'هیچ نوتیفیکیشن حذف شده ای پیدا نشد'
-            ], 200);
+            ], 404);
 
         $notFoundNotificationsId = array();
         foreach ($notifications as $notification){
@@ -1272,6 +1339,7 @@ class UserAPIController extends AppBaseController
         }
 
         return response()->json([
+            'success' => true,
             'message' => 'عملیات موفقیت آمیز بود'
         ]);
     }
@@ -1311,11 +1379,24 @@ class UserAPIController extends AppBaseController
      */
     public function markAsReadNotification(Request $request)
     {
-        $request->validate([
-            'notification_id' => 'required|string'
-        ]);
-
         $input = $request->all();
+
+        /**
+         * validate phone_number field
+         */
+        $validator = Validator::make($input, [
+            'notification_id' => 'required|regex:/^([0-9a-z]{8})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{12})$/',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message'=> 'The given data was invalid.',
+                'errors'=> [
+                    'notification_id' => [
+                        'فرمت شناسه نوتیفیکیشن صحیح نیست'
+                    ]
+                ],
+            ], 422);
+        }
 
         /** @var User $user */
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
@@ -1325,25 +1406,28 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->unreadNotifications;
         }
 
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->unreadNotifications->merge($user->unreadNotifications);
+        $notifications = $notifications->merge($user->unreadNotifications);
         $notification = Notification::staticRemoveTrashedAndExpired($notifications)->find($input['notification_id']);
         if(isset($notification) && empty($notification->deleted_at)) /** check for soft deleted notifications */
         {
             $notification->markAsRead();
             return response()->json([
+                'success' => true,
                 'message' => 'عملیات موفقیت آمیز بود'
             ]);
         }
 
         return response()->json([
+            'success' => false,
             'message' => 'نوتیفیکیشن خوانده نشده‌ای با این مشخصات پیدا نشد'
-        ], 200);
+        ], 404);
     }
 
     /**
@@ -1381,11 +1465,24 @@ class UserAPIController extends AppBaseController
      */
     public function markAsUnreadNotification(Request $request)
     {
-        $request->validate([
-            'notification_id' => 'required|string'
-        ]);
-
         $input = $request->all();
+
+        /**
+         * validate phone_number field
+         */
+        $validator = Validator::make($input, [
+            'notification_id' => 'required|regex:/^([0-9a-z]{8})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{12})$/',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message'=> 'The given data was invalid.',
+                'errors'=> [
+                    'notification_id' => [
+                        'فرمت شناسه نوتیفیکیشن صحیح نیست'
+                    ]
+                ],
+            ], 422);
+        }
 
         /** @var User $user */
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
@@ -1395,25 +1492,28 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->readNotifications;
         }
 
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->readNotifications->merge($user->readNotifications);
+        $notifications = $notifications->merge($user->readNotifications);
         $notification = Notification::staticRemoveTrashedAndExpired($notifications)->find($input['notification_id']);
         if(isset($notification) && empty($notification->deleted_at)) /** check for soft deleted notifications */
         {
             $notification->markAsUnread();
             return response()->json([
+                'success' => true,
                 'message' => 'عملیات موفقیت آمیز بود'
             ]);
         }
 
         return response()->json([
+            'success' => false,
             'message' => 'نوتیفیکیشن خوانده شده‌ای با این مشخصات پیدا نشد'
-        ], 200);
+        ], 404);
     }
 
     /**
@@ -1451,11 +1551,24 @@ class UserAPIController extends AppBaseController
      */
     public function deleteNotification(Request $request)
     {
-        $request->validate([
-            'notification_id' => 'required|string'
-        ]);
-
         $input = $request->all();
+
+        /**
+         * validate phone_number field
+         */
+        $validator = Validator::make($input, [
+            'notification_id' => 'required|regex:/^([0-9a-z]{8})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{12})$/',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message'=> 'The given data was invalid.',
+                'errors'=> [
+                    'notification_id' => [
+                        'فرمت شناسه نوتیفیکیشن صحیح نیست'
+                    ]
+                ],
+            ], 422);
+        }
 
         /** @var User $user */
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
@@ -1465,26 +1578,29 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->notifications;
         }
 
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->notifications->merge($user->notifications);
+        $notifications = $notifications->merge($user->notifications);
         $notification = Notification::staticRemoveTrashedAndExpired($notifications)->find($input['notification_id']);
         if(isset($notification) && empty($notification->deleted_at)) /** check for notifications has been deleted  */
         {
             $notification->deleted_at = Carbon::now();
             $notification->save();
             return response()->json([
+                'success' => true,
                 'message' => 'عملیات موفقیت آمیز بود'
             ]);
         }
 
         return response()->json([
+            'success' => false,
             'message' => 'نوتیفیکیشنی با این مشخصات پیدا نشد'
-        ], 200);
+        ], 404);
     }
 
     /**
@@ -1522,11 +1638,25 @@ class UserAPIController extends AppBaseController
      */
     public function restoreNotification(Request $request)
     {
-        $request->validate([
-            'notification_id' => 'required|string'
-        ]);
-
         $input = $request->all();
+
+        /**
+         * validate phone_number field
+         */
+        $validator = Validator::make($input, [
+            'notification_id' => 'required|regex:/^([0-9a-z]{8})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{4})(-)([0-9a-z]{12})$/',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message'=> 'The given data was invalid.',
+                'errors'=> [
+                    'notification_id' => [
+                        'فرمت شناسه نوتیفیکیشن صحیح نیست'
+                    ]
+                ],
+            ], 422);
+        }
+
 
         /** @var User $user */
         $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
@@ -1536,25 +1666,28 @@ class UserAPIController extends AppBaseController
         }
 
         if (empty($user->student)){
-            return $this->sendError('کاربر اطلاعات دانشگاهی خود را احراز نکرده است.');
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->notifications;
         }
 
-        /** @var Student $student */
-        $student = $this->studentRepository->findWithoutFail($user->student->id);
-
-        $notifications = $student->notifications->merge($user->notifications);
+        $notifications = $notifications->merge($user->notifications);
         $notification = Notification::staticRemoveUnTrashedAndExpired($notifications)->find($input['notification_id']);
         if(isset($notification) && isset($notification->deleted_at)) /** check for notifications has been deleted  */
         {
             $notification->deleted_at = null;
             $notification->save();
             return response()->json([
+                'success' => true,
                 'message' => 'عملیات موفقیت آمیز بود'
             ]);
         }
 
         return response()->json([
+            'success' => false,
             'message' => 'نوتیفیکیشن حذف‌شده‌ای با این مشخصات پیدا نشد'
-        ], 200);
+        ], 404);
     }
 }

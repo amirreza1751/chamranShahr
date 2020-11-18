@@ -38,6 +38,10 @@ use phpseclib\Net\SSH1;
 use Weidner\Goutte\GoutteFacade;
 use function foo\func;
 
+
+
+Route::resource('manageLevels', 'ManageLevelController'); // ++
+
 Route::post('empty', 'HomeController@empty');
 
 Route::group(['prefix' => 'GfIEpZz0QgdgdDz9hrpxfDo0cqk0Fw9vuBAdfM3titEyxDkOtGhPN8f0UESwBrdTWslIqA56iMSz10RZKZci2wLfGf3GJaT4wg8SBXyQg0CGBjbQYbo4I8NSNH1HodtQ'], function () {

@@ -26,9 +26,13 @@ class OtpController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json([
-                'success' => false,
-                'message'=> 'شماره وارد شده صحیح نیست',
-            ]);
+                'message'=> 'The given data was invalid.',
+                'errors'=> [
+                    'phone_number' => [
+                        'فرمت شماره تلفن همراه صحیح نیست'
+                    ]
+                ],
+            ], 422);
         }
 
         $today_phonenumber_tokens = PhonenumberToken::where('phone_number', $input['phone_number'])->where('used', '0')->where('created_at', '>', Carbon::now()->subDay())->get();
@@ -37,7 +41,7 @@ class OtpController extends Controller
             return response()->json([
                 'success' => false,
                 'message'=> 'تعداد مجاز درخواست کد احراز شماره تلفن همراه به پایان رسیده است.',
-            ]);
+            ], 429);
         }
 
         $phonenumber_tokens_last = PhonenumberToken::where('phone_number', $input['phone_number'])->get()->last();
@@ -51,7 +55,7 @@ class OtpController extends Controller
             return response()->json([
                 'success' => false,
                 'message'=> 'متاسفانه خطایی رخ داده است، لطفا مجددا تلاش کنید',
-            ]);
+            ], 425);
         }
 
         $token = mt_rand(10000,99999);
@@ -78,7 +82,7 @@ class OtpController extends Controller
         } else {
             return response()->json([
                 'success' => false,
-                'message' => 'متاسفانه خطایی رخ داده است، لطفا مجددا تلاش کنید'], $result->return->status);
+                'message' => 'متاسفانه خطایی در ارسال پیام رخ داده است، لطفا مجددا تلاش کنید'], $result->return->status);
         }
     }
 }

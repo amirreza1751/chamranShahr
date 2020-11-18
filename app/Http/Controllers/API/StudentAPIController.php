@@ -6,6 +6,7 @@ use App\General\TimeHandling;
 use App\Http\Controllers\API\Sama\SamaRequestController;
 use App\Http\Requests\API\CreateStudentAPIRequest;
 use App\Http\Requests\API\UpdateStudentAPIRequest;
+use App\Http\Requests\API\VerifyStudentAPIRequest;
 use App\Models\Faculty;
 use App\Models\Gender;
 use App\Models\Notification;
@@ -410,35 +411,41 @@ class StudentAPIController extends AppBaseController
      *      )
      * )
      */
-    public function verify(Request $request)
+    public function verify(VerifyStudentAPIRequest $request)
     {
+
+//        $request->validate([
+//            'scu_id' => 'required|regex:/[0-9]{6,7}/|max:7',
+//            'national_id' => 'required|regex:/[0-9]{10}/|max:10',
+//        ]);
+//
         $input = $request->all();
-
-        /**
-         * validate national_id field
-         */
-        $validator = Validator::make($input, [
-            'national_id' => 'required|regex:/^[0-9]{10}$/',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message'=> 'شماره ملی صحیح نیست',
-            ]);
-        }
-
-        /**
-         * validate scu_id field
-         */
-        $validator = Validator::make($input, [
-            'scu_id' => 'required|regex:/^[0-9]{6,7}$/',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message'=> 'شماره دانشجویی صحیح نیست',
-            ]);
-        }
+//
+//        /**
+//         * validate national_id field
+//         */
+//        $validator = Validator::make($input, [
+//            'national_id' => 'required|regex:/^[0-9]{10}$/',
+//        ]);
+//        if ($validator->fails()) {
+//            return response()->json([
+//                'success' => false,
+//                'message'=> 'شماره ملی صحیح نیست',
+//            ]);
+//        }
+//
+//        /**
+//         * validate scu_id field
+//         */
+//        $validator = Validator::make($input, [
+//            'scu_id' => 'required|regex:/^[0-9]{6,7}$/',
+//        ]);
+//        if ($validator->fails()) {
+//            return response()->json([
+//                'success' => false,
+//                'message'=> 'شماره دانشجویی صحیح نیست',
+//            ]);
+//        }
         /** ************************************************************************************************/
 //        $student_fetch = SamaRequestController::sama_request('StudentService', 'GetStudentPersonInfo', ['studentNumber' => $input['scu_id']]);
         /** ************************************************************************************************/
@@ -498,7 +505,7 @@ class StudentAPIController extends AppBaseController
             return response()->json([
                 'success' => false,
                 'message' => 'اطلاعات دانشگاهی خود را قبلا احراز کرده‌اید',
-            ]);
+            ], 400);
         }
         elseif (empty($student)) { // user not verified
             $check_scu_id = User::where('scu_id', $input['scu_id'])->first();
@@ -508,7 +515,7 @@ class StudentAPIController extends AppBaseController
                 return response()->json([
                     'success' => false,
                     'message' => 'این اطلاعات قبلا احراز شده است. اگر از صحت اطلاعات اطمینان دارید، لطفا به مدیریت سامانه اطلاع دهید',
-                ]);
+                ], 400);
             }
             try {
                 $student_fetch = SamaRequestController::sama_request('StudentService', 'GetStudentPersonInfo', ['studentNumber' => $input['scu_id']]);
@@ -634,38 +641,38 @@ class StudentAPIController extends AppBaseController
                                         return response()->json([
                                             'success' => false,
                                             'message' => 'اطلاعات وارد شده صحیح نیست. لطفا مجددا تلاش کنید'
-                                        ]);
+                                        ], 404);
                                     }
                                 } else { // this user has no NationalCode !
                                     return response()->json([
                                         'success' => false,
                                         'message' => 'متاسفانه در اطلاعات دانشگاهی شما ایرادی وجود دارد. لطفا با مدیریت ارتباط برقرار کنید'
-                                    ]);
+                                    ], 400);
                                 }
                             } else { // this user has no StudentNumber !
                                 return response()->json([
                                     'success' => false,
                                     'message' => 'متاسفانه در اطلاعات دانشگاهی شما ایرادی وجود دارد. لطفا با مدیریت ارتباط برقرار کنید'
-                                ]);
+                                ], 400);
                             }
                         } else {
                             return response()->json([
                                 'success' => false,
                                 'message' => 'اطلاعات وارد شده صحیح نیست. لطفا مجددا تلاش کنید'
-                            ]);
+                            ], 404);
                         }
                     } else { // this user has no StudentNumber !
                         return response()->json([
                             'success' => false,
                             'message' => 'متاسفانه در اطلاعات دانشگاهی شما ایرادی وجود دارد. لطفا با مدیریت ارتباط برقرار کنید'
-                        ]);
+                        ], 400);
                     }
                 }
                 else { // invalid scu_id
                     return response()->json([
                         'success' => false,
                         'message' => 'اطلاعات وارد شده صحیح نیست. لطفا مجددا تلاش کنید'
-                    ]);
+                    ], 404);
                 }
             } catch (\Exception $e) {
                 /** ATTENTION!
@@ -673,9 +680,9 @@ class StudentAPIController extends AppBaseController
                  */
 //                return response()->json($e->getMessage());
                 return response()->json([
-                    'status' => false,
+                    'success' => false,
                     'message' => 'عملیات موفقیت آمیز نبود، در صورت صحت اطلاعات، لطفا به مدیریت سامانه اطلاع دهید',
-                ]);
+                ], 500);
             }
         }
     }
@@ -728,7 +735,8 @@ class StudentAPIController extends AppBaseController
         $user->is_verified = false;
 
         return response()->json([
-            'status' => 'اطلاعات دانشگاهی کاربر با موفقیت حذف شد.'
+            'success' => true,
+            'message' => 'اطلاعات دانشگاهی کاربر با موفقیت حذف شد.'
         ]);
     }
 
@@ -815,7 +823,8 @@ class StudentAPIController extends AppBaseController
         $student['user'] = $user;
 
         return response()->json([
-            'status' => 'درخواست موفقیت آمیز بود.',
+            'success' => true,
+            'message' => 'درخواست موفقیت آمیز بود.',
             'student' => $student,
         ]);
     }
@@ -917,7 +926,8 @@ class StudentAPIController extends AppBaseController
         $student['entranceTerm'] = $entranceTerm;
 
         return response()->json([
-            'status' => 'درخواست موفقیت آمیز بود.',
+            'success' => true,
+            'message' => 'درخواست موفقیت آمیز بود.',
             'student' => $student,
         ]);
     }
@@ -1004,7 +1014,7 @@ class StudentAPIController extends AppBaseController
         $user->student = $this->studentRepository->update($input, $student->id);
 
 
-        return $this->sendResponse($user->toArray(), 'Profile updated successfully');
+        return $this->sendResponse($user->toArray(), 'صفحه شخصی به روز رسانی شد');
     }
 
     /** ************************************************** Notification **************************************************/
