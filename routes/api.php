@@ -52,6 +52,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function(){
     Route::get('users/trashedNotifications', 'UserAPIController@trashedNotifications'); /** Retrieve trashed notifications of authenticated user */
     Route::get('users/readNotifications', 'UserAPIController@readNotifications'); /** Retrieve read notifications of authenticated user */
     Route::get('users/unreadNotifications', 'UserAPIController@unreadNotifications'); /** Retrieve Unread notifications of authenticated user */
+    Route::get('users/unreadNotificationsCount', 'UserAPIController@unreadNotificationsCount'); /** Retrieve Unread notifications Count of authenticated user */
 
     Route::put('users/notifications/markAsRead', 'UserAPIController@markAsReadNotifications'); /** Update the notifications should be mark as read by authenticated user */
     Route::delete('users/notifications/delete', 'UserAPIController@deleteNotifications'); /** Soft Delete the notifications should be deleted by authenticated user */

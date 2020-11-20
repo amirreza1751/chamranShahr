@@ -784,6 +784,62 @@ class UserAPIController extends AppBaseController
      * @return Response
      *
      * @SWG\Get(
+     *      path="users/unreadNotificationsCount",
+     *      summary="Get User Unread Notifictions Count",
+     *      tags={"User Notification"},
+     *      description="Get list of authenticated User Unread Notifications Count",
+     *      produces={"application/json"},
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="success",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="count",
+     *                  type="integer",
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function unreadNotificationsCount()
+    {
+        /** @var User $user */
+        $user = $this->userRepository->findWithoutFail(auth('api')->user()->id);
+
+        if (empty($user)) {
+            return $this->sendError('ابتدا وارد سامانه شوید');
+        }
+
+        if (empty($user->student)){
+            $notifications = collect();
+        } else {
+            /** @var Student $student */
+            $student = Student::find($user->student->id);
+            $notifications = $student->unreadNotifications;
+        }
+
+        $retrieves = Notification::staticRetrieves($notifications->merge($user->unreadNotifications));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'عملیات موفقیت آمیز بود.',
+            'count' => sizeof($retrieves),
+        ]);
+    }
+
+    /**
+     * @return Response
+     *
+     * @SWG\Get(
      *      path="users/readNotifications",
      *      summary="Get User Read Notifictions",
      *      tags={"User Notification"},

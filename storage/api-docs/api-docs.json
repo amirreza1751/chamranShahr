@@ -6649,6 +6649,37 @@
                 }
             }
         },
+        "users/unreadNotificationsCount": {
+            "get": {
+                "tags": [
+                    "User Notification"
+                ],
+                "summary": "Get User Unread Notifictions Count",
+                "description": "Get list of authenticated User Unread Notifications Count",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "count": {
+                                    "type": "integer"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "users/readNotifications": {
             "get": {
                 "tags": [
