@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\CollectionHelper;
 use App\Enums\MediaType;
 use App\Http\Requests\API\CreateAdAPIRequest;
+use App\Http\Requests\API\CreateBookAdAPIRequest;
 use App\Http\Requests\API\UpdateAdAPIRequest;
 use App\Models\Ad;
 use App\Models\Media;
@@ -305,20 +306,20 @@ class AdAPIController extends AppBaseController
      *******************************************************************************************************************
      */
 
-    public function create_book_ad(Request $request){
+    public function create_book_ad(CreateBookAdAPIRequest $request){
 //        $this->authorize('create_book_ad', Ad::class);
 
-        $this->validate($request, [
-            'title' => 'required',
-            'offered_price' => 'required',
-            'phone_number' => 'required',
-            'book_title' => 'required',
-            'book_length' => 'required',
-//            'isbn' => 'unique:books'
-            'images.*' => 'image|mimes:jpg,jpeg,png|max:512',
-            'publish_month' => 'required|numeric|min:2',
-            'publish_year' => 'required|numeric|min:4',
-        ]);
+//        $this->validate($request, [
+//            'title' => 'required',
+//            'offered_price' => 'required',
+//            'phone_number' => 'required',
+//            'book_title' => 'required',
+//            'book_length' => 'required',
+////            'isbn' => 'unique:books'
+//            'images.*' => 'image|mimes:jpg,jpeg,png|max:512',
+//            'publish_month' => 'required|numeric|min:2',
+//            'publish_year' => 'required|numeric|min:4',
+//        ]);
 
         $book_info = [
             'title' => $request->get('book_title'),
