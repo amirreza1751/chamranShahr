@@ -281,14 +281,16 @@ class ExternalServiceController extends AppBaseController
 //                    dump("read data from external service: " . $external_service->title . "...");
 //                    dump("( URL: " . $external_service->url . " )");
 
-                    $ch = curl_init();
-                    curl_setopt($ch, CURLOPT_HEADER, 0);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($ch, CURLOPT_URL, $external_service->url);
-                    $xml = curl_exec($ch);  // get xml content of this service rss url
-                    curl_close($ch);
+                    // $ch = curl_init();
+                    // curl_setopt($ch, CURLOPT_HEADER, 0);
+                    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    // curl_setopt($ch, CURLOPT_URL, $external_service->url);
+                    // $xml = curl_exec($ch);  // get xml content of this service rss url
+                    // curl_close($ch);
 
-                    $xml = simplexml_load_string($xml);
+                    // $xml = simplexml_load_string($xml);
+
+                    $xml = simplexml_load_file($external_service->url);
 
                     if ($external_service->content_type == News::class){
                         /**
